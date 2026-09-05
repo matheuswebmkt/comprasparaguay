@@ -44,7 +44,7 @@ export default function AtrativosFozContent() {
             style={{ mixBlendMode: "multiply" }}
             aria-hidden="true"
           />
-          <div className="section-container relative z-10 py-20 sm:py-24">
+          <div className="section-container relative z-10 pt-14 pb-10 sm:pt-16 sm:pb-12">
             <div className="rf-head">
               <p className="rf-eyebrow">{t.grid.eyebrow}</p>
               <h1
@@ -76,7 +76,7 @@ export default function AtrativosFozContent() {
                       "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
                   }}
                 >
-                  Ver atrativos
+                  {t.grid.cta}
                   <span
                     aria-hidden="true"
                     className="transition-transform duration-300 group-hover:translate-y-0.5"

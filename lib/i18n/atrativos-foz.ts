@@ -1,9 +1,10 @@
 // Filepath: lib/i18n/atrativos-foz.ts
-// Version: 1.1
-// Nome da Versão: "Dicionário i18n do hub /atrativos (pt/en/es)"
+// Version: 2.0
+// Nome da Versão: "Foco Compras PY — dicionário do hub /roteiros-de-compras reescrito"
 //
 // Cobre só a parte VISÍVEL (client). JSON-LD (FAQ/ItemList/Breadcrumb/Article) e `metadata` continuam em
-// pt no page.tsx (SEO canônico). Nomes de atrativos (app/data/attractions.ts) ficam intactos.
+// pt no page.tsx (SEO canônico). A página é o hub do roteiro de compras: Ciudad del Este, Duty Free,
+// By Night e os shoppings de Foz — nenhum conteúdo de turismo geral (Cataratas, Itaipu, parques) aqui.
 
 import type { Locale } from "./config";
 
@@ -11,7 +12,7 @@ export interface AtrativosFozUI {
   /* ⓘ Havia aqui um bloco `hero` (eyebrow, h1, p1, p2, chips). A página tinha DOIS cabeçalhos
      empilhados — essa hero e o cabeçalho da grade logo abaixo — dizendo a mesma coisa. O da
      grade subiu para a hero e este foi deletado, nos três locales.
-     ⚠️ Não recriar: quem apresenta `/atrativos` é `grid`. */
+     ⚠️ Não recriar: quem apresenta `/roteiros-de-compras` é `grid`. */
   grid: {
     eyebrow: string;
     title: string;
@@ -19,6 +20,8 @@ export interface AtrativosFozUI {
      *  existir em `title`, o título renderiza inteiro sem destaque — degrada sem quebrar. */
     titleDestaque: string;
     subtitle: string;
+    /** Rótulo do CTA de rolagem para a grade (âncora interna `#atrativos`). */
+    cta: string;
   };
   faq: {
     eyebrow: string;
@@ -30,55 +33,64 @@ export interface AtrativosFozUI {
 export const ATRATIVOS_FOZ_UI: Record<Locale, AtrativosFozUI> = {
   pt: {
     grid: {
-      eyebrow: "Pontos turísticos",
-      title: "Os principais atrativos de Foz do Iguaçu",
-      titleDestaque: "atrativos",
-      subtitle: "Da natureza às compras: um guia direto dos lugares que valem a visita em Foz do Iguaçu e na Tríplice Fronteira.",
+      eyebrow: "Roteiro de compras",
+      title: "Os 5 destinos de compras da fronteira",
+      titleDestaque: "compras",
+      subtitle:
+        "Ciudad del Este, Duty Free e By Night de Puerto Iguazú e os shoppings de Foz — cada um com horários, dicas e a melhor ordem para o seu dia de compras.",
+      cta: "Ver destinos de compras",
     },
     faq: {
       eyebrow: "Perguntas frequentes",
-      title: "Dúvidas sobre os atrativos de Foz do Iguaçu",
+      title: "Dúvidas sobre o roteiro de compras",
       items: [
-        { q: "Quais são os principais atrativos de Foz do Iguaçu?", a: "Os destaques são as Cataratas do Iguaçu (uma das Sete Maravilhas da Natureza), o Parque das Aves, a Usina de Itaipu e o Marco das Três Fronteiras. A cidade também tem parques como o Dreams Park Show e o Aquafoz, além de shoppings e uma gastronomia diversa." },
-        { q: "O que fazer em Foz do Iguaçu além das Cataratas?", a: "Muita coisa: Parque das Aves, Itaipu e sua iluminação, Marco das Três Fronteiras, parques temáticos e shoppings. Em dias de chuva, opções cobertas ajudam. Monte a sequência no hub de roteiros do Compras Paraguay." },
-        { q: "Quantos dias são necessários para conhecer Foz do Iguaçu?", a: "Para o essencial — Cataratas dos lados brasileiro e argentino, Parque das Aves, Itaipu e Marco das Três Fronteiras —, reserve de 3 a 4 dias. Com mais tempo, dá para incluir parques temáticos, compras no Paraguai e o pôr do sol na roda-gigante." },
-        { q: "Quais atrativos de Foz do Iguaçu são bons para ir com crianças?", a: "O Parque das Aves, o Dreams Park Show (Vale dos Dinossauros) e o Aquafoz costumam agradar famílias. Monte a sequência no hub de roteiros (Clássico ou Aventura)." },
+        { q: "Quais são os destinos de compras da fronteira?", a: "São cinco: Compras em Ciudad del Este (Paraguai), Duty Free e By Night de Puerto Iguazú (Argentina) e os shoppings Cataratas JL e Catuaí Palladium, em Foz do Iguaçu. Cada um tem página própria com horários e dicas." },
+        { q: "Qual a melhor ordem para o roteiro de compras?", a: "Comece por Ciudad del Este, enquanto o comércio está aberto (as lojas fecham no meio da tarde), e volte pelo Brasil. Encaixe o duty free argentino no meio da tarde e, se quiser, a noite no By Night. Os shoppings de Foz entram nos momentos que sobram do dia." },
+        { q: "Dá para fazer Ciudad del Este e a Argentina no mesmo dia?", a: "Dá. A travessia da Ponte da Amizade leva à Ciudad del Este e a Ponte Tancredo Neves a Puerto Iguazú — os dois eixos de compras cabem no mesmo dia quando você planeja a ordem e respeita os horários de cada lado." },
+        { q: "Qual a diferença entre o Duty Free e o By Night?", a: "O Duty Free é o free shop de Puerto Iguazú — perfumes, eletrônicos e bebidas importadas — aberto de dia. O By Night é a experiência de compras e gastronomia da noite argentina. Os dois ficam na mesma região e combinam bem no mesmo roteiro." },
+        { q: "Como recebo o meu roteiro de compras?", a: "Na página de qualquer um dos cinco destinos, clique no botão e deixe seus dados. Um especialista revisa as suas escolhas e entra em contato com as condições e a melhor ordem para o seu dia de compras." },
       ],
     },
   },
   en: {
     grid: {
-      eyebrow: "Tourist spots",
-      title: "The main attractions in Foz do Iguaçu",
-      titleDestaque: "attractions",
-      subtitle: "From nature to shopping: a straightforward guide to the places worth visiting in Foz do Iguaçu and the Tríplice Fronteira.",
+      eyebrow: "Shopping plan",
+      title: "The 5 border shopping destinations",
+      titleDestaque: "shopping",
+      subtitle:
+        "Ciudad del Este, Puerto Iguazú's Duty Free and By Night, and the Foz malls — each with hours, tips and the best order for your shopping day.",
+      cta: "See shopping destinations",
     },
     faq: {
       eyebrow: "Frequently asked questions",
-      title: "Questions about Foz do Iguaçu's attractions",
+      title: "Questions about the shopping plan",
       items: [
-        { q: "What are the main attractions in Foz do Iguaçu?", a: "The highlights are the Iguaçu Falls (one of the Seven Natural Wonders), the Bird Park, the Itaipu Dam and the Marco das Três Fronteiras. The city also has parks like Dreams Park Show and Aquafoz, plus malls and a diverse food scene." },
-        { q: "What else is there to do in Foz do Iguaçu besides the Falls?", a: "Plenty: Bird Park, Itaipu, Triple Frontier Landmark, theme parks and malls. On rainy days, covered options help. Build the day plan in the itineraries hub." },
-        { q: "How many days do you need to see Foz do Iguaçu?", a: "For the essentials — Falls, Bird Park, Itaipu and the Triple Frontier Landmark — set aside 3 to 4 days. With more time, add theme parks, border shopping and food. See 1–7 day plans on /roteiros." },
-        { q: "Which Foz do Iguaçu attractions are good for kids?", a: "Bird Park, Dreams Park Show and Aquafoz are family favorites. Ready-made “with kids” itineraries are on the hub." },
+        { q: "What are the border's shopping destinations?", a: "There are five: shopping in Ciudad del Este (Paraguay), Duty Free and By Night in Puerto Iguazú (Argentina), and the Cataratas JL and Catuaí Palladium malls in Foz do Iguaçu. Each has its own page with hours and tips." },
+        { q: "What's the best order for the shopping plan?", a: "Start in Ciudad del Este while stores are open (they close by mid-afternoon), then head back through Brazil. Fit the Argentine duty free in mid-afternoon and, if you like, the By Night evening. Foz's malls fill the spare moments of the day." },
+        { q: "Can I do Ciudad del Este and Argentina on the same day?", a: "Yes. The Friendship Bridge crossing takes you to Ciudad del Este and the Tancredo Neves Bridge to Puerto Iguazú — both shopping axes fit in one day when you plan the order and respect each side's hours." },
+        { q: "What's the difference between Duty Free and By Night?", a: "Duty Free is Puerto Iguazú's duty-free shop — perfumes, electronics and imported drinks — open by day. By Night is the shopping-and-dining experience of the Argentine evening. They're in the same area and pair well in one plan." },
+        { q: "How do I get my shopping plan?", a: "On any of the five destination pages, click the button and leave your details. A specialist reviews your choices and gets in touch with the conditions and the best order for your shopping day." },
       ],
     },
   },
   es: {
     grid: {
-      eyebrow: "Puntos turísticos",
-      title: "Los principales atractivos de Foz do Iguaçu",
-      titleDestaque: "atractivos",
-      subtitle: "De la naturaleza a las compras: una guía directa de los lugares que valen la visita en Foz do Iguaçu y la Tríplice Fronteira.",
+      eyebrow: "Ruta de compras",
+      title: "Los 5 destinos de compras de la frontera",
+      titleDestaque: "compras",
+      subtitle:
+        "Ciudad del Este, Duty Free y By Night de Puerto Iguazú y los shoppings de Foz — cada uno con horarios, consejos y el mejor orden para tu día de compras.",
+      cta: "Ver destinos de compras",
     },
     faq: {
       eyebrow: "Preguntas frecuentes",
-      title: "Dudas sobre los atractivos de Foz do Iguaçu",
+      title: "Dudas sobre la ruta de compras",
       items: [
-        { q: "¿Cuáles son los principales atractivos de Foz do Iguaçu?", a: "Los destacados son las Cataratas del Iguazú (una de las Siete Maravillas de la Naturaleza), el Parque de las Aves, la Represa de Itaipú y el Marco das Três Fronteiras. La ciudad también tiene parques como Dreams Park Show y Aquafoz, además de shoppings y una gastronomía diversa." },
-        { q: "¿Qué hacer en Foz do Iguaçu además de las Cataratas?", a: "Mucho: Parque de las Aves, Itaipú, Marco de las Tres Fronteras, parques y shoppings. En días de lluvia, opciones cubiertas ayudan. Arma la secuencia en el hub de itinerarios de Compras Paraguay." },
-        { q: "¿Cuántos días se necesitan para conocer Foz do Iguaçu?", a: "Para lo esencial — Cataratas del lado brasileño y argentino, Parque de las Aves, Itaipú y Marco das Três Fronteiras —, reserva de 3 a 4 días. Con más tiempo, puedes incluir parques temáticos, compras en Paraguay y el atardecer en la rueda gigante." },
-        { q: "¿Qué atractivos de Foz do Iguaçu son buenos para ir con niños?", a: "El Parque de las Aves, Dreams Park Show y Aquafoz suelen gustar a las familias. Hay itinerarios listos en el perfil “Con niños” en el hub." },
+        { q: "¿Cuáles son los destinos de compras de la frontera?", a: "Son cinco: compras en Ciudad del Este (Paraguay), Duty Free y By Night de Puerto Iguazú (Argentina) y los shoppings Cataratas JL y Catuaí Palladium, en Foz do Iguaçu. Cada uno tiene su propia página con horarios y consejos." },
+        { q: "¿Cuál es el mejor orden para la ruta de compras?", a: "Empieza por Ciudad del Este mientras el comercio está abierto (las tiendas cierran a media tarde) y vuelve por Brasil. Encaja el duty free argentino en la media tarde y, si quieres, la noche en el By Night. Los shoppings de Foz entran en los momentos que sobran del día." },
+        { q: "¿Puedo hacer Ciudad del Este y Argentina el mismo día?", a: "Sí. El cruce del Puente de la Amistad lleva a Ciudad del Este y el Puente Tancredo Neves a Puerto Iguazú — los dos ejes de compras caben en un mismo día cuando planificas el orden y respetas los horarios de cada lado." },
+        { q: "¿Cuál es la diferencia entre el Duty Free y el By Night?", a: "El Duty Free es el free shop de Puerto Iguazú — perfumes, electrónicos y bebidas importadas — abierto de día. El By Night es la experiencia de compras y gastronomía de la noche argentina. Están en la misma zona y combinan bien en la misma ruta." },
+        { q: "¿Cómo recibo mi ruta de compras?", a: "En la página de cualquiera de los cinco destinos, haz clic en el botón y deja tus datos. Un especialista revisa tus elecciones y se comunica contigo con las condiciones y el mejor orden para tu día de compras." },
       ],
     },
   },
