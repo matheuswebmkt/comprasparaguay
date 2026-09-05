@@ -23,7 +23,6 @@ import { internalUrl } from "@/lib/utm";
 import TituloComDestaque from "@/components/TituloComDestaque";
 import TransferHero from "@/components/niche/TransferHero";
 import TransferAtrativosSection from "@/components/niche/TransferAtrativosSection";
-import RelatedAttractionsSection from "@/components/RelatedAttractionsSection";
 import RoteirosCta from "@/components/RoteirosCta";
 import FaqAccordion from "@/components/FaqAccordion";
 import type { Niche, NicheSection } from "@/app/data/niches";
@@ -258,9 +257,6 @@ export default function NichePageContent({
           <FaqAccordion items={t.faq} className="mx-auto max-w-3xl" />
         </div>
       </section>
-
-      {/* Sugestão de atrativos (scroll lateral) */}
-      <RelatedAttractionsSection source={`nicho-${niche.key}`} fundo="areia" />
 
       <RoteirosCta ctaType={`niche_${niche.key}`} />
     </main>
