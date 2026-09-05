@@ -598,7 +598,7 @@ export default function PartnerDetailContent({
               {t.backBody}
             </p>
             <Link
-              href="/atrativos"
+              href="/roteiros-de-compras"
               className="mt-7 inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
               style={{ background: "linear-gradient(135deg, hsl(152,47%,32%) 0%, hsl(152,50%,28%) 100%)"}}
             >

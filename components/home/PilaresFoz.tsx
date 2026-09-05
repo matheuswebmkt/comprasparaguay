@@ -13,7 +13,7 @@
 // Os itens são links tipográficos com filete superior — deliberadamente NÃO são cards com fundo e
 // borda, o que os devolveria ao padrão catálogo.
 //
-// ⚠️ Rotas na forma CURTA, conferidas em `app/` na R3: /o-que-fazer, /onde-comer, /hospedagem.
+// ⚠️ Rotas na forma CURTA, conferidas em `app/`: /roteiros-de-compras, /transfer, /triplice-fronteira.
 // NÃO usar as formas longas antigas (`/o-que-fazer-em-foz-do-iguacu` etc.) — dão 404.
 
 "use client";

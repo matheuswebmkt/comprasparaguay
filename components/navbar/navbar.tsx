@@ -63,10 +63,8 @@ const Navbar = () => {
   }, []);
 
   const links = [
-    { href: "/atrativos/compras-paraguai-ciudad-del-este", label: t.itinerary },
-    { href: "/atrativos", label: t.whatToDo },
+    { href: "/roteiros-de-compras", label: t.whatToDo },
     { href: "/transfer", label: t.transfer },
-    { href: "/o-que-fazer", label: t.oQueFazer },
     { href: "/triplice-fronteira", label: t.tripleFrontier },
   ];
 
@@ -115,7 +113,7 @@ const Navbar = () => {
               (ver o painel no fim do arquivo), não na barra. A barra no mobile ficaria com
               idioma + CTA + hambúrguer em 64px de altura. */}
           <Link
-            href={internalUrl("/atrativos/compras-paraguai-ciudad-del-este", `navbar-cta-${fromSource}`)}
+            href={internalUrl("/roteiros-de-compras", `navbar-cta-${fromSource}`)}
             className="hidden items-center rounded-full px-3 py-1.5 text-xs font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98] sm:px-4 sm:py-2 sm:text-sm lg:inline-flex"
             style={{
               background:
@@ -174,7 +172,7 @@ const Navbar = () => {
                 justifica ou condena esta mudança. */}
               <Link
                 href={internalUrl(
-                  "/atrativos/compras-paraguai-ciudad-del-este",
+                  "/roteiros-de-compras",
                   `navbar-menu-cta-${fromSource}`,
                 )}
                 className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"

@@ -16,15 +16,6 @@ export interface TripliceFronteiraUI {
     h1Destaque: string;
     body: RichPart[];
   };
-  elo: {
-    eyebrow: string;
-    title: string;
-    p1: RichPart[];
-    p2: RichPart[];
-    tags: string[];
-    link: string;
-    cta: string;
-  };
   countries: {
     label: string;
     city: string;
@@ -43,8 +34,6 @@ export interface TripliceFronteiraUI {
     highlights: { slug: string; label: string }[];
   }[];
   seeDoTitle: string;
-  /** Rótulo do link que fecha o card de destaques, apontando para `/atrativos`. */
-  seeAllAttractions: string;
   crossings: {
     eyebrow: string;
     title: string;
@@ -74,25 +63,7 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
         { text: " e nas pontes você entende a geografia; nos roteiros prontos, encaixa o dia a dia sem improviso." },
       ],
     },
-    elo: {
-      eyebrow: "Onde os três se encontram",
-      title: "Três países, uma região só",
-      p1: [
-        { text: "No " },
-        { text: "Marco das Três Fronteiras", strong: true },
-        { text: " você vê o encontro dos rios e dos países. Do lado brasileiro, argentino e paraguaio, cada um tem o seu obelisco — o cartão-postal da " },
-        { text: "Tríplice Fronteira", strong: true },
-        { text: "." },
-      ],
-      p2: [
-        { text: "Com as pontes da Amizade e Tancredo Neves, " },
-        { text: "dá para visitar os três países no mesmo roteiro", strong: true },
-        { text: " — compras, gastronomia e paisagem. O Compras Paraguay organiza isso em turnos manhã/tarde/noite." },
-      ],
-      tags: ["3 países", "2 rios", "2 pontes"],
-      link: "Ver o Marco das Três Fronteiras",
-      cta: "Roteiros prontos de 1, 2 e 3 dias",
-    },
+
     countries: [
       {
         label: "Brasil", city: "Foz do Iguaçu",
@@ -100,13 +71,10 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "O lado brasileiro é a base natural para explorar a região: Cataratas do Iguaçu, Parque das Aves, Itaipu e o Marco das Três Fronteiras.",
           "Foz concentra hospedagem e gastronomia, com fácil acesso aos dois países vizinhos.",
         ],
-        /* ⓘ TRÊS por card, não quatro: os destaques passaram a ser exibidos LADO A LADO, e a
-           grade é de 3 colunas. O Marco das Três Fronteiras saiu daqui — ele já é o assunto da
-           seção "O ELO" no topo da página, com foto grande e link próprio. */
+        /* ⓘ Foco compras: os dois shoppings de Foz entram como destaques do Brasil. */
         highlights: [
-          { slug: "cataratas-do-iguacu", label: "Cataratas do Iguaçu" },
-          { slug: "parque-das-aves", label: "Parque das Aves" },
-          { slug: "itaipu-binacional", label: "Itaipu Binacional" },
+          { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
+          { slug: "shopping-catuai-palladium", label: "Shopping Catuaí Palladium" },
         ],
       },
       {
@@ -115,15 +83,9 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "Do lado argentino, o Parque Nacional Iguazú oferece uma experiência diferente das Cataratas: passarelas que avançam sobre os rios e levam você à beira da imponente Garganta do Diabo, além do trem ecológico que cruza a mata.",
           "A poucos minutos, Puerto Iguazú é tranquila e charmosa, famosa pelas parrillas (a clássica carne argentina) e pelo seu próprio mirante das três fronteiras (Hito Tres Fronteras).",
         ],
-        /* ⚠️ SAIU "Passarelas e trem ecológico", e não é esquecimento: não existe atrativo para
-           ele em `attractions.ts` — e, se existisse com esse recorte, seria REDUNDANTE. As
-           passarelas e o trem ecológico SÃO o Parque Nacional Iguazú, ou seja, o mesmo
-           `cataratas-lado-argentino` que a linha da Garganta do Diabo já aponta. Se um atrativo
-           próprio for criado depois, o recorte precisa ser outra coisa (o trem em si, o Sendero
-           Macuco), não o parque de novo — aí sim volta para cá. */
+        /* ⓘ Destques da Argentina: o Duty Free e o By Night (compras + noite argentina). */
         highlights: [
-          { slug: "cataratas-lado-argentino", label: "Garganta do Diabo (lado argentino)" },
-          { slug: "madero-tango-iguazu", label: "Madero Tango Iguazú" },
+          { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
           { slug: "by-night-argentina-puerto-iguazu", label: "By Night Puerto Iguazú" },
         ],
       },
@@ -147,7 +109,6 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
        o papel do resto. Prometer "o que ver e fazer" com três itens era prometer mais do que a
        seção entrega. */
     seeDoTitle: "Principais destaques",
-    seeAllAttractions: "Ver todos os atrativos",
     crossings: {
       eyebrow: "Logística",
       title: "Como circular entre os três países",
@@ -190,25 +151,7 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
         { text: " and the bridges you feel the geography — ready-made itineraries turn that into a day plan." },
       ],
     },
-    elo: {
-      eyebrow: "Where the three meet",
-      title: "Three countries, one region",
-      p1: [
-        { text: "At the " },
-        { text: "Triple Frontier Landmark", strong: true },
-        { text: " you see rivers and countries meet. Brazil, Argentina and Paraguay each have their marker — the postcard of the " },
-        { text: "Triple Frontier", strong: true },
-        { text: "." },
-      ],
-      p2: [
-        { text: "With the Friendship and Tancredo Neves bridges, " },
-        { text: "you can visit three countries in one itinerary", strong: true },
-        { text: " — shopping, food and scenery. Compras Paraguay slots that into morning / afternoon / night." },
-      ],
-      tags: ["3 countries", "2 rivers", "2 bridges"],
-      link: "See the Triple Frontier Landmark",
-      cta: "Ready-made itineraries for 1, 2 and 3 days",
-    },
+
     countries: [
       {
         label: "Brazil", city: "Foz do Iguaçu",
@@ -217,9 +160,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "Foz has lodging and dining with easy access to both neighboring countries.",
         ],
         highlights: [
-          { slug: "cataratas-do-iguacu", label: "Iguaçu Falls" },
-          { slug: "parque-das-aves", label: "Bird Park" },
-          { slug: "itaipu-binacional", label: "Itaipu Binational" },
+          { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
+          { slug: "shopping-catuai-palladium", label: "Shopping Catuaí Palladium" },
         ],
       },
       {
@@ -229,8 +171,7 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "Just minutes away, Puerto Iguazú is quiet and charming, famous for its parrillas (classic Argentine grilled meat) and its own three-borders viewpoint (Hito Tres Fronteras).",
         ],
         highlights: [
-          { slug: "cataratas-lado-argentino", label: "Devil's Throat (Argentine side)" },
-          { slug: "madero-tango-iguazu", label: "Madero Tango Iguazú" },
+          { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
           { slug: "by-night-argentina-puerto-iguazu", label: "By Night Puerto Iguazú" },
         ],
       },
@@ -247,7 +188,6 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       },
     ],
     seeDoTitle: "Main highlights",
-    seeAllAttractions: "See all attractions",
     crossings: {
       eyebrow: "Logistics",
       title: "How to get around the three countries",
@@ -277,25 +217,7 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
         { text: " y en los puentes entiendes la geografía; en los itinerarios listos, lo conviertes en un plan del día." },
       ],
     },
-    elo: {
-      eyebrow: "Donde se encuentran los tres",
-      title: "Tres países, una región",
-      p1: [
-        { text: "En el " },
-        { text: "Marco de las Tres Fronteras", strong: true },
-        { text: " ves el encuentro de ríos y países. Brasil, Argentina y Paraguay — la postal de la " },
-        { text: "Triple Frontera", strong: true },
-        { text: "." },
-      ],
-      p2: [
-        { text: "Con los puentes de la Amistad y Tancredo Neves, " },
-        { text: "puedes visitar tres países en un mismo itinerario", strong: true },
-        { text: " — compras, gastronomía y paisaje. Compras Paraguay lo organiza en mañana / tarde / noche." },
-      ],
-      tags: ["3 países", "2 ríos", "2 puentes"],
-      link: "Ver el Marco de las Tres Fronteras",
-      cta: "Itinerarios listos de 1, 2 y 3 días",
-    },
+
     countries: [
       {
         label: "Brasil", city: "Foz do Iguaçu",
@@ -304,9 +226,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "Foz concentra hospedaje y gastronomía, con fácil acceso a los dos países vecinos.",
         ],
         highlights: [
-          { slug: "cataratas-do-iguacu", label: "Cataratas del Iguazú" },
-          { slug: "parque-das-aves", label: "Parque de las Aves" },
-          { slug: "itaipu-binacional", label: "Itaipú Binacional" },
+          { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
+          { slug: "shopping-catuai-palladium", label: "Shopping Catuaí Palladium" },
         ],
       },
       {
@@ -316,8 +237,7 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
           "A pocos minutos, Puerto Iguazú es tranquila y con encanto, famosa por sus parrillas (la clásica carne argentina) y por su propio mirador de las tres fronteras (Hito Tres Fronteras).",
         ],
         highlights: [
-          { slug: "cataratas-lado-argentino", label: "Garganta del Diablo (lado argentino)" },
-          { slug: "madero-tango-iguazu", label: "Madero Tango Iguazú" },
+          { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
           { slug: "by-night-argentina-puerto-iguazu", label: "By Night Puerto Iguazú" },
         ],
       },
@@ -334,7 +254,6 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       },
     ],
     seeDoTitle: "Principales destacados",
-    seeAllAttractions: "Ver todos los atractivos",
     crossings: {
       eyebrow: "Logística",
       title: "Cómo circular entre los tres países",

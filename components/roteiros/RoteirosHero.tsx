@@ -142,7 +142,7 @@ export default function RoteirosHero() {
               </Link>
 
               <Link
-                href={internalUrl("/atrativos", "home-hero-atrativos")}
+                href={internalUrl("/roteiros-de-compras", "home-hero-atrativos")}
                 className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4 transition-colors"
                 style={{ color: "hsl(152,47%,30%)", textDecorationColor: "hsla(152,40%,60%,0.5)" }}
               >

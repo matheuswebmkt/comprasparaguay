@@ -15,9 +15,8 @@
 | Rota | Função |
 |---|---|
 | `/` | Home — foco Compras PY |
-| `/atrativos` | Hub dos 5 atrativos de compras/fronteira |
+| `/roteiros-de-compras` | Hub de compras (ex-`/atrativos`) — 5 atrativos do eixo compras/fronteira |
 | `/atrativos/[slug]` | Página individual de atrativo (5: Ciudad del Este, Duty Free, By Night, Cataratas JL, Catuaí Palladium) |
-| `/o-que-fazer` | Pilar editorial "o que fazer" |
 | `/triplice-fronteira` | Página BR/AR/PY |
 | `/transfer` | Cluster de nicho — transfer (agência ativa) |
 | `/obrigado` | Página de confirmação pós-submit (noindex, fora do sitemap) |
@@ -26,7 +25,7 @@
 | `/contato` | Formulário de contato |
 
 > ⚠️ **Rotas removidas na simplificação Compras PY** (sem redirect): `/roteiros` + `/roteiros/[slug]`,
-> `/montar-roteiro` (wizard), `/roteiros/salvos`, `/onde-comer`, `/hospedagem` e `/r/[token]`
+> `/montar-roteiro` (wizard), `/roteiros/salvos`, `/onde-comer`, `/hospedagem`, `/o-que-fazer`, `/r/[token]`
 > (página pública do pedido — o token `leads.public_token` permanece no banco, mas as mensagens já
 > não geram o link).
 
@@ -79,7 +78,7 @@ Agrupadas por área; ver o arquivo de arquitetura correspondente para o comporta
 
 ### Sitemap e robots
 
-- `app/sitemap.ts` gera: páginas estáticas vivas (home, `/atrativos`, `/o-que-fazer`,
+- `app/sitemap.ts` gera: páginas estáticas vivas (home, `/roteiros-de-compras`,
   `/transfer`, `/triplice-fronteira`, `/sobre`, `/aviso-legal`, `/contato`) + uma
   entrada por atrativo do catálogo (5).
 - `app/robots.ts` — `allow: "/"` para todos os agentes, com `disallow` para as rotas privadas

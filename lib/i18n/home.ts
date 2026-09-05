@@ -17,9 +17,6 @@ export interface HomeUI {
     brand: string;
     home: string;
     whatToDo: string;
-    oQueFazer: string;
-    whereToEat: string;
-    itinerary: string;
     transfer: string;
     tripleFrontier: string;
     cta: string;
@@ -104,10 +101,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     navbar: {
       brand: "Compras Paraguay",
       home: "Início",
-      whatToDo: "Atrativos",
-      oQueFazer: "O que fazer",
-      whereToEat: "Onde comer",
-      itinerary: "Compras",
+      whatToDo: "Roteiros de compras",
       transfer: "Transfer",
       tripleFrontier: "Tríplice Fronteira",
       cta: "Fazer meu roteiro",
@@ -233,8 +227,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       eyebrow: "Explore a fronteira",
       items: [
         { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Compras no Paraguai", hint: "O que comprar e horários" },
-        { href: "/atrativos", label: "Compras e shoppings", hint: "Ciudad del Este e duty free" },
-        { href: "/o-que-fazer", label: "O que fazer", hint: "Foz e a Tríplice Fronteira" },
+        { href: "/roteiros-de-compras", label: "Roteiros de compras", hint: "Ciudad del Este, duty free e shoppings" },
         { href: "/transfer", label: "Transfer", hint: "Chegar e voltar" },
         { href: "/triplice-fronteira", label: "Tríplice Fronteira", hint: "Brasil, Argentina e Paraguai" },
       ],
@@ -259,10 +252,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     navbar: {
       brand: "Compras Paraguay",
       home: "Home",
-      whatToDo: "Attractions",
-      oQueFazer: "What to do",
-      whereToEat: "Where to eat",
-      itinerary: "Shopping",
+      whatToDo: "Shopping guides",
       transfer: "Transfer",
       tripleFrontier: "Triple Frontier",
       cta: "Make my itinerary",
@@ -388,8 +378,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       eyebrow: "Explore the frontier",
       items: [
         { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Shopping in Paraguay", hint: "What to buy and hours" },
-        { href: "/atrativos", label: "Shopping & malls", hint: "Ciudad del Este and duty free" },
-        { href: "/o-que-fazer", label: "What to do", hint: "Foz and the Triple Frontier" },
+        { href: "/roteiros-de-compras", label: "Shopping guides", hint: "Ciudad del Este, duty free and malls" },
         { href: "/transfer", label: "Transfer", hint: "Getting there and back" },
         { href: "/triplice-fronteira", label: "Triple Frontier", hint: "Brazil, Argentina and Paraguay" },
       ],
@@ -415,9 +404,6 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       brand: "Compras Paraguay",
       home: "Inicio",
       whatToDo: "Atractivos",
-      oQueFazer: "Qué hacer",
-      whereToEat: "Dónde comer",
-      itinerary: "Compras",
       transfer: "Transfer",
       tripleFrontier: "Triple Frontera",
       cta: "Hacer mi itinerario",
@@ -543,8 +529,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       eyebrow: "Explora la frontera",
       items: [
         { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Compras en Paraguay", hint: "Qué comprar y horarios" },
-        { href: "/atrativos", label: "Compras y shoppings", hint: "Ciudad del Este y duty free" },
-        { href: "/o-que-fazer", label: "Qué hacer", hint: "Foz y la Triple Frontera" },
+        { href: "/roteiros-de-compras", label: "Guías de compras", hint: "Ciudad del Este, duty free y shoppings" },
         { href: "/transfer", label: "Transfer", hint: "Ir y volver" },
         { href: "/triplice-fronteira", label: "Triple Frontera", hint: "Brasil, Argentina y Paraguay" },
       ],

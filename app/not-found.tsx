@@ -38,7 +38,7 @@ export default function NotFound() {
               Voltar ao início
             </Link>
             <Link
-              href={internalUrl("/atrativos", "404")}
+              href={internalUrl("/roteiros-de-compras", "404")}
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl font-semibold text-sm border transition-all hover:scale-[1.02]"
               style={{ color: "hsl(210,56%,23%)", borderColor: "hsl(214,25%,85%)", background: "white" }}
             >

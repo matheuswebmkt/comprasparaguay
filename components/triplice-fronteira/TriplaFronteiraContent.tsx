@@ -29,32 +29,6 @@ const COUNTRY_CODES = ["BR", "AR", "PY"] as const;
    inteira toda vez, e o resultado nunca muda dentro de uma sessão. */
 const CAPA_POR_SLUG = new Map(attractions.map((a) => [a.slug, a.cover]));
 
-/* Link secundário para a página do Marco (§7.2: texto linkado em Verde Selva, nunca um segundo
-   botão preenchido). Extraído porque é renderizado DUAS vezes na seção `elo`, alternadas por
-   breakpoint — ver o comentário na fileira de botões. Href, cor e seta ficam num lugar só; com
-   o JSX duplicado, as duas cópias divergem na primeira vez que alguém mexe numa delas.
-   ⓘ O `className` traz o display (`inline-flex`) porque é ele que muda entre as duas. */
-function LinkMarco({ label, className }: { label: string; className: string }) {
-  return (
-    <Link
-      href={internalUrl("/atrativos", "triplice")}
-      className={`group items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4 ${className}`}
-      style={{
-        color: "hsl(152,47%,30%)",
-        textDecorationColor: "hsla(152,40%,60%,0.5)",
-      }}
-    >
-      {label}
-      <span
-        aria-hidden="true"
-        className="transition-transform duration-300 group-hover:translate-x-0.5"
-      >
-        →
-      </span>
-    </Link>
-  );
-}
-
 export default function TriplaFronteiraContent() {
   const { locale } = useLocale();
   const t = TRIPLICE_FRONTEIRA_UI[locale];
@@ -113,143 +87,6 @@ export default function TriplaFronteiraContent() {
                 <CountryFlag country="BR" className="h-5 w-7" />
                 <CountryFlag country="AR" className="h-5 w-7" />
                 <CountryFlag country="PY" className="h-5 w-7" />
-              </div>
-
-              {/* CTA de rolagem — mesmo padrão de `/atrativos`, `/onde-comer` e
-                  `/roteiros/[slug]`. Âncora interna, não `<Link>`. */}
-              <div className="mt-9">
-                <a
-                  href="#a-fronteira"
-                  className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
-                  }}
-                >
-                  Entender a fronteira
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-y-0.5"
-                  >
-                    ↓
-                  </span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* O ELO
-            ⓘ `id` + `scroll-mt-24`: alvo do CTA da hero. Fundo BRANCO porque a hero acima é
-            Areia (§7.5) — antes esta seção não declarava fundo e herdava o Areia do `<main>`,
-            colando as duas.
-            ⚠️ O CONTEÚDO desta seção ainda não passou pelo padrão (`font-black`, eyebrow em
-            dourado como texto, chips). Só o invólucro foi ajustado. */}
-        <section
-          id="a-fronteira"
-          className="rf-section scroll-mt-24"
-          style={{ background: "hsl(0,0%,100%)" }}
-        >
-          <div className="section-container">
-            <div className="grid items-center gap-10 lg:grid-cols-2">
-              <div>
-                {/* ⚠️ Eyebrow em Verde Selva. Estava em `hsl(35,82%,40%)` com ícone em
-                    `hsl(35,82%,47%)` — dourado como COR DE TEXTO sobre fundo claro é violação em
-                    qualquer tamanho (§2/§7.4). O ícone saiu junto: os eyebrows do projeto são
-                    texto puro.
-                    ⓘ `.rf-eyebrow` sem `.rf-head` porque esta coluna é alinhada à ESQUERDA — a
-                    classe é só tipografia; quem centraliza é o `.rf-head` (§8.1, mesma exceção
-                    documentada para `PilaresFoz`). */}
-                <p className="rf-eyebrow mb-4">{t.elo.eyebrow}</p>
-                {/* ⚠️ `font-black` (900) com Fraunces é proibido pelo §3, e a escala própria
-                    (`text-2xl sm:text-3xl md:text-4xl`) divergia de todos os H2 do projeto.
-                    `.rf-title` entrega os 600 e a escala única; `marginTop: 0` porque aqui ela
-                    vem logo abaixo do eyebrow, não de um bloco de cabeçalho. */}
-                <h2 className="rf-title" style={{ marginTop: 0 }}>
-                  {t.elo.title}
-                </h2>
-                <p className="mt-5 text-base leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
-                  {t.elo.p1.map((part, i) => (part.strong ? <strong key={i}>{part.text}</strong> : <span key={i}>{part.text}</span>))}
-                </p>
-                <p className="mt-4 text-base leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
-                  {t.elo.p2.map((part, i) => (part.strong ? <strong key={i}>{part.text}</strong> : <span key={i}>{part.text}</span>))}
-                </p>
-                <div className="mt-6 flex flex-wrap items-center gap-2.5">
-                  {t.elo.tags.map((s) => (
-                    <span key={s} className="inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-semibold" style={{ background: "white", border: "1px solid hsl(214,25%,88%)", color: "hsl(210,56%,23%)" }}>
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                {/* ⓘ O CTA dourado usa a família de seção (`text-lg px-8 py-4 rounded-3xl`, §2).
-                    O tamanho do rótulo é decisão de HIERARQUIA, não de acessibilidade: o gradiente
-                    âmbar com rótulo branco não passa em AA em tamanho nenhum (2.79 na ponta escura,
-                    2.00 na clara) — dívida conhecida e aceita, ver design-system.md §2, inclusive
-                    os três enganos já pagos ali. Aumentar o rótulo NÃO conserta contraste.
-                    ⓘ O secundário é link Verde Selva, não um segundo botão preenchido (§7.2).
-
-                    ⚠️ O LINK DO MARCO SÓ APARECE AQUI DE `lg` PRA CIMA. Abaixo disso ele é
-                    renderizado embaixo da FOTO do Marco, na outra célula do grid — o destino do
-                    link é aquela foto, e no mobile a coluna única já põe as duas coisas juntas.
-                    As duas instâncias são o mesmo `LinkMarco`, alternado por breakpoint.
-
-                    ⚠️ NO DESKTOP OS DOIS FICAM NA MESMA LINHA, e isso é restrição de LARGURA, não
-                    de estilo: a coluna do grid tem ~588px (`section-container` 1216 ÷ 2, menos
-                    `gap-10`). Com o rótulo antigo do botão ("Ver roteiros com a fronteira") o par
-                    pedia ~655px e o link caía para a linha de baixo. O rótulo virou "Ver roteiros
-                    prontos" — o mesmo de `shared.ts`, usado em todo o resto do projeto — e o par
-                    passou a caber com ~20px de folga.
-                    → Ao mexer em `t.elo.cta` ou `t.elo.link`, conferir que ainda cabem. O
-                      `flex-wrap` fica: na faixa 1024–1340 a coluna aperta e empilhar é o
-                      comportamento correto. */}
-                <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-                  <Link
-                    href={internalUrl("/atrativos/compras-paraguai-ciudad-del-este", "triplice")}
-                    className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
-                    }}
-                  >
-                    {t.elo.cta}
-                    <span
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    >
-                      →
-                    </span>
-                  </Link>
-                  <LinkMarco label={t.elo.link} className="hidden lg:inline-flex" />
-                </div>
-              </div>
-              {/* ⓘ Wrapper: a célula do grid deixou de ser o cartão da foto e passou a ser
-                  foto + link do Marco (este último só abaixo de `lg`). De `lg` pra cima o link
-                  é `display:none`, então a altura da célula continua sendo a do cartão e o
-                  `items-center` do grid alinha exatamente como antes. */}
-              <div>
-                <div className="overflow-hidden rounded-3xl border shadow-tef-lg" style={{ borderColor: "hsl(214,25%,88%)" }}>
-                  <div className="relative aspect-[4/3]">
-                    <Image
-                      src="/images/atrativos/marco-das-tres-fronteiras/cover.webp"
-                      alt="Marco das Três Fronteiras — encontro de Brasil, Argentina e Paraguai em Foz do Iguaçu"
-                      fill
-                      /* ⚠️ `sizes` descreve o que o `object-cover` EXIGE, não a largura da caixa.
-                         A fonte é 16:9 e a caixa é 4:3: o navegador escala pela ALTURA e corta a
-                         largura, então precisa de mais pixels horizontais do que a caixa tem.
-                         Coluna ≈ 588px → caixa 588×441 → altura 441 sobre fonte de 720 dá fator
-                         0.61 → largura renderizada ≈ 784px. Com `600px` o Next servia menos que
-                         isso e a foto era ampliada ~1.3× (o "mole" do §8-ter).
-                         900px faz o Next escolher 1080 do `deviceSizes`, com folga para DPR>1 —
-                         e ele nunca serve acima da largura do arquivo original. */
-                      sizes="(max-width: 1024px) 100vw, 900px"
-                      className="object-cover"
-                    />
-                  </div>
-                </div>
-                <LinkMarco
-                  label={t.elo.link}
-                  className="mt-5 inline-flex lg:hidden"
-                />
               </div>
             </div>
           </div>
@@ -360,20 +197,6 @@ export default function TriplaFronteiraContent() {
                       );
                     })}
                   </ul>
-                  {/* Fecho do card: leva ao índice completo. Recupera, num lugar mais útil, o
-                      destino do CTA que saiu junto com a seção "Um dia, três países".
-                      Link Verde Selva, não botão — §8-bis conta CTA por botão cheio, e três
-                      botões (um por país) competiriam com o dourado de "O ELO". */}
-                  <Link
-                    href={internalUrl("/atrativos", "triplice")}
-                    className="group mt-5 inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"
-                    style={{ color: "hsl(152,47%,30%)", textDecorationColor: "hsla(152,40%,60%,0.5)" }}
-                  >
-                    {t.seeAllAttractions}
-                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-0.5">
-                      →
-                    </span>
-                  </Link>
                 </div>
               </div>
             </div>

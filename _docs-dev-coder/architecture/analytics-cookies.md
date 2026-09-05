@@ -61,7 +61,7 @@
   param omitido.
 - `components/analytics/ViewContentOnLoad.tsx` — client component que não renderiza nada e dispara
   UM `ViewContent` por montagem. Ponte entre as páginas ESTÁTICAS e o pixel. Montado em
-  `/atrativos/[slug]`. 🚫 **Nunca em hub** (`/atrativos`, `/transfer`, `/o-que-fazer`): lista é
+  `/atrativos/[slug]`. 🚫 **Nunca em hub** (`/roteiros-de-compras`, `/transfer`): lista é
   `view_item_list`, não `view_item`. `components/ImpressionObserver.tsx` continua sendo outra coisa (item dentro de lista)
   e **não** deve virar `ViewContent`.
 - **Os modais de detalhe disparam `ViewContent` na ABERTURA** — parceiro e agência não têm rota

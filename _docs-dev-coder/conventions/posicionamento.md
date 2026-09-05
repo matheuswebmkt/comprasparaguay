@@ -213,12 +213,11 @@ UMA página. Home e pilar editorial disputando o mesmo termo é ruim de SEO **e*
 | Página | Intenção que ela é dona |
 |---|---|
 | `/` (home) | **roteiro de compras em Ciudad del Este** / planejar o dia de compras |
-| `/o-que-fazer` | **o que fazer em Foz e na Tríplice Fronteira** (pilar editorial) |
-| `/atrativos` + `/atrativos/[slug]` | compras e shoppings (Ciudad del Este, duty free, Cataratas JL, Catuaí) |
+| `/roteiros-de-compras` + `/atrativos/[slug]` | compras e shoppings (Ciudad del Este, duty free, Cataratas JL, Catuaí) |
 | `/transfer` | transfer na fronteira |
 | `/triplice-fronteira` | BR-AR-PY |
 
-⚠️ **Os slugs são as formas curtas** (`/o-que-fazer`, `/atrativos`, `/transfer`,
+⚠️ **Os slugs são as formas curtas** (`/roteiros-de-compras`, `/atrativos/[slug]`, `/transfer`,
 `/triplice-fronteira`) — **não** `/o-que-fazer-em-foz-do-iguacu` nem `/onde-comer-em-foz`, que não
 existem como rotas. Conferir `app/` antes de escrever qualquer link novo (context.md §2.4: o código é
 a verdade máxima) — essas formas longas já vazaram para outros documentos e para copy gerada por

@@ -156,8 +156,7 @@ export default function NichePageContent({
   const { locale } = useLocale();
   const t = NICHES_CONTENT[locale][niche.key] ?? ptFallback(niche);
   const [firstSection, ...restSections] = t.sections;
-  const heroHubHref =
-    niche.category === "hotelaria" ? "/triplice-fronteira" : "/o-que-fazer";
+  const heroHubHref = "/triplice-fronteira";
   const temRecomendacao = niche.key === "transfer";
 
   return (
@@ -209,7 +208,7 @@ export default function NichePageContent({
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
-                  href={internalUrl("/atrativos", "niche")}
+                  href={internalUrl("/roteiros-de-compras", "niche")}
                   className="inline-flex items-center gap-1.5 text-sm font-semibold transition-all hover:gap-2.5 duration-200"
                   style={{ color: "hsl(152,47%,32%)" }}
                 >

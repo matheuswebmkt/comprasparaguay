@@ -77,7 +77,7 @@ export default function CtaFinal() {
                 (§8-bis: o dourado tem de continuar o único objeto cheio). Mesmo par
                 do /triplice-fronteira. */}
             <Link
-              href={internalUrl("/atrativos", "home-cta-final-prontos")}
+              href={internalUrl("/roteiros-de-compras", "home-cta-final-prontos")}
               className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"
               style={{
                 color: "hsl(152,47%,30%)",

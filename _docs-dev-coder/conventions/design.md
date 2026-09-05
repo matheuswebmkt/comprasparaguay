@@ -29,7 +29,7 @@ Travado:
   vidro com foto grande pesa demais: o atrativo é detalhe de apoio, a copy é a protagonista.
 - **Duas ações, hierarquia por peso.** "Quero meu roteiro de compras" (dourado, preenchido, →
   `/atrativos/compras-paraguai-ciudad-del-este`) e "Ver atrativos e shoppings" (texto linkado em Verde
-  Selva, → `/atrativos`), lado a lado. O secundário **não pode** virar botão preenchido.
+  Selva, → `/roteiros-de-compras`), lado a lado. O secundário **não pode** virar botão preenchido.
 - **Um único objeto dourado na tela: o CTA.** Núcleo, filamentos, selos e badges são Verde Selva.
 - **Fora do hero:** eyebrow de faixa de dias; ícones de turno soltos (foram para a segunda dobra).
 

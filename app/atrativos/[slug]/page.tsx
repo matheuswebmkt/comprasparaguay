@@ -83,7 +83,7 @@ export default async function AttractionPage({
       <JsonLd
         data={breadcrumbSchema([
           { name: "Início", url: "/" },
-          { name: "Atrativos", url: "/atrativos" },
+          { name: "Roteiros de compras", url: "/roteiros-de-compras" },
           { name: a.name, url: `/atrativos/${a.slug}` },
         ])}
       />

@@ -485,8 +485,7 @@ export function pageLabel(path: string): string {
   const clean = (path || "").replace(/\/$/, "") || "/";
   const STATIC: Record<string, string> = {
     "/": "Início (home)",
-    "/atrativos": "Atrativos (hub + ingressos)",
-    "/o-que-fazer": "O que fazer em Foz (SEO)",
+    "/roteiros-de-compras": "Roteiros de compras (hub)",
     "/transfer": "Transfer",
     "/triplice-fronteira": "Tríplice Fronteira",
     // ⚠️ Rotas antigas — rotas removidas/renomeadas (jul/2026), mantidas só pra rotular pageviews

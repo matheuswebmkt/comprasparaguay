@@ -102,7 +102,7 @@ export default function AttractionPageContent({
                 <li aria-hidden="true">/</li>
                 <li>
                   <Link
-                    href="/atrativos"
+                    href="/roteiros-de-compras"
                     className="transition-opacity hover:opacity-70"
                     style={{ color: "hsl(210,56%,35%)" }}
                   >

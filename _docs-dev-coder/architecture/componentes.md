@@ -17,7 +17,7 @@
 
 | Arquivo | Papel |
 |---|---|
-| `components/roteiros/RoteirosHero.tsx` | Hero da home (`/`). Fundo **Areia puro** + grão, sem foto. Grid 48/52: copy à esquerda, constelação à direita. Duas ações lado a lado: "Quero meu roteiro de compras" (dourado → `/atrativos/compras-paraguai-ciudad-del-este`) e "Ver atrativos e shoppings" (texto linkado → `/atrativos`). Renderizado por `app/page.tsx` como 1ª seção. |
+| `components/roteiros/RoteirosHero.tsx` | Hero da home (`/`). Fundo **Areia puro** + grão, sem foto. Grid 48/52: copy à esquerda, constelação à direita. Duas ações lado a lado: "Quero meu roteiro de compras" (dourado → `/atrativos/compras-paraguai-ciudad-del-este`) e "Ver atrativos e shoppings" (texto linkado → `/roteiros-de-compras`). Renderizado por `app/page.tsx` como 1ª seção. |
 | `components/home/RoteiroConstelacao.tsx` | **Client component.** A constelação: o rótulo "você" num disco central (com anéis pulsando) emitindo um filamento por vez até a miniatura de um atrativo, na ordem manhã → tarde → noite. Os dias espelham o **eixo compras** (os 5 atrativos do catálogo). Loop entre 3 dias. Cada nó é `Link` para `/atrativos/[slug]`. |
 
 ⚠️ Não existe `components/home/RoteiroLiveStack.tsx` — foi substituído pela constelação acima; não
@@ -38,7 +38,9 @@ recriar.
 
 | Arquivo | Papel |
 |---|---|
-| `components/atrativos/AttractionPageContent.tsx` | Página de detalhe do atrativo (client, i18n). Estrutura no padrão do design system: **hero** Areia puro + grão com breadcrumb, eyebrow ("Atrativo · Foz do Iguaçu"), H1 na escala única (§3) e foto **contida** à direita (`rounded-3xl`, `aspect-[4/3] lg:aspect-[16/10]` — imagem com margem, nunca full-bleed §14); **conteúdo** em grid 1fr/360px ("Sobre" `rf-title` + destaques Verde Selva | sidebar branca `rounded-2xl` com ficha de info e CTA dourado `text-lg font-bold` → `TicketOfferButton`); **FAQ** `.rf-section` branco + `.rf-head` + `FaqAccordion` `max-w-3xl`; **relacionados** via componente compartilhado `RelatedAttractionsSection` (fundo areia, `items` sem o atrativo atual); fecho `RoteirosCta` (padrão compartilhado). Sem `NicheClusterLinks` e sem `PartnerPicks` (decisões do usuário). |
+| `components/atrativos/AttractionPageContent.tsx` | Página de detalhe do atrativo (client, i18n). Estrutura no padrão do design system: **hero** Areia puro + grão com breadcrumb, eyebrow ("Atrativo · Foz do Iguaçu"), H1 na escala única (§3) e foto **contida** à direita (`rounded-3xl`, `aspect-[4/3] lg:aspect-[16/10]` — imagem com margem, nunca full-bleed §14); **conteúdo** em grid 1fr/360px ("Sobre" `rf-title` + destaques Verde Selva | sidebar branca `rounded-2xl` com ficha de info e CTA dourado `text-lg font-bold` → `TicketOfferButton`); **FAQ** `.rf-section` branco + `.rf-head` + `FaqAccordion` `max-w-3xl`; **relacionados** via componente compartilhado `RelatedAttractionsSection` (fundo areia, `items` sem o atrativo atual); fecho `RoteirosCta` (padrão compartilhado). |
+
+_`AtrativosDestaqueSection.tsx` foi **deletado** (único consumidor, `/o-que-fazer`, também saiu)._
 
 #### Página de confirmação (`/obrigado`)
 
@@ -50,19 +52,17 @@ recriar.
 #### Demais seções da home (`app/page.tsx`, ordem de render)
 
 `RoteirosHero` → `DoresSection` → `AutoridadeSection` → `FaqSection` → `PilaresFoz` → `CtaFinal`.
-⚠️ `RoteirosHomeSection` ("Roteiros prontos") e `AtrativosDestaqueSection` ("Pontos turísticos")
-foram **removidos da home** na simplificação Compras PY (decisão do usuário). `AtrativosDestaqueSection`
-continua vivo em `/o-que-fazer`.
+⚠️ `RoteirosHomeSection` ("Roteiros prontos") foi **removido da home** na simplificação Compras PY e
+`AtrativosDestaqueSection` foi **deletado** (o único consumidor era o `/o-que-fazer`, também removido).
 A alternância de fundo entre elas é regra — ver `conventions/design.md` §7.4.
 
 | Arquivo | Papel |
 |---|---|
 | `components/home/DoresSection.tsx` | **Segunda dobra (pós-hero).** A DOR em empatia: eyebrow "O cenário" + 8 dores em grid (tempo, escolha, horário, orçamento, fronteira, antecipação, logística, perda) com ícones Verdes, sem CTA. Fundo branco (alternância §7.5). Copy PT hardcoded (marcador §21.8) — em iteração. |
 | `components/home/AutoridadeSection.tsx` | **Pós-Dores (prova — §21.1 camada 4 + mecanismo).** **Os 3 passos do mecanismo** (migrados do `ComoFunciona`, removido — loop de destaque §7.3 com pausa no hover/foco e reduced-motion) → **divisória fina e sutil** → **afirmações** (estrelas de contorno dourado = compromisso, não avaliação; revisão humana §21.3; orçamento do visitante §21.7). Fundo areia. Copy PT hardcoded (marcador §21.8) — em iteração. |
-| `components/atrativos/AtrativosDestaqueSection.tsx` | Seção "Atrativos em destaque" — curadoria do eixo compras (`DESTAQUE_SLUGS` = os 5 atrativos do catálogo) + convite para `/atrativos`. Usada hoje em `/o-que-fazer` (saiu da home na simplificação Compras PY). |
 | `components/roteiros/RoteiroCard.tsx` | Removido (mundo de roteiros prontos saiu). |
 | `components/home/FaqSection.tsx` + `FaqSectionContent.tsx` | FAQ da home: o `FaqSection` (server) emite o JSON-LD canônico em pt; o `FaqSectionContent` (client, i18n) é a parte visível. Fundo **branco puro** (fecha a alternância: Atrativos areia → esta branco → PilaresFoz areia). |
-| `components/FaqAccordion.tsx` | **Acordeão de FAQ único do projeto — serve 6 superfícies** (home, `/o-que-fazer`, `/atrativos`, `/atrativos/[slug]`, nichos, tríplice). Server component com `<details>`/`<summary>` nativos, filetes entre itens em vez de caixas. **NÃO** renderiza JSON-LD — isso é da página, senão sai `FAQPage` duplicado. Qualquer cor daqui se multiplica pelo site inteiro. |
+| `components/FaqAccordion.tsx` | **Acordeão de FAQ único do projeto — serve 5 superfícies** (home, `/roteiros-de-compras`, `/atrativos/[slug]`, nichos, tríplice). Server component com `<details>`/`<summary>` nativos, filetes entre itens em vez de caixas. **NÃO** renderiza JSON-LD — isso é da página, senão sai `FAQPage` duplicado. Qualquer cor daqui se multiplica pelo site inteiro. |
 - **Utilities de motion removidas de `app/globals.css`** junto com ele, por serem exclusivas dele:
   `rf-row-in`, `rf-progress`, `rf-drift`.
 - **Utilities de motion adicionadas em `app/globals.css`:** `rf-grain` (grão sobre o Areia),

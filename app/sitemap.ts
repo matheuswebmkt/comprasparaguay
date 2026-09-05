@@ -13,8 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
-    { url: `${SITE_URL}/atrativos`, changeFrequency: "weekly", priority: 0.98 },
-    { url: `${SITE_URL}/o-que-fazer`, changeFrequency: "weekly", priority: 0.97 },
+    { url: `${SITE_URL}/roteiros-de-compras`, changeFrequency: "weekly", priority: 0.98 },
     { url: `${SITE_URL}/transfer`, changeFrequency: "weekly", priority: 0.88 },
     { url: `${SITE_URL}/triplice-fronteira`, changeFrequency: "weekly", priority: 0.93 },
     { url: `${SITE_URL}/sobre`, changeFrequency: "yearly", priority: 0.4 },

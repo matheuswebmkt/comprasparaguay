@@ -15,17 +15,16 @@ Foco em **Compras PY**: roteiro de compras em Ciudad del Este, duty free de Puer
 | Rota | Função |
 |---|---|
 | `/` | Home de compras — foco Compras PY |
-| `/atrativos` | Hub dos 5 atrativos de compras/fronteira |
+| `/roteiros-de-compras` | Hub de compras (ex-`/atrativos`) — 5 atrativos do eixo compras/fronteira |
 | `/atrativos/[slug]` | Página individual — Ciudad del Este, Duty Free, By Night, Cataratas JL, Catuaí Palladium |
-| `/o-que-fazer` | Pilar SEO editorial de atrativos, aponta para `/atrativos` |
 | `/transfer` | Cluster de nicho — transfer (agência ativa) |
 | `/triplice-fronteira` | BR / AR / PY |
 | `/obrigado` | Página de confirmação pós-submit (noindex) |
 | `/sobre` · `/aviso-legal` · `/contato` | Institucionais |
 
 > Simplificação Compras PY (rodada de rebrand): removidos `/roteiros`, `/roteiros/[slug]`,
-> `/montar-roteiro`, `/roteiros/salvos`, `/onde-comer`, `/hospedagem` e `/r/[token]` (sem
-> redirects — domínio greenfield). Ver `architecture/rotas.md`.
+> `/montar-roteiro`, `/roteiros/salvos`, `/onde-comer`, `/hospedagem`, `/o-que-fazer` e
+> `/r/[token]` (sem redirects — domínio greenfield). Ver `architecture/rotas.md`.
 
 > ⓘ Tabela resumida. A lista completa — incluindo comercial, admin e APIs — está em
 > `_docs-dev-coder/architecture/rotas.md`, que é a fonte de verdade.

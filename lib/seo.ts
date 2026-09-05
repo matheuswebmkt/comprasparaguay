@@ -276,13 +276,13 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
 export function nichePillar(category: PartnerCategory): { name: string; url: string } {
   switch (category) {
     case "gastronomia":
-      return { name: "Atrativos", url: "/atrativos" };
+      return { name: "Atrativos", url: "/roteiros-de-compras" };
     case "hotelaria":
-      return { name: "Atrativos", url: "/atrativos" };
+      return { name: "Atrativos", url: "/roteiros-de-compras" };
     case "turismo":
       return { name: "Transfer em Foz", url: "/transfer" };
     default:
-      return { name: "Atrativos", url: "/atrativos" };
+      return { name: "Atrativos", url: "/roteiros-de-compras" };
   }
 }
 

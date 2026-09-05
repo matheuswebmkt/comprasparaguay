@@ -42,8 +42,8 @@ Ambas foram removidas de propósito. Quem ler o gerador vai achar que falta camp
   **que não existe** no site. `SearchAction` só faz sentido com endpoint de busca real; sem ele o
   Google ignora na melhor hipótese e desconfia na pior.
 - **Canonical:** toda página define `alternates.canonical` na própria metadata. Rotas com forma
-  curta (`/o-que-fazer`, `/atrativos`, `/transfer`, `/triplice-fronteira`) são a única forma
-  canônica — ver `architecture/rotas.md`. A home canoniza em `SITE_URL` **sem barra final**, e
+  curta (`/roteiros-de-compras`, `/transfer`, `/triplice-fronteira`, `/atrativos/[slug]`) são a única
+  forma canônica — ver `architecture/rotas.md`. A home canoniza em `SITE_URL` **sem barra final**, e
   `app/sitemap.ts` declara a mesma string: sitemap e canonical não devem divergir nem em barra.
 - **i18n e canônica:** o site serve pt/en/es por **cookie**, sem rota por locale. Logo não há
   `hreflang` nem URL alternativa: a canônica é única e `metadata`/JSON-LD ficam **sempre em pt**

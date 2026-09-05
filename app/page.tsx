@@ -44,12 +44,10 @@ import { HOME_UI } from "@/lib/i18n/home";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  // ⚠️ A home mira "roteiro em Foz do Iguaçu" — NÃO "o que fazer em Foz do Iguaçu", que pertence ao
-  // pilar /o-que-fazer. Até a R2 os dois disputavam o mesmo termo (canibalização).
+  // ⚠️ A home mira "roteiro de compras em Ciudad del Este" — o comprador, não o piloto editorial.
   // Ver conventions/posicionamento.md §21.6.
-  // ⚠️ Sem sufixo `| Compras Paraguay` AQUI, ao contrário dos outros hubs: "Roteiro" + "Foz do Iguaçu"
-  // já É o nome da marca, e o sufixo seria a terceira repetição — custaria ~14 caracteres do teto
-  // de 60 sem acrescentar termo nenhum. Ver conventions/seo.md §19.
+  // ⚠️ Sem sufixo `| Compras Paraguay` na home: o título já carrega a marca — o sufixo seria
+  // repetição. Ver conventions/seo.md §19.
   title: {
     absolute: "Roteiro de compras em Ciudad del Este — Compras Paraguay",
   },

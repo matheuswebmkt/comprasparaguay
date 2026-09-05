@@ -87,7 +87,7 @@ export default function RoteirosCta({
           </Link>
 
           <Link
-            href={internalUrl("/atrativos", `${ctaType}-atrativos`)}
+            href={internalUrl("/roteiros-de-compras", `${ctaType}-atrativos`)}
             className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"
             style={{
               color: "hsl(152,47%,30%)",

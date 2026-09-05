@@ -92,11 +92,9 @@ export default function TriplaFronteiraPage() {
           name: "Eixos da Tríplice Fronteira",
           description: "Países e experiências ligadas a Foz do Iguaçu.",
           items: [
-            { name: "Brasil — Foz do Iguaçu", url: "/atrativos" },
-            { name: "Argentina — Cataratas e compras", url: "/atrativos" },
-            { name: "Paraguai — Ciudad del Este", url: "/atrativos" },
-            { name: "Marco das Três Fronteiras", url: "/atrativos/marco-das-tres-fronteiras" },
-            { name: "O que fazer em Foz", url: "/o-que-fazer-em-foz" },
+            { name: "Brasil — Foz do Iguaçu", url: "/roteiros-de-compras" },
+            { name: "Argentina — Cataratas e compras", url: "/roteiros-de-compras" },
+            { name: "Paraguai — Ciudad del Este", url: "/roteiros-de-compras" },
           ],
         })}
       />

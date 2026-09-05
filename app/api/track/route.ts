@@ -26,8 +26,7 @@ const clip = (v: unknown, n = MAX): string | null =>
 //    Sem elas na allowlist, pageviews/cliques nesses paths são ignorados (204).
 const STATIC_PATHS = new Set([
   "/",
-  "/atrativos",
-  "/o-que-fazer",
+  "/roteiros-de-compras",
   "/triplice-fronteira",
   "/sobre",
   "/aviso-legal",

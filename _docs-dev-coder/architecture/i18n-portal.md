@@ -31,7 +31,7 @@
   (FAQ, descrições por slug) — `pt` nos dicionários cai no dado via fallback (`??`).
 - **Páginas server + conteúdo client:** o que o visitante lê sai de um componente client i18n-izado;
   o `page.tsx` fica com `metadata`/JSON-LD em **pt canônico** (SEO) e monta a página. Padrão usado em
-  `/o-que-fazer` (`OQueFazerContent`), `/atrativos` (`AtrativosFozContent`),
+  `/roteiros-de-compras` (`AtrativosFozContent`),
   `/atrativos/[slug]` (`AttractionPageContent`), nichos (`NichePageTemplate` = casca server +
   `NichePageContent` client; o slot de recomendação `NicheRecommendation` resolve no server/DB e
   renderiza `NichePitchCard`/`NicheEmptyState` no client),
