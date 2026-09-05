@@ -280,7 +280,13 @@ export default function TriplaFronteiraContent() {
             seção a mais no meio e o branco fixo dele tornava a página insolúvel. A remoção
             dissolveu essa restrição, então a prop voltou a não ser passada por ninguém e FOI
             RETIRADA do `RoteirosCta`. Se uma cauda futura recriar o impasse, é ela que volta. */}
-        <RelatedAttractionsSection source="triplice" fundo="areia" />
+        <RelatedAttractionsSection
+          source="triplice"
+          fundo="areia"
+          eyebrow={t.related.eyebrow}
+          title={t.related.title}
+          subtitle={t.related.subtitle}
+        />
 
         <RoteirosCta ctaType="triplice_roteiros" title={t.finalCta.title} text={t.finalCta.text} />
       </main>

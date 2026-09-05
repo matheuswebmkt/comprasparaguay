@@ -1,9 +1,11 @@
 // Filepath: lib/i18n/triplice-fronteira.ts
-// Version: 1.0
-// Nome da Versão: "Dicionário i18n da página /triplice-fronteira (pt/en/es)"
+// Version: 2.0
+// Nome da Versão: "Foco Compras PY — copys da página reescritas para o roteiro de compras"
 //
 // Cobre só a parte VISÍVEL (client). JSON-LD e `metadata` continuam em pt no page.tsx (SEO canônico).
-// Conteúdo próprio da página (não é dado de parceiro/atrativo de terceiro) — traduzido por completo.
+// A página é o guia do roteiro de compras na Tríplice Fronteira: Ciudad del Este (PY), Duty Free e
+// By Night (AR) e os shoppings de Foz (BR) — nenhum conteúdo de turismo geral (Cataratas, Itaipu,
+// parques) aparece aqui.
 
 import type { Locale } from "./config";
 import type { RichPart } from "./home";
@@ -28,8 +30,8 @@ export interface TripliceFronteiraUI {
      * solto, o que deixava entrar item sem contrapartida no site. Agora, se um `slug` não existir
      * em `attractions.ts`, a linha some silenciosamente na renderização (a página não inventa
      * miniatura) — então errar aqui custa conteúdo, e o tipo obriga a decidir.
-     * ⓘ O `label` é editorial e pode divergir do `name` do atrativo: "Compras na fronteira"
-     * aponta para "Compras Paraguai - Ciudad del Este". A moldura é da seção, o destino é o atrativo.
+     * ⓘ O `label` é editorial e pode divergir do `name` do atrativo: "Duty Free Puerto Iguazú"
+     * aponta para "Compras Duty Free - Puerto Iguazú". A moldura é da seção, o destino é o atrativo.
      */
     highlights: { slug: string; label: string }[];
   }[];
@@ -49,18 +51,24 @@ export interface TripliceFronteiraUI {
     title: string;
     text: string;
   };
+  /** Cabeçalho da seção de cards do rodapé (os 5 destinos de compras do guia). */
+  related: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+  };
 }
 
 export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
   pt: {
     hero: {
-      eyebrow: "Três países, um roteiro",
-      h1: "A Tríplice Fronteira de Foz do Iguaçu",
+      eyebrow: "Compras na Tríplice Fronteira",
+      h1: "A Tríplice Fronteira das compras",
       h1Destaque: "Tríplice Fronteira",
       body: [
-        { text: "Brasil, Argentina e Paraguai se encontram em Foz do Iguaçu. " },
-        { text: "No Marco das Três Fronteiras", strong: true },
-        { text: " e nas pontes você entende a geografia; nos roteiros prontos, encaixa o dia a dia sem improviso." },
+        { text: "Brasil, Argentina e Paraguai se encontram em Foz do Iguaçu — e cada um tem um pedaço do seu roteiro de compras: " },
+        { text: "Ciudad del Este", strong: true },
+        { text: ", o duty free argentino e os shoppings de Foz, a poucos minutos de distância." },
       ],
     },
 
@@ -68,10 +76,10 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Brasil", city: "Foz do Iguaçu",
         text: [
-          "O lado brasileiro é a base natural para explorar a região: Cataratas do Iguaçu, Parque das Aves, Itaipu e o Marco das Três Fronteiras.",
-          "Foz concentra hospedagem e gastronomia, com fácil acesso aos dois países vizinhos.",
+          "Foz do Iguaçu é a base do seu roteiro de compras: a cidade concentra os shoppings Cataratas JL e Catuaí Palladium e fica a poucos minutos das pontes para Argentina e Paraguai.",
+          "Do centro de Foz, a Ponte da Amizade leva a Ciudad del Este e a Ponte Tancredo Neves leva a Puerto Iguazú — as duas rotas de compras cabem no mesmo dia quando você planeja a ordem.",
         ],
-        /* ⓘ Foco compras: os dois shoppings de Foz entram como destaques do Brasil. */
+        /* ⓘ Foco compras: os dois shoppings de Foz são os destaques do Brasil. */
         highlights: [
           { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
           { slug: "shopping-catuai-palladium", label: "Shopping Catuaí Palladium" },
@@ -80,10 +88,10 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Argentina", city: "Puerto Iguazú",
         text: [
-          "Do lado argentino, o Parque Nacional Iguazú oferece uma experiência diferente das Cataratas: passarelas que avançam sobre os rios e levam você à beira da imponente Garganta do Diabo, além do trem ecológico que cruza a mata.",
-          "A poucos minutos, Puerto Iguazú é tranquila e charmosa, famosa pelas parrillas (a clássica carne argentina) e pelo seu próprio mirante das três fronteiras (Hito Tres Fronteras).",
+          "Do lado argentino, Puerto Iguazú guarda o Duty Free — perfumes, eletrônicos e bebidas importadas a preço de free shop — e o By Night, a experiência de compras e gastronomia que esquenta a noite.",
+          "A travessia pela Ponte Tancredo Neves é curta: dá para ir ao duty free de dia e voltar com as compras na mala no mesmo dia.",
         ],
-        /* ⓘ Destques da Argentina: o Duty Free e o By Night (compras + noite argentina). */
+        /* ⓘ Destaques da Argentina: Duty Free + By Night (compras + noite argentina). */
         highlights: [
           { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
           { slug: "by-night-argentina-puerto-iguazu", label: "By Night Puerto Iguazú" },
@@ -92,63 +100,50 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Paraguai", city: "Ciudad del Este",
         text: [
-          "Ciudad del Este é o paraíso das compras da fronteira: eletrônicos, perfumes, cosméticos e importados a preços competitivos, concentrados logo após a Ponte da Amizade.",
-          "Além do comércio, o lado paraguaio guarda o Salto Monday, uma queda d'água impressionante e bem menos concorrida que as Cataratas — uma boa surpresa para quem quer fugir do óbvio.",
+          "Ciudad del Este é o coração das compras no Paraguai: eletrônicos, perfumes, cosméticos e importados concentrados logo depois da Ponte da Amizade.",
+          "O comércio abre cedo e fecha no meio da tarde — por isso ele vai no começo do seu dia de compras, não no fim.",
         ],
-        /* ⓘ SAIU "Ponte da Amizade" (decisão do usuário). Ela continua na seção de Logística
-           logo abaixo, como `via` de uma travessia — que é o papel certo dela: é caminho, não
-           destino de visita. */
+        /* ⓘ Foco compras: o Paraguai tem um destaque único (Ciudad del Este). O Salto Monday saiu
+           — é passeio de natureza, não roteiro de compras. */
         highlights: [
           { slug: "compras-paraguai-ciudad-del-este", label: "Compras na fronteira" },
-          { slug: "saltos-del-monday", label: "Salto Monday" },
         ],
       },
     ],
-    /* ⓘ Era "O que ver e fazer". Virou "Principais destaques" porque a lista deixou de ser
-       exaustiva: são 2–3 atalhos escolhidos, com o "Ver todos os atrativos" logo abaixo fazendo
-       o papel do resto. Prometer "o que ver e fazer" com três itens era prometer mais do que a
-       seção entrega. */
-    seeDoTitle: "Principais destaques",
+    /* ⓘ Era "O que ver e fazer". Virou "Onde comprar" porque a página é 100% roteiro de compras. */
+    seeDoTitle: "Onde comprar",
     crossings: {
       eyebrow: "Logística",
-      title: "Como circular entre os três países",
+      title: "Como circular entre as compras dos três países",
       items: [
-        { from: "Brasil", to: "Paraguai", via: "Ponte da Amizade", note: "liga Foz do Iguaçu a Ciudad del Este — bem movimentada, principalmente em dias de compras." },
-        { from: "Brasil", to: "Argentina", via: "Ponte Tancredo Neves", note: "liga Foz do Iguaçu a Puerto Iguazú, dando acesso ao lado argentino das Cataratas." },
+        { from: "Brasil", to: "Paraguai", via: "Ponte da Amizade", note: "liga Foz do Iguaçu a Ciudad del Este — o comércio abre cedo e fecha no meio da tarde, então atravesse de manhã." },
+        { from: "Brasil", to: "Argentina", via: "Ponte Tancredo Neves", note: "liga Foz do Iguaçu a Puerto Iguazú — acesso ao Duty Free argentino e ao By Night, a noite de compras e gastronomia." },
       ],
       tipBefore: "Dica:",
-      tipText: "leve um documento oficial com foto, atenção ao câmbio de cada país e, se for a primeira vez, considere ir com uma agência de turismo ou guia — as fronteiras costumam ser movimentadas.",
+      tipText: "leve um documento oficial com foto, atenção ao câmbio de cada país e às cotas da Receita na volta — e, se for a primeira vez, considere ir com uma agência de turismo ou guia; as fronteiras costumam ser movimentadas.",
       tipCtaBefore: "Veja nossa",
       tipCtaLink: "recomendação",
       tipCtaAfter: ".",
     },
-    /* ⚠️ O `text` anterior era "Escolha um plano pronto com a fronteira encaixada no dia certo e
-       receba as condições da agência." — TRÊS problemas, e nenhum deles é pego pelo `check:copy`:
-         1. "da agência" — §21.5 só admite nomear a agência na microcopy de LGPD e no disclaimer
-            do rodapé. Em copy de marketing, não.
-         2. "receba as condições" — §21.2, a regra de ouro: a copy pré-submit promete o RESULTADO,
-            nunca o canal nem o instante. "Condições" antecipa justamente o que só existe depois
-            do submit.
-         3. "Escolha um plano pronto" descrevia o LINK SECUNDÁRIO. O CTA dourado leva ao wizard.
-       ⓘ Este é o mesmo par de violações que o default de `shared.ts` já tinha corrigido — o
-       override desta página escapou da limpeza. Ao criar override novo, conferir o default antes.
-       ⓘ Estrutura copiada do default: pergunta rápida → resultado completo, com o ângulo da
-       página no meio. Sem fecho de gratuidade — §21.4 proíbe as duas formas, a palavra direta
-       e a construção "por nossa conta". */
     finalCta: {
-      title: "Os três países no mesmo roteiro.",
-      text: "Você define suas preferências e recebe o roteiro completo dos seus dias em Foz — com a travessia da fronteira no dia em que ela rende mais, sem atropelar o resto.",
+      title: "Compras nos três países, em um único roteiro.",
+      text: "Você conta o que quer comprar e recebe o roteiro completo do seu dia de compras — a ordem das lojas, os horários da ponte e o que vale a pena levar, sem improviso.",
+    },
+    related: {
+      eyebrow: "Os destinos de compras",
+      title: "Os 5 roteiros de compras da região",
+      subtitle: "Ciudad del Este, Duty Free, By Night e os shoppings de Foz — os cinco destinos do seu roteiro, com horários e dicas em cada página.",
     },
   },
   en: {
     hero: {
-      eyebrow: "Three countries, one itinerary",
-      h1: "The Triple Frontier of Foz do Iguaçu",
+      eyebrow: "Shopping on the Triple Frontier",
+      h1: "The Triple Frontier of shopping",
       h1Destaque: "Triple Frontier",
       body: [
-        { text: "Brazil, Argentina and Paraguay meet in Foz do Iguaçu. At the " },
-        { text: "Triple Frontier Landmark", strong: true },
-        { text: " and the bridges you feel the geography — ready-made itineraries turn that into a day plan." },
+        { text: "Brazil, Argentina and Paraguay meet in Foz do Iguaçu — and each one has a piece of your shopping plan: " },
+        { text: "Ciudad del Este", strong: true },
+        { text: ", the Argentine duty free and the malls of Foz, all minutes apart." },
       ],
     },
 
@@ -156,8 +151,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Brazil", city: "Foz do Iguaçu",
         text: [
-          "The Brazilian side is the natural base: Iguaçu Falls, Bird Park, Itaipu and the Triple Frontier Landmark.",
-          "Foz has lodging and dining with easy access to both neighboring countries.",
+          "Foz do Iguaçu is the base of your shopping plan: the city is home to Cataratas JL Shopping and Shopping Catuaí Palladium, and it's minutes from the bridges to Argentina and Paraguay.",
+          "From downtown Foz, the Friendship Bridge takes you to Ciudad del Este and the Tancredo Neves Bridge to Puerto Iguazú — both shopping routes fit in one day when you plan the order.",
         ],
         highlights: [
           { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
@@ -167,8 +162,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Argentina", city: "Puerto Iguazú",
         text: [
-          "On the Argentine side, Iguazú National Park offers a different experience of the Falls: walkways that reach out over the rivers and take you right to the edge of the imposing Devil's Throat, plus an eco-train that runs through the forest.",
-          "Just minutes away, Puerto Iguazú is quiet and charming, famous for its parrillas (classic Argentine grilled meat) and its own three-borders viewpoint (Hito Tres Fronteras).",
+          "On the Argentine side, Puerto Iguazú holds the Duty Free — imported perfumes, electronics and drinks at free-shop prices — and By Night, the shopping-and-dining experience that heats up the evening.",
+          "The crossing over the Tancredo Neves Bridge is short: hit the duty free by day and be back with your bags the same day.",
         ],
         highlights: [
           { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
@@ -178,43 +173,47 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Paraguay", city: "Ciudad del Este",
         text: [
-          "Ciudad del Este is the border's shopping paradise: electronics, perfumes, cosmetics and imported goods at competitive prices, concentrated right after the Friendship Bridge.",
-          "Beyond the shopping, the Paraguayan side is home to Salto Monday, an impressive waterfall that's much less crowded than the Falls — a nice surprise for those looking to skip the obvious.",
+          "Ciudad del Este is the heart of Paraguayan shopping: electronics, perfumes, cosmetics and imported goods right after the Friendship Bridge.",
+          "Stores open early and close by mid-afternoon — that's why it goes first in your shopping day, not last.",
         ],
         highlights: [
           { slug: "compras-paraguai-ciudad-del-este", label: "Border shopping" },
-          { slug: "saltos-del-monday", label: "Salto Monday" },
         ],
       },
     ],
-    seeDoTitle: "Main highlights",
+    seeDoTitle: "Where to shop",
     crossings: {
       eyebrow: "Logistics",
-      title: "How to get around the three countries",
+      title: "How to get around the three shopping stops",
       items: [
-        { from: "Brazil", to: "Paraguay", via: "Friendship Bridge", note: "connects Foz do Iguaçu to Ciudad del Este — quite busy, especially on shopping days." },
-        { from: "Brazil", to: "Argentina", via: "Tancredo Neves Bridge", note: "connects Foz do Iguaçu to Puerto Iguazú, giving access to the Argentine side of the Falls." },
+        { from: "Brazil", to: "Paraguay", via: "Friendship Bridge", note: "connects Foz do Iguaçu to Ciudad del Este — stores open early and close by mid-afternoon, so cross in the morning." },
+        { from: "Brazil", to: "Argentina", via: "Tancredo Neves Bridge", note: "connects Foz do Iguaçu to Puerto Iguazú — access to the Argentine Duty Free and By Night, the shopping-and-dining night out." },
       ],
       tipBefore: "Tip:",
-      tipText: "bring an official photo ID, mind each country's exchange rate, and if it's your first time, consider going with a tour agency or guide — the borders tend to get busy.",
+      tipText: "bring an official photo ID, mind each country's exchange rate and customs allowances on the way back — and if it's your first time, consider going with a tour agency or guide; borders tend to be busy.",
       tipCtaBefore: "See our",
       tipCtaLink: "recommendation",
       tipCtaAfter: ".",
     },
     finalCta: {
-      title: "All three countries in one itinerary.",
-      text: "You set your preferences and receive the complete itinerary for your days in Foz — with the border crossing on the day it pays off most, without rushing anything else.",
+      title: "Shopping across all three countries in one plan.",
+      text: "Tell us what you want to buy and get your complete shopping plan — the order of stores, bridge hours and what's worth bringing back, with no guesswork.",
+    },
+    related: {
+      eyebrow: "Shopping destinations",
+      title: "The 5 shopping guides in the region",
+      subtitle: "Ciudad del Este, Duty Free, By Night and the malls of Foz — the five stops of your shopping plan, with hours and tips on each page.",
     },
   },
   es: {
     hero: {
-      eyebrow: "Tres países, un itinerario",
-      h1: "La Triple Frontera de Foz do Iguaçu",
+      eyebrow: "Compras en la Triple Frontera",
+      h1: "La Triple Frontera de las compras",
       h1Destaque: "Triple Frontera",
       body: [
-        { text: "Brasil, Argentina y Paraguay se encuentran en Foz do Iguaçu. En el " },
-        { text: "Marco de las Tres Fronteras", strong: true },
-        { text: " y en los puentes entiendes la geografía; en los itinerarios listos, lo conviertes en un plan del día." },
+        { text: "Brasil, Argentina y Paraguay se encuentran en Foz do Iguaçu — y cada uno tiene una parte de tu ruta de compras: " },
+        { text: "Ciudad del Este", strong: true },
+        { text: ", el duty free argentino y los shoppings de Foz, a pocos minutos de distancia." },
       ],
     },
 
@@ -222,8 +221,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Brasil", city: "Foz do Iguaçu",
         text: [
-          "El lado brasileño es la base natural: Cataratas del Iguazú, Parque de las Aves, Itaipú y el Marco de las Tres Fronteras.",
-          "Foz concentra hospedaje y gastronomía, con fácil acceso a los dos países vecinos.",
+          "Foz do Iguaçu es la base de tu ruta de compras: la ciudad reúne los shoppings Cataratas JL y Catuaí Palladium y queda a pocos minutos de los puentes hacia Argentina y Paraguay.",
+          "Desde el centro de Foz, el Puente de la Amistad lleva a Ciudad del Este y el Puente Tancredo Neves a Puerto Iguazú — las dos rutas de compras caben en el mismo día cuando planificas el orden.",
         ],
         highlights: [
           { slug: "cataratas-jl-shopping", label: "Cataratas JL Shopping" },
@@ -233,8 +232,8 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Argentina", city: "Puerto Iguazú",
         text: [
-          "Del lado argentino, el Parque Nacional Iguazú ofrece una experiencia distinta de las Cataratas: pasarelas que avanzan sobre los ríos y te llevan al borde de la imponente Garganta del Diablo, además del tren ecológico que cruza la selva.",
-          "A pocos minutos, Puerto Iguazú es tranquila y con encanto, famosa por sus parrillas (la clásica carne argentina) y por su propio mirador de las tres fronteras (Hito Tres Fronteras).",
+          "Del lado argentino, Puerto Iguazú guarda el Duty Free — perfumes, electrónicos y bebidas importadas a precio de free shop — y el By Night, la experiencia de compras y gastronomía que anima la noche.",
+          "El cruce por el Puente Tancredo Neves es corto: ve al duty free de día y vuelve con las bolsas el mismo día.",
         ],
         highlights: [
           { slug: "duty-free-shop-puerto-iguazu-argentina", label: "Duty Free Puerto Iguazú" },
@@ -244,32 +243,36 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       {
         label: "Paraguay", city: "Ciudad del Este",
         text: [
-          "Ciudad del Este es el paraíso de las compras de la frontera: electrónicos, perfumes, cosméticos e importados a precios competitivos, concentrados justo después del Puente de la Amistad.",
-          "Además del comercio, el lado paraguayo guarda el Salto Monday, una caída de agua impresionante y con mucho menos gente que las Cataratas — una buena sorpresa para quien quiere escapar de lo obvio.",
+          "Ciudad del Este es el corazón de las compras paraguayas: electrónicos, perfumes, cosméticos e importados justo después del Puente de la Amistad.",
+          "El comercio abre temprano y cierra a media tarde — por eso va primero en tu día de compras, no al final.",
         ],
         highlights: [
           { slug: "compras-paraguai-ciudad-del-este", label: "Compras en la frontera" },
-          { slug: "saltos-del-monday", label: "Salto Monday" },
         ],
       },
     ],
-    seeDoTitle: "Principales destacados",
+    seeDoTitle: "Dónde comprar",
     crossings: {
       eyebrow: "Logística",
-      title: "Cómo circular entre los tres países",
+      title: "Cómo circular entre las compras de los tres países",
       items: [
-        { from: "Brasil", to: "Paraguay", via: "Puente de la Amistad", note: "conecta Foz do Iguaçu con Ciudad del Este — bastante transitado, sobre todo en días de compras." },
-        { from: "Brasil", to: "Argentina", via: "Puente Tancredo Neves", note: "conecta Foz do Iguaçu con Puerto Iguazú, dando acceso al lado argentino de las Cataratas." },
+        { from: "Brasil", to: "Paraguay", via: "Puente de la Amistad", note: "conecta Foz do Iguaçu con Ciudad del Este — el comercio abre temprano y cierra a media tarde, cruza por la mañana." },
+        { from: "Brasil", to: "Argentina", via: "Puente Tancredo Neves", note: "conecta Foz do Iguaçu con Puerto Iguazú — acceso al Duty Free argentino y al By Night, la noche de compras y gastronomía." },
       ],
       tipBefore: "Consejo:",
-      tipText: "lleva un documento oficial con foto, presta atención al tipo de cambio de cada país y, si es tu primera vez, considera ir con una agencia de turismo o guía — las fronteras suelen estar concurridas.",
+      tipText: "lleva un documento oficial con foto, presta atención al tipo de cambio de cada país y a las cuotas de aduana a la vuelta — y si es tu primera vez, considera ir con una agencia de turismo o guía; las fronteras suelen estar concurridas.",
       tipCtaBefore: "Mira nuestra",
       tipCtaLink: "recomendación",
       tipCtaAfter: ".",
     },
     finalCta: {
-      title: "Los tres países en un mismo itinerario.",
-      text: "Tú defines tus preferencias y recibes el itinerario completo de tus días en Foz — con la travesía de la frontera en el día en que más rinde, sin atropellar el resto.",
+      title: "Compras en los tres países en un solo plan.",
+      text: "Cuéntanos qué quieres comprar y recibe tu plan completo de compras — el orden de las tiendas, los horarios del puente y qué vale la pena traer, sin improvisar.",
+    },
+    related: {
+      eyebrow: "Los destinos de compras",
+      title: "Las 5 guías de compras de la región",
+      subtitle: "Ciudad del Este, Duty Free, By Night y los shoppings de Foz — las cinco paradas de tu plan, con horarios y consejos en cada página.",
     },
   },
 };
