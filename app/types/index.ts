@@ -170,9 +170,10 @@ export interface Attraction {
   country: "BR" | "AR" | "PY";
   address?: string;
   mapUrl?: string;
-  /** Destino do CTA — site OFICIAL do atrativo (recebe UTM enriquecida). */
+  /** Site OFICIAL do atrativo. ⚠️ NÃO é mais destino de CTA: desde que o modo "Link direto" saiu, o
+   * campo só alimenta o `sameAs` do schema.org (`lib/seo.ts`). O CTA de todo atrativo abre o modal de
+   * reserva. Manter vazio não quebra nada na página. */
   officialUrl: string;
-  ctaLabel?: string;
   cover: string;
   gallery?: string[];
   /** Pares rótulo/valor para a ficha (ex: "Como chegar", "Horário", "Dica"). */

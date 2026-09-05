@@ -1,5 +1,5 @@
 // Filepath: app/api/telegram-webhook/route.ts
-// Version: 2.2
+// Version: 2.3
 // Nome da Versão: "Ping de lead pendente (Sprint 11) — apaga o aviso quando não sobra mais lead atrasado"
 // Baseado na Versão: 2.1
 //
@@ -23,7 +23,7 @@ import {
   sendPrivateText,
   sendPrivateWa,
 } from "@/lib/telegram";
-import { getOfferConfigCached, getProductWaGreeting } from "@/lib/offer-settings";
+import { getProductWaGreeting } from "@/lib/offer-settings";
 import { itensKind } from "@/lib/offer-defaults";
 import { productKindOf } from "@/lib/lead-card";
 import { resumoCurto } from "@/lib/pedido-resumo";
@@ -127,14 +127,13 @@ const pedidoDoLead = async (lead: LeadRow) => {
   const kind = productKindOf(productCtxOf(lead));
   const locale = isLocale(lead.locale) ? lead.locale : DEFAULT_LOCALE;
   const slugs = (lead.item_slugs ?? "").split(",").filter(Boolean);
-  // O `hasLink` vive na config da oferta, não no lead: derivar aqui (e não gravar) faz o rótulo
-  // acompanhar uma correção do admin, inclusive num pedido antigo. Cacheado, então não pesa.
-  const offer = await getOfferConfigCached();
   return {
     token: lead.public_token,
     kind,
     locale,
-    itens: kind === "atrativo" ? itensKind(slugs, offer.attractionOffers) : undefined,
+    // Desde que o ingresso deixou de existir, o vocabulário do pedido é sempre "reservas" — não há mais
+    // config por atrativo a consultar (a antiga leitura de `hasLink` vivia aqui).
+    itens: kind === "atrativo" ? itensKind(slugs) : undefined,
     resumo: resumoCurto(
       {
         kind,

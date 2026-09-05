@@ -161,7 +161,7 @@ export default function TriplaFronteiraContent() {
                     `globals.css`, junto da regra, com o bloco de `prefers-reduced-motion` (§10.3).
                     ⓘ Caixa `aspect-[4/3]`, que é a proporção NATIVA das capas: aqui o
                     `object-cover` não corta nada e o `sizes` pode ser a largura real da célula —
-                    ao contrário da timeline e da constelação, onde a caixa é quadrada e o §8-ter
+                    ao contrário de uma caixa quadrada, onde o §8-ter
                     obriga a pedir o dobro para não ampliar. */}
                 <div className="rounded-3xl border p-7" style={{ borderColor: "hsl(214,25%,90%)", background: i % 2 === 0 ? "hsl(40,33%,98.5%)" : "hsl(40,33%,97%)" }}>
                   <h3 className="mb-4 text-sm font-bold uppercase tracking-wide" style={{ color: "hsl(210,56%,23%)" }}>

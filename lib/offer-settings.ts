@@ -1,6 +1,6 @@
 // Filepath: lib/offer-settings.ts
-// Version: 4.1
-// Nome da Versão: "Remove itineraryOffersEnabled (master switch do bloco 'incluir experiências no roteiro' extinto)"
+// Version: 4.2
+// Nome da Versão: "attractionOffers (config por atrativo, com tabela) → attractionCatalog (slug→nome, estático) — link direto extinto"
 //
 // Chaves independentes em app_settings (conventions §2/§12): captura + modal + bot + TEXTOS (agora por locale).
 // Tipos/defaults ficam em lib/offer-defaults.ts (client-safe). Aqui só o acesso ao banco.
@@ -8,7 +8,7 @@
 
 import { unstable_cache } from "next/cache";
 import { getSql } from "./db";
-import { getAttractionOffersPublic } from "./attraction-offers";
+import { getAttractionCatalog } from "./attraction-catalog";
 import { LOCALES, type Locale } from "./i18n/config";
 import { officialAgencyName } from "@/app/data/agencies";
 import {
@@ -18,7 +18,6 @@ import {
   DEFAULT_PRODUCT_COPIES,
   PRODUCT_COPY_KINDS,
   PRODUCT_COPY_FIELDS,
-  ATRATIVO_ONLY_COPY_FIELDS,
   productCopyKey,
   TEXT_KEYS,
   textKeyFor,
@@ -160,11 +159,9 @@ export async function getOfferConfig(): Promise<OfferConfig> {
       for (const locale of LOCALES) {
         const def = DEFAULT_PRODUCT_COPIES[kind][locale];
         const row = { ...def } as ProductLeadCopy;
-        // Atrativo tem 2 campos a mais (modo "Link direto") — ver `AtrativoLeadCopy`.
-        const fields =
-          kind === "atrativo"
-            ? [...PRODUCT_COPY_FIELDS, ...ATRATIVO_ONLY_COPY_FIELDS]
-            : PRODUCT_COPY_FIELDS;
+        // Desde a v3.0 de `offer-defaults.ts` o produto atrativo não tem campo a mais: o modo
+        // "Link direto" (e seus 2 textos) saiu. Uma lista de campos só.
+        const fields = PRODUCT_COPY_FIELDS;
         for (const field of fields) {
           const stored = asStr(m.get(productCopyKey(kind, field, locale)));
           if (stored !== null && stored !== undefined && stored.length > 0) {
@@ -208,7 +205,7 @@ export async function getOfferConfig(): Promise<OfferConfig> {
       texts: transportOfferTexts,
     };
 
-    const attractionOffers = await getAttractionOffersPublic();
+    const attractionCatalog = getAttractionCatalog();
 
     return {
       roteiroSuccessMode: m.get(K.modalModeRoteiro) === "whatsapp" ? "whatsapp"
@@ -226,7 +223,7 @@ export async function getOfferConfig(): Promise<OfferConfig> {
       agencyAcceptLocals,
       agencyDefined,
       transportOffer,
-      attractionOffers,
+      attractionCatalog,
     };
   } catch {
     return { ...DEFAULT_OFFER };

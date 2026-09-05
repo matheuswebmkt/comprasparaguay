@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/home.ts
-// Version: 3.1
-// Nome da Versão: "CTA da navbar alinhado ao rótulo único de /montar-roteiro em en/es — §21.8"
+// Version: 3.5
+// Nome da Versão: "Chaves `constelacao` removidas dos 3 idiomas — o componente da home foi deletado"
 //
 // Só strings de UI fixa. `exploreFoz` e `buyTicketButton` não existem: o primeiro morreu junto com
 // o componente `ExploreFoz` (virou `PilaresFoz`), o segundo era chave morta.
@@ -46,17 +46,6 @@ export interface HomeUI {
     h1Strong: string;
     h1After: string;
     subtitle: string;
-  };
-  constelacao: {
-    coreLabel: string;
-    dayChip: (cur: number, total: number) => string;
-    /** Legenda do dia na constelação da home. ⚠️ É ESTE array que aparece na tela — o campo
-     *  `tema` do `RoteiroConstelacao` é só `key` do React. Os dois precisam contar a MESMA
-     *  história do roteiro `3-dias-classico`; mexeu num, confira o outro. */
-    themes: string[];
-    turnos: { manha: string; tarde: string; porDoSol: string; noite: string };
-    pickDayLabel: string;
-    pickDayAria: (n: number, tema: string) => string;
   };
   dores: {
     eyebrow: string;
@@ -161,19 +150,17 @@ export const HOME_UI: Record<Locale, HomeUI> = {
         "O Compras Paraguay é um portal independente de curadoria turística. Não somos vendedores diretos de roteiros, transfers, hospedagens ou ingressos nem processamos pagamentos. Marcas e atrativos mencionados pertencem aos seus detentores. Orçamentos, reservas e emissões são operados por agências e parceiros homologados.",
     },
     hero: {
-      h1Before: "Seu ",
-      h1Strong: "roteiro de compras",
-      h1After: " em Ciudad del Este",
+      /* ⚠️ `h1Strong` cai dentro do `<em>` verde de `RoteirosHero` — é a KEYWORD EXATA que o H1
+         lidera ("compras no Paraguai"), não um enfeite: mexer ali é decisão de SEO. `h1After` NÃO
+         leva espaço inicial: o `{" "}` depois do `</em>` já vem no componente.
+      /* H1 curto, em registro de promessa — o detalhe do serviço (ida e volta, hotel, guias) é do
+         subtítulo. "Roteiro" está fora do hero por decisão do usuário: o que se contrata é o dia de
+         compras conduzido por quem é da fronteira, não um planejamento teórico. */
+      h1Before: "Suas ",
+      h1Strong: "compras no Paraguai",
+      h1After: "do jeito certo",
       subtitle:
-        "Onde comprar, horários da ponte, dicas de fronteira e o que vale a pena levar — organizado por quem entende de compras no Paraguai.",
-    },
-    constelacao: {
-      coreLabel: "você",
-      dayChip: (cur, total) => `Dia ${cur} de ${total}`,
-      themes: ["Compras no Paraguai", "Shoppings da fronteira", "Compras, duty free e noite"],
-      turnos: { manha: "Manhã", tarde: "Tarde", porDoSol: "Pôr do sol", noite: "Noite" },
-      pickDayLabel: "Escolher o dia do roteiro",
-      pickDayAria: (n, tema) => `Dia ${n} — ${tema}`,
+        "Te levamos às compras no Paraguai — Ciudad del Este, com ida e volta a partir do seu hotel em Foz do Iguaçu. Segurança para você e suas compras com nossos guias especialistas.",
     },
     dores: {
       eyebrow: "O cenário",
@@ -313,18 +300,10 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     hero: {
       h1Before: "Your ",
-      h1Strong: "shopping guide",
-      h1After: " for Ciudad del Este",
+      h1Strong: "shopping in Paraguay",
+      h1After: "done right",
       subtitle:
-        "Where to shop, bridge hours, border tips and what's worth bringing back — organized by people who know shopping in Paraguay.",
-    },
-    constelacao: {
-      coreLabel: "you",
-      dayChip: (cur, total) => `Day ${cur} of ${total}`,
-      themes: ["Nature and sunset", "Itaipu and dinner", "Temple, aquarium and parks"],
-      turnos: { manha: "Morning", tarde: "Afternoon", porDoSol: "Sunset", noite: "Evening" },
-      pickDayLabel: "Choose the itinerary day",
-      pickDayAria: (n, tema) => `Day ${n} — ${tema}`,
+        "We take you shopping in Paraguay — Ciudad del Este, round trip from your hotel in Foz do Iguaçu. You and your purchases stay safe with our expert guides.",
     },
     dores: {
       eyebrow: "The scenario",
@@ -463,19 +442,11 @@ export const HOME_UI: Record<Locale, HomeUI> = {
         "Compras Paraguay es un portal independiente de curaduría turística. No somos vendedores directos de itinerarios, transfers, alojamientos ni entradas, ni procesamos pagos. Las marcas y atractivos mencionados pertenecen a sus titulares. Los presupuestos, reservas y emisiones son operados por agencias y socios acreditados.",
     },
     hero: {
-      h1Before: "Tu ",
-      h1Strong: "guía de compras",
-      h1After: " en Ciudad del Este",
+      h1Before: "Tus ",
+      h1Strong: "compras en Paraguay",
+      h1After: "como deben ser",
       subtitle:
-        "Dónde comprar, horarios del puente, consejos de frontera y qué vale la pena llevar — organizado por quienes saben de compras en Paraguay.",
-    },
-    constelacao: {
-      coreLabel: "tú",
-      dayChip: (cur, total) => `Día ${cur} de ${total}`,
-      themes: ["Naturaleza y atardecer", "Itaipú y cena", "Templo, acuario y parques"],
-      turnos: { manha: "Mañana", tarde: "Tarde", porDoSol: "Atardecer", noite: "Noche" },
-      pickDayLabel: "Elegir el día del itinerario",
-      pickDayAria: (n, tema) => `Día ${n} — ${tema}`,
+        "Te llevamos de compras por Paraguay — Ciudad del Este, con ida y vuelta desde tu hotel en Foz do Iguaçu. Seguridad para ti y tus compras con nuestros guías especialistas.",
     },
     dores: {
       eyebrow: "El escenario",

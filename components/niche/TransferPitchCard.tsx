@@ -1,37 +1,67 @@
 // Filepath: components/niche/TransferPitchCard.tsx
-// Version: 1.0
-// Nome da Versão: "Card de recomendação PRÓPRIO do /transfer (sem agência)"
+// Version: 2.0
+// Nome da Versão: "CTA vira o modal de reserva (era wa.me direto) + seção reusada na home via `placement`"
 //
-// Substitui o card da agência no nicho `transfer`: nada de nome/imagem de agência. Mostra um
-// card "nosso", do transfer — imagem de van neutra com identidade visual do site (asset a
-// fornecer), título "Transfers e Transporte turístico" e um CTA que abre o WhatsApp
-// diretamente (número fixo + mensagem pronta).
+// Card "nosso" do transfer — imagem de van neutra com a identidade do site, SEM nome nem marca de
+// agência. Foi criado como o card de recomendação do nicho `transfer` (substituindo o card da
+// agência) e hoje vive em DOIS lugares: `/transfer` e a home, logo depois da seção de dores.
 //
-// ⚠️ Só o nicho `transfer` (kind === "agency"). Hospedagem (kind === "hotel") e parceiros
-// (kind === "partner") continuam no `NichePitchCard` original.
+// ⚠️ v2.0 — o CTA. Antes era um `TrackedLink` para `wa.me/<número>?text=<mensagem pronta>` com o
+//    rótulo "Conversar no WhatsApp". Duas violações numa peça só: nomeava o CANAL antes do envio
+//    (§21.2) e pulava a captura — o lead ia para uma conversa solta em vez de entrar no funil com a
+//    data. Hoje é o `ReservarDataCta`: abre o modal, mesmo rótulo do hero ("Reservar data"), mesmo
+//    caminho de conversão do resto do site. O número e a mensagem saíram do dicionário junto.
+//
+// ⚠️ `placement` existe por causa da ALTERNÂNCIA DE FUNDO (§7.5). A home é areia→branco→areia… e a
+//    seção entrou entre duas cores fixas: em `/transfer` ela é branca (como sempre foi), na home é
+//    areia (a cor que não colide com a seção de dores, branca, acima). Fundo só tem DOIS valores
+//    válidos — branco `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
+//
+// ⚠️ Sem nome de agência aqui, e sem copy de parceiro: a copy/SEO da página de nicho vive em
+//    `app/data/niches.ts` e nunca menciona o recomendado (`NicheRecommendation`, §13).
 
 "use client";
 
 import Image from "next/image";
-import { MessageCircle, Sparkles } from "lucide-react";
+import { CalendarDays, Sparkles } from "lucide-react";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { TRANSFER_PITCH } from "@/lib/i18n/niches-content";
+import { SHARED_UI } from "@/lib/i18n/shared";
 import ImpressionObserver from "@/components/ImpressionObserver";
-import TrackedLink from "@/components/TrackedLink";
-import { NICHE_KEYS, VERTICALS } from "@/lib/tracking-taxonomy";
+import ReservarDataCta from "@/components/ReservarDataCta";
 
-export default function TransferPitchCard() {
+/** Onde a seção está: decide o fundo (alternância) e os rótulos de telemetria. */
+type Placement = "transfer" | "home";
+
+const PLACEMENT = {
+  transfer: {
+    background: "hsl(0,0%,100%)",
+    ctaType: "transfer_pitch_reserva",
+    impressionType: "niche_recommendation",
+    source: "transfer-card",
+  },
+  home: {
+    background: "hsl(40,33%,97%)",
+    ctaType: "home_transfer_reserva",
+    impressionType: "home_transfer",
+    source: "home-transfer",
+  },
+} as const;
+
+export default function TransferPitchCard({ placement = "transfer" }: { placement?: Placement }) {
   const { locale } = useLocale();
   const p = TRANSFER_PITCH[locale];
-  const waUrl = `https://wa.me/${TRANSFER_PITCH.whatsapp}?text=${encodeURIComponent(p.message)}`;
+  // Rótulo do CTA: o MESMO texto do hero e do CtaFinal — um produto, um verbo em todo o funil.
+  const cta = SHARED_UI[locale].roteirosCta;
+  const at = PLACEMENT[placement];
 
   return (
-    <section id="recomendacao" className="rf-section" style={{ background: "hsl(0,0%,100%)" }}>
+    <section id="recomendacao" className="rf-section" style={{ background: at.background }}>
       <div className="section-container">
         {/* Mesmo slot de impressão do card original (reach/CTR) — com slug próprio do Compras Paraguay. */}
         <ImpressionObserver
           slug={TRANSFER_PITCH.itemSlug}
-          ctaType="niche_recommendation"
+          ctaType={at.impressionType}
           threshold={0.35}
         />
 
@@ -74,24 +104,20 @@ export default function TransferPitchCard() {
               ))}
             </div>
 
-            {/* CTA → WhatsApp (abre direto, mensagem pronta). CTA dourado = único objeto dourado (§2). */}
+            {/* CTA → modal de reserva. Dourado = único objeto cheio da seção; rótulo ≥ text-lg bold
+                porque o contraste do dourado sobre branco só passa AA como texto grande (§2). */}
             <div className="mt-8">
-              <TrackedLink
-                href={waUrl}
-                ctaType="whatsapp"
-                itemSlug={TRANSFER_PITCH.itemSlug}
-                campaign="transfer"
-                vertical={VERTICALS.transporte}
-                niche={NICHE_KEYS.transfer}
-                exit
+              <ReservarDataCta
+                ctaType={at.ctaType}
+                source={at.source}
                 className="inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
                 style={{
                   background: "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
                 }}
               >
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-                {p.cta}
-              </TrackedLink>
+                <CalendarDays className="h-5 w-5" aria-hidden="true" />
+                {cta.ctaReserva}
+              </ReservarDataCta>
             </div>
           </div>
         </div>

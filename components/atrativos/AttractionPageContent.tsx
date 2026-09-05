@@ -1,11 +1,11 @@
 // Filepath: components/atrativos/AttractionPageContent.tsx
-// Version: 3.0
-// Nome da Versão: "Redesign no padrão — hero com foto contida, seções no rf-head"
+// Version: 3.1
+// Nome da Versão: "CTA sempre 'Reservar data' + calendário — a leitura de `hasLink` saiu"
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Ticket, CheckCircle2 } from "lucide-react";
+import { CalendarDays, CheckCircle2 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import Footer from "@/components/footer";
 import TicketOfferButton from "@/components/ticket-offer/TicketOfferButton";
@@ -14,7 +14,6 @@ import RelatedAttractionsSection from "@/components/RelatedAttractionsSection";
 import { Attraction } from "@/app/types";
 import { attractionPlaceLabel } from "@/lib/seo";
 import { useLocale } from "@/components/i18n/LocaleProvider";
-import { useOfferConfig } from "@/components/cta-mode/CtaModeProvider";
 import { ATTRACTION_DETAIL_UI } from "@/lib/i18n/attraction-detail";
 import { ATTRACTIONS_I18N, ATTRACTION_NAMES, attractionSubjectI18n } from "@/lib/i18n/attractions";
 import { ATTRACTION_FAQS } from "@/lib/i18n/attraction-faqs";
@@ -32,9 +31,6 @@ export default function AttractionPageContent({
 }) {
   const { locale } = useLocale();
   const t = ATTRACTION_DETAIL_UI[locale];
-  // Mesma leitura do AttractionCard: "Tem link = Não" no admin → CTA "Reservar data" + calendário.
-  const offer = useOfferConfig();
-  const hasLink = offer.attractionOffers?.[a.slug]?.hasLink ?? true;
   const nome = ATTRACTION_NAMES[locale][a.slug] ?? a.name;
   // FAQ visível: en/es vêm do dicionário; pt cai no dado (matriz, também usado no JSON-LD).
   const faqVisivel = ATTRACTION_FAQS[locale][a.slug] ?? faq;
@@ -282,12 +278,8 @@ export default function AttractionPageContent({
                       "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
                   }}
                 >
-                  {hasLink ? (
-                    <Ticket className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <CalendarDays className="h-4 w-4" aria-hidden="true" />
-                  )}
-                  {a.ctaLabel ?? (hasLink ? t.ctaDefault : t.ctaNoLink)}
+                  <CalendarDays className="h-4 w-4" aria-hidden="true" />
+                  {t.ctaReserva}
                 </TicketOfferButton>
 
               </div>

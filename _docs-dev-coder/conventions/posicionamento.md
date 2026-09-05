@@ -212,10 +212,19 @@ UMA página. Home e pilar editorial disputando o mesmo termo é ruim de SEO **e*
 
 | Página | Intenção que ela é dona |
 |---|---|
-| `/` (home) | **roteiro de compras em Ciudad del Este** / planejar o dia de compras |
+| `/` (home) | **compras no Paraguai** (H1) — dia de compras com privativo e guia, com data reservada |
 | `/roteiros-de-compras` + `/atrativos/[slug]` | compras e shoppings (Ciudad del Este, duty free, Cataratas JL, Catuaí) |
 | `/transfer` | transfer na fronteira |
 | `/triplice-fronteira` | BR-AR-PY |
+
+⚠️ **Virada de posicionamento — 'Compras PY = serviço reservável'**. O hero da home vende o **dia de
+compras com carro privativo e guia local, com data reservada**: *'Suas compras no Paraguai do jeito
+certo'*, com o subtítulo nomeando o serviço (ida e volta desde o hotel em Foz, guias especialistas) e
+o CTA **'Reservar data'**, que abre o modal de captura. Nesta página, portanto, **'roteiro' não está
+mais no H1 nem no CTA** — decisão explícita do usuário: o produto não é um planejamento teórico, é o
+serviço que a agência presta. §21.1-bis ('roteiro' no H1 e no CTA) **deixa de valer para o funil de
+compras** e segue valendo nas outras superfícies até a reescrita desta convenção. O `<em>` do hero é a
+keyword, não decoração: mexer ali é decisão de SEO.
 
 ⚠️ **Os slugs são as formas curtas** (`/roteiros-de-compras`, `/atrativos/[slug]`, `/transfer`,
 `/triplice-fronteira`) — **não** `/o-que-fazer-em-foz-do-iguacu` nem `/onde-comer-em-foz`, que não

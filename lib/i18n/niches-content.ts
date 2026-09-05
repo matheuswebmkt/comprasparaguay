@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/niches-content.ts
-// Version: 1.0
-// Nome da Versão: "Conteúdo visível das páginas de nicho (transfer) — en/es"
+// Version: 1.1
+// Nome da Versão: "TRANSFER_PITCH perde `cta`/`message`/`whatsapp` — o card converte pelo modal de reserva"
 //
 // O `pt` é a matriz e vive em `app/data/niches.ts`; aqui só en/es (consumidores usam
 // `NICHES_CONTENT[locale][slug] ?? niche`). Os 6 nichos de gastronomia não têm página própria
@@ -223,8 +223,9 @@ export const TRANSFER_ATRATIVOS: Record<Locale, TransferAtrativosI18n> = {
 // =============================================================================
 // Card de recomendação do /transfer — versão PRÓPRIA do Compras Paraguay (sem agência).
 // Substitui o card da agência no nicho `transfer`: imagem de van neutra + identidade do
-// site, título "Transfers e Transporte turístico" (sem nome da agência) e CTA que abre o
-// WhatsApp diretamente (número fixo + mensagem pronta). 
+// site, título "Transfers e Transporte turístico" (sem nome da agência). O CTA abre o MODAL de
+// reserva (v2.0 do `TransferPitchCard`) — por isso não há mais número de WhatsApp nem mensagem
+// pré-preenchida aqui: o que o lead recebe é a captura da data, e o contato vem depois, humano. 
 // =============================================================================
 
 export interface TransferPitchI18n {
@@ -232,20 +233,14 @@ export interface TransferPitchI18n {
   title: string;
   description: string;
   tags: string[];
-  cta: string;
-  /** Mensagem pré-preenchida do wa.me (por idioma). */
-  message: string;
 }
 
 export const TRANSFER_PITCH: Record<Locale, TransferPitchI18n> & {
-  /** Número do WhatsApp (formato internacional, sem `+`). */
-  whatsapp: string;
   /** Imagem de van neutra com identidade visual do site (asset a fornecer). */
   cover: string;
   /** Slug interno p/ tracking de impressão/CTA deste card. */
   itemSlug: string;
 } = {
-  whatsapp: "5545999245153",
   cover: "/images/transfer/cover.webp",
   itemSlug: "compras-paraguay-transfer",
   pt: {
@@ -254,9 +249,6 @@ export const TRANSFER_PITCH: Record<Locale, TransferPitchI18n> & {
     description:
       "Especialistas em Foz do Iguaçu, Paraguai e Argentina — transfers para Ciudad del Este, duty free e shoppings, com a fronteira no horário certo.",
     tags: ["Roteiro de compras", "Transfers", "Tríplice Fronteira"],
-    cta: "Conversar no WhatsApp",
-    message:
-      "Olá! Vim pelo site da Compras Paraguay e quero mais informações sobre o transfer para o roteiro de compras em Foz do Iguaçu.",
   },
   en: {
     eyebrow: "SHOPPING IN THE TRIPLE FRONTIER",
@@ -264,9 +256,6 @@ export const TRANSFER_PITCH: Record<Locale, TransferPitchI18n> & {
     description:
       "Specialists in Foz do Iguaçu, Paraguay and Argentina — transfers to Ciudad del Este, the duty free and the malls, with the border timed right.",
     tags: ["Shopping plan", "Transfers", "Triple Frontier"],
-    cta: "Chat on WhatsApp",
-    message:
-      "Hi! I came from the Compras Paraguay website and I'd like more information about the transfer for the shopping plan in Foz do Iguaçu.",
   },
   es: {
     eyebrow: "COMPRAS EN LA TRIPLE FRONTERA",
@@ -274,8 +263,5 @@ export const TRANSFER_PITCH: Record<Locale, TransferPitchI18n> & {
     description:
       "Especialistas en Foz do Iguaçu, Paraguay y Argentina — traslados a Ciudad del Este, el duty free y los shoppings, con la frontera a la hora justa.",
     tags: ["Plan de compras", "Traslados", "Triple Frontera"],
-    cta: "Hablar por WhatsApp",
-    message:
-      "¡Hola! Vengo del sitio de Compras Paraguay y quiero más información sobre el traslado para el plan de compras en Foz do Iguaçu.",
   },
 };

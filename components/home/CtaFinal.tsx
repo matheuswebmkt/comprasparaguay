@@ -1,14 +1,18 @@
 // Filepath: components/home/CtaFinal.tsx
-// Version: 3.1
-// Nome da Versão: "Par no fechamento: CTA dourado + 'Roteiros prontos de 1, 2 e 3 dias' (link Verde Selva), como no /triplice-fronteira"
+// Version: 3.3
+// Nome da Versão: "Fundo vira AREIA — a seção de transfer deslocou a alternância da home (§7.5)"
+// Baseado na Versão: 3.2 ("fechamento converte pelo mesmo caminho do hero: 'Reservar data' abre o modal").
 //
 // 5ª e última seção da home. A ideia é a ÚNICA que ainda não estava na página: o **custo de não
 // planejar**. O hero vende o ganho, a AutoridadeSection vende o mecanismo, os roteiros vendem a prova e o
 // FAQ derruba objeção — falta a perda.
 //
-// ⚠️ FUNDO BRANCO — um dos dois fundos padrão do projeto (o outro é Areia). NÃO inventar cor de
+// ⚠️ FUNDO AREIA — um dos dois fundos padrão do projeto (o outro é branco). NÃO inventar cor de
 // fundo aqui. Foram reprovados, nesta ordem: gradiente navy→verde escuro, verde-escuro de hue única
 // e campo verde claro. A seção não precisa de fundo próprio — o CTA dourado já é o ponto focal.
+// ⓘ É AREIA desde a v3.3: a home alterna rigorosamente, e a TransferPitchCard inserida no meio
+// deslocou a cor de tudo que vem depois dela. Fechar em areia também deixa o Footer (escuro) tocar
+// um fundo claro — era assim antes da v3.1.
 //
 // ⚠️ §21.2 — promete o resultado, nunca o canal nem o instante. "antes de comprar o primeiro
 // ingresso" é o timing da DECISÃO da pessoa, não uma promessa de entrega nossa.
@@ -20,6 +24,7 @@ import { useLocale } from "@/components/i18n/LocaleProvider";
 import { HOME_UI } from "@/lib/i18n/home";
 import { SHARED_UI } from "@/lib/i18n/shared";
 import { internalUrl } from "@/lib/utm";
+import ReservarDataCta from "@/components/ReservarDataCta";
 
 export default function CtaFinal() {
   const { locale } = useLocale();
@@ -28,7 +33,7 @@ export default function CtaFinal() {
   return (
     <section
       className="rf-section relative overflow-hidden"
-      style={{ background: "hsl(0,0%,100%)" }}
+      style={{ background: "hsl(40,33%,97%)" }}
     >
       {/* Mesmo grão do hero — textura sem introduzir cor. */}
       <div
@@ -62,16 +67,15 @@ export default function CtaFinal() {
               limiar é 3:1 — margem de 0.02. O tamanho do rótulo é o que sustenta o contraste
               sozinho (§2). Padrão idêntico ao do hero e ao da AutoridadeSection. */}
           <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
-            <Link
-              href={internalUrl("/atrativos/compras-paraguai-ciudad-del-este", "home-cta-final")}
+            <ReservarDataCta
+              ctaType="home_cta_final_reserva"
+              source="home-cta-final"
               className="inline-flex items-center justify-center rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
               style={{
                 background:
                   "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
               }}
-            >
-              {cta.ctaPrincipal}
-            </Link>
+            />
 
             {/* Ação secundária — link Verde Selva, nunca um segundo botão preenchido
                 (§8-bis: o dourado tem de continuar o único objeto cheio). Mesmo par

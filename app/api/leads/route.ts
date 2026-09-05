@@ -1,5 +1,5 @@
 // Filepath: app/api/leads/route.ts
-// Version: 2.4
+// Version: 2.5
 // Nome da Versão: "Guarda same-origin migrada pra lib/same-origin.ts (Sprint 10 — hostname exato)"
 // Baseado na Versão: 2.3
 
@@ -168,24 +168,14 @@ export async function POST(req: NextRequest) {
   // nem apareceu faria o banco afirmar "não quer" sobre quem ninguém perguntou — e envenenaria
   // qualquer taxa de aceite (denominador contaminado por quem nunca viu a pergunta).
   //
-  // ⭐ TRANSPORTE AUTOMÁTICO — atrativo SEM link de ingresso ("Tem link - NÃO" no admin: Compras no
-  // Paraguai, By Night…). Quem reserva esses precisa de transporte, então o modal NÃO pergunta e
-  // assume `true` (`transporteAutomatico` em TicketOfferModal). Aqui a regra é replicada porque o
-  // servidor tem os mesmos dois insumos — o contexto e a config do atrativo.
-  // Sem isto a coluna gravava `null` ("não foi perguntado") num lead que É de transporte: ele sumia
-  // de toda contagem feita pela coluna, enquanto Pixel e CAPI — que leem o valor POSTADO — contavam
-  // `transfer: true`. Os dois lados agora contam a mesma coisa, e o tri-state continua honesto:
-  // `null` segue significando apenas "ninguém perguntou e nada foi assumido".
-  const isAtrativoCtx = leadContextCol === "atrativo";
-  const hasIngressoLink = isAtrativoCtx
-    ? (offer.attractionOffers?.[itemSlugCol ?? ""]?.hasLink ?? true)
-    : true;
-  const transporteAutomatico = isAtrativoCtx && !hasIngressoLink;
-  const transportWanted: boolean | null = transporteAutomatico
-    ? true
-    : offer.transportOffer.enabled
-      ? body.wantsTransport === true
-      : null;
+  // O TRANSPORTE AUTOMÁTICO saiu do servidor junto com o do modal: ele só existia para os atrativos
+  // "Tem link - NÃO", que entravam com `true` sem que a pergunta aparecesse. Como TODO atrativo passou
+  // a ser reserva de data, a regra viraria "todo lead chega marcando transporte" — a coluna deixaria de
+  // medir aceitação e o card afirmaria uma preferência que ninguém deu. Caminho único: `enabled` decide
+  // se a pergunta aparece, e o que entra na coluna é o que o lead respondeu.
+  const transportWanted: boolean | null = offer.transportOffer.enabled
+    ? body.wantsTransport === true
+    : null;
 
   // Calendário + quantidade (D5/D6) — lidos aqui pelo mesmo motivo: reaproveitados no INSERT e na
   // notificação Telegram (buildWaUrl/visitDateLine/ticketQtyLine).
@@ -491,7 +481,7 @@ export async function POST(req: NextRequest) {
       // não vai em nenhum dos dois — ela vive na página (/r/[token]).
       pedidoToken: leadId ? publicToken : null,
       // Ingressos, reservas de data ou os dois (§17-ter): o rótulo do link no wa.me acompanha.
-      itens: itensKind((itemSlugsCol ?? "").split(",").filter(Boolean), offer.attractionOffers),
+      itens: itensKind((itemSlugsCol ?? "").split(",").filter(Boolean)),
       resumo: resumoCurto(
         {
           kind: productKindOf(productCtx),

@@ -135,7 +135,7 @@ export const ATTRACTION_NAMES: Record<Locale, Record<string, string>> = {
   },
 };
 /** Label CURTO exibido no CARD do atrativo (titulo do card) — por locale, por slug.
- * Camada INDEPENDENTE do ATTRACTION_NAMES: o nome oficial (pagina/H1/SEO/constelacao) continua no
+ * Camada INDEPENDENTE do ATTRACTION_NAMES: o nome oficial (pagina/H1/SEO) continua no
  * ATTRACTION_NAMES/dado. Quem precisa de titulo curto no card (quebra de linha) edita AQUI, nos 3
  * idiomas, sem derrubar a pagina. Fonte unica por definicao: sem entrada -> fallback ATTRACTION_NAMES. */
 export const CARD_LABELS: Record<Locale, Record<string, string>> = {

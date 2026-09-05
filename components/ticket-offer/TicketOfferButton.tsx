@@ -1,13 +1,12 @@
 // Filepath: components/ticket-offer/TicketOfferButton.tsx
-// Version: 6.1
-// Nome da Versão: "Clique no CTA passa a contar (Sprint 10 — track() nunca era chamado, só o CustomEvent)"
+// Version: 7.0
+// Nome da Versão: "Clique SEMPRE abre o modal — a saída pelo link oficial do atrativo (Modo Direto) morreu"
 // Baseado na Versão: 6.0 ("Captura sempre ativa; link de sucesso resolvido por atrativo (ou global)")
 "use client";
 
 import React from "react";
 import { buildTrackedUrl, type UtmParams } from "@/lib/utm";
 import { track } from "@/lib/track";
-import { useOfferConfig } from "@/components/cta-mode/CtaModeProvider";
 import type { LeadContext, LeadIntent, TicketOfferOpenDetail } from "@/lib/roteiro-lead";
 
 interface TicketOfferButtonProps {
@@ -52,26 +51,15 @@ export default function TicketOfferButton({
   subjectSubtitle,
   subjectI18n,
 }: TicketOfferButtonProps) {
-  const { attractionOffers } = useOfferConfig();
-  const isAtrativo = context === "atrativo";
-  const attractionSetting = isAtrativo ? attractionOffers?.[itemSlug ?? ""] : undefined;
-
-  // Link direto só existe por atrativo específico, com URL própria (Modo="direct" + preenchido). Sem
-  // fallback global — roteiro/personalizar nunca têm link, e atrativo em Modo="agency" (ou sem URL
-  // própria preenchida) cai no modo de sucesso normal (mensagem/WhatsApp), sem link nenhum.
-  const resolvedDirectUrl =
-    isAtrativo && attractionSetting?.hasLink !== false && attractionSetting?.mode === "direct"
-      ? (attractionSetting.officialUrl?.trim() || null)
-      : null;
-
-  const officialHref = resolvedDirectUrl ?? href;
-
+  // Não há mais caminho por fora: `href` é a URL interna rastreada do próprio clique. O antigo
+  // `resolvedDirectUrl` (Modo="direct" + URL própria no admin) a trocava pelo `officialUrl` do atrativo;
+  // com o ingresso extinto, o clique abre o modal de reserva em TODO contexto.
   const utm: UtmParams = {
     campaign: campaign ?? itemSlug,
     content: ctaType,
     term: itemSlug,
   };
-  const finalHref = buildTrackedUrl(officialHref, utm);
+  const finalHref = buildTrackedUrl(href, utm);
   const openModal = (e: React.MouseEvent) => {
     // Botão pode viver dentro de um <Link> (ex: AttractionCard, corpo inteiro clicável) — sem isso, o
     // clique bubbla pro <Link> e navega pro atrativo além de (ou em vez de) abrir o modal.
@@ -81,8 +69,8 @@ export default function TicketOfferButton({
     // só disparava o CustomEvent abaixo (que abre o modal) e nunca chamava `track()`, então nenhum clique
     // aqui era contado. ⚠️ `destination: "#"`: o clique abre o MODAL, o visitante não vai a lugar nenhum
     // — gravar `finalHref` faria abertura de modal parecer saída real e inflaria a métrica (`opened` vs.
-    // `redirected` já se separam por essa convenção em lib/metrics). `finalHref` continua indo só no
-    // CustomEvent (o modal precisa dele pro link direto da tela de sucesso).
+    // `redirected` já se separam por essa convenção em lib/metrics). `finalHref` segue no CustomEvent
+    // como destino registrado do clique — desde a v7.0 o modal não a usa como link de saída.
     track({ type: "cta_click", ctaType, itemSlug, destination: "#", utm });
     const isRoteiro =
       context === "roteiro" ||
@@ -91,10 +79,10 @@ export default function TicketOfferButton({
     window.dispatchEvent(
       new CustomEvent("ticket-offer:open", {
         detail: {
-          href: resolvedDirectUrl ? finalHref : "",
+          href: finalHref,
           ctaType,
           itemSlug,
-          context: context ?? (isAtrativo ? "atrativo" : undefined),
+          context,
           intent,
           roteiroTitulo,
           roteiroResumo,
@@ -104,11 +92,6 @@ export default function TicketOfferButton({
           subjectImage: subjectImage ?? null,
           subjectSubtitle: subjectSubtitle ?? null,
           subjectI18n,
-          attractionMode: isAtrativo ? (attractionSetting?.mode ?? "direct") : undefined,
-          attractionNoLinkMode:
-            isAtrativo && attractionSetting?.hasLink === false
-              ? (attractionSetting.noLinkMode ?? "close")
-              : undefined,
         },
       }),
     );

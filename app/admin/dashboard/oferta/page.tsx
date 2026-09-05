@@ -1,6 +1,6 @@
 // Filepath: app/admin/dashboard/oferta/page.tsx
-// Version: 1.0
-// Nome da Versão: "Editor do fluxo de oferta em página própria (fora do dashboard)"
+// Version: 1.1
+// Nome da Versão: 'Seção "Ingresso por atrativo" saiu do admin — nada por atrativo a configurar'
 
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -11,8 +11,6 @@ import {
   getTransportEnabledRaw, getTransportNoAgencyEnabled, getAgencyInfoOnlyWhenNoPlan,
 } from "@/lib/offer-settings";
 import { getActiveAgencySlug, getActiveAgencySlugRaw } from "@/lib/agencies";
-import { getAttractionOfferSettings } from "@/lib/attraction-offers";
-import { attractions } from "@/app/data/attractions";
 import { MUTED, TITLE } from "@/components/admin/dashboard-ui";
 import RefreshButton from "@/components/admin/RefreshButton";
 import OfferModeControl from "@/components/admin/OfferModeControl";
@@ -29,7 +27,6 @@ export default async function OfferPage() {
     config, agencyAcceptLocals, agencyChatId, agencyGroupNotifyEnabled,
     transportEnabledRaw, transportNoAgencyEnabled, agencyInfoOnlyNoPlan,
     activeAgencySlugRaw, activeAgencySlug,
-    attractionSettings,
   ] = await Promise.all([
     getOfferConfig(),
     getAgencyAcceptLocals(),
@@ -41,14 +38,12 @@ export default async function OfferPage() {
     getAgencyInfoOnlyWhenNoPlan(),
     getActiveAgencySlugRaw(), // placement puro (ignora plano) — distingue "sem agência" de "plano vencido"
     getActiveAgencySlug(),    // já plan-gated internamente (null se plano não vigente)
-    getAttractionOfferSettings(),
   ]);
   // Ativa = placement (qual entidade) · PlanActive = ATIVA + plano vigente (visibilidade global no site).
   // Não repetir a checagem de plano aqui (ex.: chamar isPlanCurrentlyActive de novo) — getActiveAgencySlug
   // já faz esse gate internamente; duplicar custa um ciclo extra e caro de ensure() no load da página.
   const agencyActive = Boolean(activeAgencySlugRaw);
   const agencyPlanActive = Boolean(activeAgencySlug);
-  const attractionList = attractions.map((a) => ({ slug: a.slug, name: a.name, cover: a.cover, officialUrl: a.officialUrl }));
 
   const HeaderLink = ({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) => (
     <Link href={href}
@@ -100,8 +95,6 @@ export default async function OfferPage() {
           agencyInfoOnlyNoPlan={agencyInfoOnlyNoPlan}
           agencyActive={agencyActive}
           agencyPlanActive={agencyPlanActive}
-          attractions={attractionList}
-          attractionSettings={attractionSettings}
         />
       </div>
     </main>

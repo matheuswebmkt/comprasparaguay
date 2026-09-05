@@ -294,26 +294,18 @@ alter table partner_lead_settings add column if not exists badge_en          tex
 alter table partner_lead_settings add column if not exists badge_es          text;
 
 -- =============================================================================
--- attraction_offer_settings — "Ingresso por atrativo": Modo (Direto/Agência) + Tem link +
--- URL, por atrativo. Auto-criada + upsert em runtime por lib/attraction-offers.ts. Keyed
--- pelo slug (casa com app/data/attractions.ts). SEM campos sensíveis — roteamento de lead
--- continua 100% global (seção Agência); esta tabela só decide o que a tela de sucesso do
--- modal mostra para aquele atrativo específico.
---   has_link = false → esse atrativo não tem ingresso/link (ex.: Compras Paraguai, Feirinha)
---   mode = 'direct'  → tela de sucesso sempre mostra official_url deste atrativo
---   mode = 'agency'  → tela de sucesso cai no modo de sucesso GLOBAL
---   no_link_mode     → só usado quando has_link=false: 'close' | 'whatsapp' (escolha PRÓPRIA do
---                       atrativo pra tela de sucesso — não herda o bucket global "Atrativos individuais")
+-- attraction_offer_settings — EXTINTA. Guardava, POR ATRATIVO, o Modo (Direto/Agência) + "Tem
+-- link" + URL oficial que decidiam o que a tela de sucesso do modal mostrava:
+--   has_link=false → atrativo sem ingresso · mode='direct' → mostra official_url ·
+--   mode='agency' → cai no modo global · no_link_mode → escolha própria pra quem não tem link.
+-- Os 5 atrativos do catálogo não vendem ingresso: todos abrem captura de RESERVA DE DATA. Não há
+-- mais escolha por item — nem UI no admin, nem leitura no client (sobrou só lib/attraction-catalog.ts,
+-- slug→nome, estático).
+-- O DROP é explícito porque este schema roda idempotente em todo migrate: sem ele a tabela fica órfã
+-- no banco, e uma tabela órfã com colunas vivas (`has_link`, `mode`) é convite pra religar um
+-- comportamento que não tem mais quem execute.
 -- =============================================================================
-create table if not exists attraction_offer_settings (
-  attraction_slug text        primary key,
-  has_link        boolean     not null default true,
-  mode            text        not null default 'direct',  -- 'direct' | 'agency'
-  official_url    text,
-  no_link_mode    text        not null default 'close',    -- 'close' | 'whatsapp'
-  updated_at      timestamptz not null default now()
-);
-alter table attraction_offer_settings add column if not exists no_link_mode text not null default 'close';
+drop table if exists attraction_offer_settings;
 
 -- =============================================================================
 -- app_settings — configurações globais chave/valor (sem redeploy).

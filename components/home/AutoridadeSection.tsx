@@ -1,7 +1,8 @@
 // Filepath: components/home/AutoridadeSection.tsx
-// Version: 2.2
-// Nome da Versão: "Afirmações reordenadas (humano, compromisso, orçamento — decisão do usuário) e peso
-// suavizado de semibold para normal."
+// Version: 2.3
+// Nome da Versão: "Fundo vira BRANCO — a entrada do transfer na home deslocou a alternância (§7.5)."
+// Baseado na Versão: 2.2 ("afirmações reordenadas — humano, compromisso, orçamento — e peso suavizado
+// de semibold para normal").
 //
 // A PROVA (§21.1 camada 4) + o MECANISMO (os 3 passos, migrados do ComoFunciona por decisão do
 // usuário — a seção foi removida da home). O loop de destaque segue o padrão §7.3: um passo em
@@ -57,7 +58,7 @@ export default function AutoridadeSection() {
   const destacado = (i: number) => semMovimento || i === ativo;
 
   return (
-    <section className="rf-section" style={{ background: "hsl(40,33%,97%)" }}>
+    <section className="rf-section" style={{ background: "hsl(0,0%,100%)" }}>
       <div className="section-container">
         <div className="rf-head">
           <p className="rf-eyebrow">{t.eyebrow}</p>

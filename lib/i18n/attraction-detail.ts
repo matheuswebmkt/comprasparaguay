@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/attraction-detail.ts
-// Version: 2.1
-// Nome da Versão: "CTA Comprar ingresso — captura de lead (não sai do site)"
+// Version: 2.2
+// Nome da Versão: "CTA único 'Reservar data' — o 'Comprar ingresso' saiu junto com o modo Link direto"
 
 import type { Locale } from "./config";
 
@@ -11,11 +11,11 @@ export interface AttractionDetailUI {
   eyebrow: string;
   about: string;
   highlights: string;
-  /** CTA principal = intenção de compra (modal → agência). */
-  ctaDefault: string;
-  /** CTA de atrativo SEM link de ingresso ("Tem link - NÃO" no admin — lugar/experiência pública, não
-   * negócio com venda): "Reservar data" em vez de "Comprar ingresso". */
-  ctaNoLink: string;
+  /** CTA principal = reservar o dia. ⚠️ Rótulo ÚNICO: não existe mais "Comprar ingresso" — nenhum
+   * atrativo do catálogo vende ingresso, todos abrem a captura de reserva de data (v3.0 do
+   * `offer-defaults.ts`). Os mesmos 3 textos vivem em `SHARED_UI.roteirosCta.ctaReserva`: um PT, uma
+   * tradução por idioma (§21.8-6) — trocou aqui, troca lá. */
+  ctaReserva: string;
   // ⛔ NÃO reintroduzir um `ctaHint` sob o CTA. O anterior dizia "Condições com a agência parceira
   // no WhatsApp — ingressos e transfers sem sair do Compras Paraguay" e violava §21 duas vezes: nomeava
   // o CANAL antes do envio (§21.2) e a AGÊNCIA PARCEIRA na nossa voz (§21.5). Removido em
@@ -33,8 +33,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
     eyebrow: "Atrativo · Foz do Iguaçu",
     about: "Sobre",
     highlights: "Destaques",
-    ctaDefault: "Comprar ingresso",
-    ctaNoLink: "Reservar data",
+    ctaReserva: "Reservar data",
     addressLabel: "Endereço",
     faqTitle: "Perguntas frequentes",
     faqEyebrow: "Dúvidas comuns",
@@ -45,8 +44,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
     eyebrow: "Attraction · Foz do Iguaçu",
     about: "About",
     highlights: "Highlights",
-    ctaDefault: "Buy tickets",
-    ctaNoLink: "Reserve a date",
+    ctaReserva: "Reserve a date",
     addressLabel: "Address",
     faqTitle: "Frequently asked questions",
     faqEyebrow: "Common questions",
@@ -57,8 +55,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
     eyebrow: "Atractivo · Foz do Iguaçu",
     about: "Sobre",
     highlights: "Destacados",
-    ctaDefault: "Comprar entrada",
-    ctaNoLink: "Reservar fecha",
+    ctaReserva: "Reservar fecha",
     addressLabel: "Dirección",
     faqTitle: "Preguntas frecuentes",
     faqEyebrow: "Dudas comunes",

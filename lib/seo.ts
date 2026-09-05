@@ -375,57 +375,19 @@ export function attractionKeywords(a: Attraction): string[] {
 }
 
 /**
- * Bloco de ingresso anexado à FAQ do atrativo que não tem pergunta de ingresso própria.
+ * FAQ do atrativo: só a versão editorial.
  *
- * ⚠️ Estas respostas são lidas pelo visitante NA PÁGINA e ainda entram no `FAQPage` do JSON-LD —
- * `conventions/posicionamento.md` §21 vale inteira aqui. A versão anterior quebrava três regras de
- * uma vez: nomeava o canal de atendimento e o instante do retorno antes do envio (§21.2), afirmava
- * que o site vende ingresso (o modelo é curadoria que encaminha — README e `produto.md` §0) e
- * citava caminho de URL cru no meio da prosa.
+ * ⚠️ O bloco de INGRESSO (`TICKET_FAQ`) saiu junto com a venda de ingresso: nenhum dos 5 atrativos
+ * do catálogo vende bilhete — todos abrem reserva de data. A pergunta "como comprar ingresso para X"
+ * continuava no ar (e no `FAQPage` do JSON-LD) sobre um produto que não existe.
  *
- * ⚠️ As PERGUNTAS ficam. "Como comprar ingresso para X" é intenção de busca real e é metade do
- * valor desta página — quem reescrever isto no futuro muda a resposta, não a pergunta.
- */
-const TICKET_FAQ = (name: string) =>
-  [
-    {
-      q: `Como comprar ingresso para ${name}?`,
-      a: `Você diz aqui mesmo nesta página o que precisa — quando pretende ir e quantas pessoas vão. A partir disso, um especialista que vive em Foz do Iguaçu confirma disponibilidade e as condições oficiais de ${name} e devolve tudo resolvido, sem você caçar informação site por site.`,
-    },
-    {
-      q: `Precisa comprar o ingresso de ${name} com antecedência?`,
-      a: `Depende da época e do tipo de visita: parte dos atrativos da região limita entradas por horário e chega a esgotar em alta temporada. Por isso a data entra logo no começo — é ela que mostra se o dia que você planejou é um dia possível.`,
-    },
-    {
-      q: `Dá para encaixar ${name} no roteiro sem fechar o ingresso agora?`,
-      a: `Dá. O ingresso e o planejamento dos dias andam juntos: ${name} entra na ordem que faz sentido com o resto dos seus dias em Foz, e você decide o que confirma e quando.`,
-    },
-  ] as const;
-
-/**
- * FAQ do atrativo: editorial + bloco de ingresso (produto).
- *
- * `hasTicket` vem do chamador, NÃO é lido aqui: este módulo é puro de propósito (sem DB, sem
- * `app/data/*` além dos tipos). A fonte real é a flag "Tem link" de
- * `/admin/dashboard/oferta` → "5 · Ingresso por atrativo" (`conventions/funil-modal.md` §17-ter),
- * que a página resolve via `getOfferConfigCached()`.
- *
- * ⚠️ **Não criar um campo `ticketed` no catálogo estático para isto.** A informação já tem dono, e
- * duplicá-la em `app/data/attractions.ts` criaria duas fontes de verdade divergindo em silêncio —
- * o admin desligaria o ingresso de um atrativo e a FAQ continuaria perguntando como comprá-lo.
- *
- * ⚠️ Com `hasTicket: false` o bloco de ingresso simplesmente NÃO é anexado; o resto da FAQ fica
- * idêntico. É a mesma decisão que `TicketOfferButton` já toma para o CTA — antes disto, botão e
- * FAQ davam respostas diferentes sobre o mesmo atrativo na mesma página.
- *
- * Default `true`: sem linha salva no admin (e sem banco no build), `getAttractionOffersPublic`
- * também devolve `hasLink: true`. Os dois lados falham para o mesmo lado.
+ * ⚠️ Não criar um campo `ticketed`/`hasTicket` no chamador para religar isso: a informação não tem
+ * mais dono nenhum. Se algum dia voltar a existir venda de ingresso, ela volta com fonte própria e
+ * com as respostas reescritas — o texto antigo afirmava que o site vende ingresso.
  */
 export function attractionDefaultFaq(
   a: Attraction,
-  opts: { hasTicket?: boolean } = {},
 ): { q: string; a: string }[] {
-  const { hasTicket = true } = opts;
   const where =
     a.info?.find((i) => /onde|local|fica/i.test(i.label))?.value ??
     a.address ??
@@ -461,15 +423,7 @@ export function attractionDefaultFaq(
           },
         ];
 
-  // Atrativo sem ingresso (lugar/experiência pública) não recebe o bloco de compra: perguntar
-  // "como comprar ingresso para Compras no Paraguai?" não casa com busca nenhuma, e a pergunta
-  // ainda ia junto no `FAQPage` do JSON-LD.
-  if (!hasTicket) return [...editorial];
-
-  const hasTicketQ = editorial.some((f) =>
-    /ingresso|comprar entrada|comprar ticket/i.test(f.q),
-  );
-  return hasTicketQ ? editorial : [...editorial, ...TICKET_FAQ(a.name)];
+  return [...editorial];
 }
 
 // =============================================================================

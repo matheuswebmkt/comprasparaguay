@@ -1,6 +1,7 @@
 // Filepath: components/home/PilaresFoz.tsx
-// Version: 2.0
-// Nome da Versão: "Faixa de pilares com presença tipográfica (R3)"
+// Version: 2.1
+// Nome da Versão: "Faixa vira BRANCA — a seção de transfer deslocou a alternância da home (§7.5)"
+// Baseado na Versão: 2.0 ("faixa de pilares com presença tipográfica (R3)").
 //
 // Substitui `ExploreFoz` (grade de 4 cards com gradiente + orbe), que era o padrão "catálogo" que o
 // posicionamento evita (§21.1) e estourava o teto de seções da home.
@@ -28,7 +29,7 @@ export default function PilaresFoz() {
   const t = HOME_UI[locale].pilares;
   const PILARES = t.items;
   return (
-    <div className="rf-section" style={{ background: "hsl(40,33%,97%)" }}>
+    <div className="rf-section" style={{ background: "hsl(0,0%,100%)" }}>
       <div className="section-container">
         {/* Eyebrow no padrão único, mas alinhado à ESQUERDA: esta é faixa utilitária de linking
             interno (§8-bis), não seção de conteúdo — por isso não usa `rf-head` (que centraliza).

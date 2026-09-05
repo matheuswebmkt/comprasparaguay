@@ -1,6 +1,6 @@
 // Filepath: components/admin/OfferModeControl.tsx
-// Version: 6.0
-// Nome da Versão: "Remove 'Ação para parceiros' (seção 4) e 'Hotel' (seção 6) por completo — sem função no modal nem envio pro Telegram; renumera Agência→4 e Ingresso por atrativo→5"
+// Version: 12.0
+// Nome da Versão: "Seção 5 'Ingresso por atrativo' sai inteira — modo Direto/Agência, Tem link e URL por atrativo não existem mais"
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -19,8 +19,6 @@ import {
   type TransportOfferTexts,
   type ProductCopies,
   type ProductCopyKind,
-  type AttractionOfferMode,
-  type AttractionOfferSetting,
 } from "@/lib/offer-defaults";
 import { officialAgencyName } from "@/app/data/agencies";
 import { LOCALES, LOCALE_META, type Locale } from "@/lib/i18n/config";
@@ -76,33 +74,6 @@ const toDraft = (
     enabled: transportEnabledRaw,
     texts: { pt: { ...c.transportOffer.texts.pt }, en: { ...c.transportOffer.texts.en }, es: { ...c.transportOffer.texts.es } },
   },
-});
-
-/** Linha editável de "Ingresso por atrativo" (salva em attraction_offer_settings via /api/admin/attraction-offers). */
-interface AttractionRow {
-  slug: string; name: string; cover: string;
-  hasLink: boolean; mode: AttractionOfferMode; officialUrl: string;
-  /** Só relevante quando hasLink=false — escolha própria (close/whatsapp), não herda o bucket global. */
-  noLinkMode: RoteiroSuccessMode;
-}
-const buildAttractionRows = (
-  attractions: { slug: string; name: string; cover: string; officialUrl: string }[],
-  settings: AttractionOfferSetting[],
-): AttractionRow[] => {
-  const bySlug = new Map(settings.map((s) => [s.slug, s]));
-  return attractions.map((a) => {
-    const s = bySlug.get(a.slug);
-    return {
-      slug: a.slug, name: a.name, cover: a.cover,
-      hasLink: s?.hasLink ?? true,
-      mode: s?.mode ?? "direct",
-      noLinkMode: s?.noLinkMode ?? "close",
-      officialUrl: s?.officialUrl ?? a.officialUrl ?? "",
-    };
-  });
-};
-const toAttractionInput = (r: AttractionRow) => ({
-  slug: r.slug, hasLink: r.hasLink, mode: r.mode, officialUrl: r.officialUrl, noLinkMode: r.noLinkMode,
 });
 
 // Atalhos (só PRÉ-PREENCHEM o rascunho — nada é salvo até clicar em Salvar).
@@ -162,7 +133,6 @@ export default function OfferModeControl({
   initial, agencyAcceptLocals, agencyChatId, agencyGroupNotifyEnabled,
   transportEnabledRaw, transportNoAgencyEnabled, agencyInfoOnlyNoPlan,
   agencyActive, agencyPlanActive,
-  attractions, attractionSettings,
 }: {
   initial: OfferConfig;
   agencyAcceptLocals: boolean;
@@ -179,19 +149,14 @@ export default function OfferModeControl({
   agencyActive: boolean;
   /** Agência com plano vigente (placement + /admin/dashboard/planos) — sem isso, "Definir agência" fica travado em Não. */
   agencyPlanActive: boolean;
-  attractions: { slug: string; name: string; cover: string; officialUrl: string }[];
-  attractionSettings: AttractionOfferSetting[];
 }) {
   const [baseline, setBaseline] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, transportNoAgencyEnabled, transportEnabledRaw, agencyInfoOnlyNoPlan));
   const [d, setD] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, transportNoAgencyEnabled, transportEnabledRaw, agencyInfoOnlyNoPlan));
-  const [attractionRowsBaseline, setAttractionRowsBaseline] = useState<AttractionRow[]>(() => buildAttractionRows(attractions, attractionSettings));
-  const [attractionRows, setAttractionRows] = useState<AttractionRow[]>(() => buildAttractionRows(attractions, attractionSettings));
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   // const [showTexts, setShowTexts] = useState(false);            // seção 3 — desativada (ago/2026)
   // const [showProductTexts, setShowProductTexts] = useState(false); // seção 3b — desativada (ago/2026)
   const [showAgency, setShowAgency] = useState(false);
-  const [showAttractions, setShowAttractions] = useState(false);
   const [previewKey, setPreviewKey] = useState(0); // muda a key pra remontar o preview do zero ("Reiniciar")
   const [previewStage, setPreviewStage] = useState<"form" | "success">("form"); // tabs Formulário/Sucesso
   // Estes dois sobreviveram à desativação dos editores porque a pré-visualização (seção 1) continua
@@ -218,7 +183,7 @@ export default function OfferModeControl({
   }, [productKind]);
 
   // Preview ao vivo (coluna direita da linha 1/2): monta o MESMO shape do OfferConfig real a partir do
-  // RASCUNHO (`d`/`attractionRows`, ainda não salvo) — o TicketOfferModal em modo `preview` consome isso
+  // RASCUNHO (`d`, ainda não salvo) — o TicketOfferModal em modo `preview` consome isso
   // em vez do contexto.
   const previewOffer: OfferConfig = useMemo(() => ({
     roteiroSuccessMode: d.roteiroSuccessMode,
@@ -240,10 +205,10 @@ export default function OfferModeControl({
       // modo `preview` não dispara evento nenhum (G9) — então não há param a preencher.
       agencySlug: null,
     },
-    attractionOffers: Object.fromEntries(
-      attractionRows.map((r) => [r.slug, { slug: r.slug, name: r.name, hasLink: r.hasLink, mode: r.mode, officialUrl: r.officialUrl || null, noLinkMode: r.noLinkMode }]),
-    ),
-  }), [d, attractionRows]);
+    // O preview não precisa do catálogo de nomes: o seletor "incluir outros atrativos" fica vazio na
+    // pré-visualização de propósito — o que se valida aqui é o fluxo, não a lista.
+    attractionCatalog: {},
+  }), [d]);
 
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => { setSaved(false); setD((p) => ({ ...p, [k]: v })); };
   // ⛔ Setters de TEXTO desativados (ago/2026) — ver o bloco no fim do arquivo. O rascunho `d` ainda
@@ -277,10 +242,6 @@ export default function OfferModeControl({
   const setTransportMeta = (patch: Partial<Pick<Draft["transportOffer"], "enabled">>) => {
     setSaved(false); setD((p) => ({ ...p, transportOffer: { ...p.transportOffer, ...patch } }));
   };
-  const setAttractionRow = (slug: string, patch: Partial<Omit<AttractionRow, "slug" | "name" | "cover">>) => {
-    setSaved(false);
-    setAttractionRows((p) => p.map((r) => (r.slug === slug ? { ...r, ...patch } : r)));
-  };
   const applyPreset = (patch: Partial<Draft>) => { setSaved(false); setD((p) => ({ ...p, ...patch })); };
 
   // Campos de TEXTO protegidos: travados por padrão; edita pelo ícone; ✓ confirma, ✗ cancela e reverte.
@@ -304,20 +265,12 @@ export default function OfferModeControl({
     />
   );
 
-  const dirty =
-    JSON.stringify(d) !== JSON.stringify(baseline) ||
-    JSON.stringify(attractionRows) !== JSON.stringify(attractionRowsBaseline);
+  const dirty = JSON.stringify(d) !== JSON.stringify(baseline);
   const usesWhatsapp =
     d.roteiroSuccessMode === "whatsapp" ||
-    d.atrativoSuccessMode === "whatsapp" ||
-    attractionRows.some((r) => !r.hasLink && r.noLinkMode === "whatsapp");
+    d.atrativoSuccessMode === "whatsapp";
   const collision = usesWhatsapp && d.botMessageMode === "assume";
   const centralIncomplete = usesWhatsapp && d.modalWhatsapp.replace(/\D/g, "").length < 10;
-  // Atrativos marcados como "Direto" que não têm URL — a seção 5 não resolve e a decisão volta pro
-  // bucket global da seção 1 sem avisar ninguém. Ver o comentário no card do atrativo.
-  const directWithoutUrl = attractionRows.filter(
-    (r) => r.hasLink && r.mode === "direct" && !r.officialUrl.trim(),
-  );
 
   const save = async () => {
     setSaving(true);
@@ -334,10 +287,7 @@ export default function OfferModeControl({
         // Do transporte só o toggle atravessa; título/descrição são código.
         transportOffer: { enabled: d.transportOffer.enabled, texts: undefined },
       };
-      const [res1, res2] = await Promise.all([
-        fetch("/api/admin/offer-config", { method: "POST", headers: H, body: JSON.stringify(payload) }),
-        fetch("/api/admin/attraction-offers", { method: "POST", headers: H, body: JSON.stringify({ offers: attractionRows.map(toAttractionInput) }) }),
-      ]);
+      const res1 = await fetch("/api/admin/offer-config", { method: "POST", headers: H, body: JSON.stringify(payload) });
       if (res1.ok) {
         const cfg = (await res1.json()) as OfferConfig;
         // As duas chaves de transporte voltam do PRÓPRIO draft (acabaram de ser gravadas): o `cfg` que a
@@ -349,8 +299,7 @@ export default function OfferModeControl({
         );
         setBaseline(nd); setD(nd);
       }
-      if (res2.ok) setAttractionRowsBaseline(attractionRows);
-      if (res1.ok && res2.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+      if (res1.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
       router.refresh();
     } finally {
       setSaving(false);
@@ -507,8 +456,9 @@ export default function OfferModeControl({
                 onChange={(v) => set("atrativoSuccessMode", v)}
               />
               <p className="mt-2 text-xs" style={HINT}>
-                Vale só pros atrativos em <b>Modo Agência</b> (seção 5 · Ingresso por atrativo). Atrativos em
-                <b> Modo Direto</b> sempre mostram o próprio link, direto da seção 5 — nunca caem aqui.
+                O que a tela de sucesso mostra num lead de atrativo: só a mensagem, ou o botão de iniciar
+                a conversa. Vale para TODO atrativo — a escolha por item (seção <b>5</b>) saiu junto com a
+                venda de ingresso.
               </p>
             </div>
 
@@ -728,95 +678,6 @@ export default function OfferModeControl({
                 */}
               </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* 5 · Ingresso por atrativo */}
-      <div className="mt-4 rounded-xl border" style={{ borderColor: "hsl(214,25%,92%)" }}>
-        <button
-          type="button"
-          onClick={() => setShowAttractions((s) => !s)}
-          className="w-full flex items-center gap-2 px-4 py-3 text-left"
-        >
-          {showAttractions ? <ChevronDown className="h-4 w-4" style={{ color: "hsl(210,25%,45%)" }} /> : <ChevronRight className="h-4 w-4" style={{ color: "hsl(210,25%,45%)" }} />}
-          <span className="text-xs font-bold" style={LABEL}>5 · Ingresso por atrativo</span>
-          <span className="text-xs" style={HINT}>(link direto vs. agência, por atrativo — {attractionRows.length} atrativos)</span>
-          {/* Sem isto o aviso de "Direto sem URL" ficaria invisível com a seção recolhida — que é o
-              estado padrão. Some sozinho quando não há nenhum. */}
-          {directWithoutUrl.length > 0 && (
-            <span
-              className="ml-auto text-xs font-bold px-2 py-0.5 rounded-lg inline-flex items-center gap-1 flex-none"
-              style={{ color: "hsl(35,82%,30%)", background: "hsl(40,90%,90%)" }}
-              title={`Modo = Direto sem URL: ${directWithoutUrl.map((r) => r.name).join(", ")}`}
-            >
-              <AlertTriangle className="h-3 w-3" />
-              {directWithoutUrl.length} sem URL
-            </span>
-          )}
-        </button>
-
-        {showAttractions && (
-          <div className="px-4 pb-4 space-y-3 min-w-0">
-            <p className="text-xs" style={HINT}>
-              Define, PARA CADA atrativo, o que a tela de sucesso mostra: o link oficial de compra DESSE
-              atrativo (<b>Modo = Direto</b>), ou a conversa com a agência — cai no modo de sucesso global
-              da seção <b>1</b> (<b>Modo = Agência</b>). Atrativos sem ingresso próprio (ex.: Compras
-              Paraguai, Feirinha) devem desligar <b>Tem link</b> — a captura de lead continua normal, mas
-              esses atrativos ganham a PRÓPRIA escolha (Só mensagem / Iniciar conversa), no lugar do Modo,
-              em vez de herdar o bucket global.
-            </p>
-            {attractionRows.map((r) => (
-              <div key={r.slug} className="rounded-xl border p-3.5 min-w-0" style={{ borderColor: "hsl(214,25%,92%)", background: r.hasLink ? "white" : "hsl(0,70%,97%)" }}>
-                <div className="flex items-center gap-3 flex-wrap mb-2">
-                  <h4 className="text-xs font-bold" style={LABEL}>{r.name}</h4>
-                  <span className="text-xs font-semibold inline-flex items-center gap-1.5" style={LABEL}>
-                    Tem link
-                    <Segmented
-                      options={[{ v: true, label: "Sim" }, { v: false, label: "Não" }]}
-                      value={r.hasLink}
-                      onChange={(v) => setAttractionRow(r.slug, { hasLink: v })}
-                    />
-                  </span>
-                  {r.hasLink ? (
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5" style={LABEL}>
-                      Modo
-                      <Segmented
-                        options={[{ v: "direct" as AttractionOfferMode, label: "Direto" }, { v: "agency" as AttractionOfferMode, label: "Agência" }]}
-                        value={r.mode}
-                        onChange={(v) => setAttractionRow(r.slug, { mode: v })}
-                      />
-                    </span>
-                  ) : (
-                    <span className="text-xs font-semibold inline-flex items-center gap-1.5" style={LABEL} title="Sem link: escolha própria pra esse atrativo — não usa o bucket global 'Atrativos individuais'">
-                      Sem link
-                      <Segmented
-                        options={[{ v: "close" as RoteiroSuccessMode, label: "Só mensagem" }, { v: "whatsapp" as RoteiroSuccessMode, label: "Iniciar conversa" }]}
-                        value={r.noLinkMode}
-                        onChange={(v) => setAttractionRow(r.slug, { noLinkMode: v })}
-                      />
-                    </span>
-                  )}
-                </div>
-                {r.hasLink && (
-                  <Field label="Link direto (URL) — usado quando Modo = Direto">
-                    {lockedField(`a:${r.slug}:url`, r.officialUrl, (v) => setAttractionRow(r.slug, { officialUrl: v }), { maxLength: 500, placeholder: "https://…" })}
-                  </Field>
-                )}
-                {/* Único estado em que a seção 5 "não resolve" e a decisão volta silenciosamente pro
-                    bucket global da seção 1: `resolvedDirectUrl` (TicketOfferButton) exige hasLink +
-                    Modo=Direto + URL preenchida; sem a URL ele vira null, `detail.href` vai vazio e
-                    `attractionForcesDirect` é falso. Sem este aviso o admin lê "Direto" no editor e o
-                    visitante recebe o fluxo da agência — divergência muda, sem erro nenhum. */}
-                {r.hasLink && r.mode === "direct" && !r.officialUrl.trim() && (
-                  <p className="mt-2 text-xs px-3 py-2 rounded-lg" style={{ color: "hsl(35,82%,30%)", background: "hsl(40,90%,96%)" }}>
-                    ⚠️ <b>Modo = Direto sem URL.</b> Este atrativo está caindo no modo de sucesso global
-                    da seção <b>1 · Modal</b> (“Atrativos individuais”), não no link próprio. Preencha a
-                    URL acima — ou mude o Modo para <b>Agência</b>, se for essa a intenção.
-                  </p>
-                )}
-              </div>
-            ))}
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 // Filepath: lib/offer-defaults.ts
-// Version: 2.1
-// Nome da Versão: "Remove preferência Manter/Personalizar, showInItinerary, itineraryOffersEnabled e textos do modal associados (offersTitle/partnerCheck/itinerary/successOffers) — bloco 'incluir experiências no roteiro' extinto"
+// Version: 3.0
+// Nome da Versão: "Link direto por atrativo EXTINTO — todo atrativo é RESERVA DE DATA: caem
+// AttractionOfferMode/Setting/Public, successDirect/directButtonLabel e o modo `direct`"
 //
 // Este módulo NÃO importa o banco → pode ser usado no client (provider/modal) sem puxar
 // o driver Neon pro bundle. O lib/offer-settings.ts (server) importa daqui e adiciona o DB.
@@ -20,7 +21,9 @@ import type { Locale } from "./i18n/config";
 // Iguaçu"). ⚠️ E o sujeito é o ESPECIALISTA, nunca o morador: "quem vive em Foz/na cidade" como sujeito
 // saiu do vocabulário permitido. Nomear a agência aqui já custou uma rodada inteira de reescrita.
 
-export type ModalSuccessMode = "close" | "whatsapp" | "direct";
+// Sem `"direct"`: não existe mais entrega self-serve por link oficial. Todo produto do modal é captura
+// de lead (reserva de data) e a entrega é humana, depois do submit.
+export type ModalSuccessMode = "close" | "whatsapp";
 export type BotMessageMode = "assume" | "passive";
 
 /** Textos EDITÁVEIS do modal, de UM idioma (tudo, menos a microcopy de Termos e os placeholders dos campos). */
@@ -104,20 +107,15 @@ export interface ProductLeadCopy {
 }
 
 /**
- * Textos que SÓ o produto "ingresso de atrativo" tem — o modo de sucesso **Link direto**.
+ * Textos do produto "reserva de data de atrativo".
  *
- * ⚠️ A assimetria é intencional e está no TIPO, não só na UI do admin: roteiro pronto e personalizado
- * usam `RoteiroSuccessMode` (que nem admite `"direct"`) e não têm site oficial externo pra apontar —
- * a tela só renderiza esse modo com `detail.href`, que é o link do atrativo. Com o tipo assim, os
- * loops de leitura/gravação de `productCopies` não têm como criar uma chave
- * `product_copy_roteiro_successDirect` órfã no `app_settings`.
+ * ⚠️ Já foi `interface extends ProductLeadCopy` com dois campos extras (`successDirect` /
+ * `directButtonLabel`), que alimentavam a tela de sucesso com LINK DIRETO para o site oficial do
+ * atrativo. O modo "Direto" deixou de existir (v3.0): os 5 atrativos do catálogo são serviços
+ * reservados com a agência — não há ingresso nem compra self-serve. O nome do tipo fica como alias
+ * para não fragmentar `ProductCopies`/`productCopyKey` nem as chaves `product_copy_atrativo_*`.
  */
-export interface AtrativoLeadCopy extends ProductLeadCopy {
-  /** Mensagem de sucesso quando o atrativo está em Modo Direto → entregamos o link oficial de compra. */
-  successDirect: string;
-  /** Rótulo do botão que leva ao link oficial do atrativo. */
-  directButtonLabel: string;
-}
+export type AtrativoLeadCopy = ProductLeadCopy;
 
 export type ProductCopyKind = "atrativo";
 
@@ -125,56 +123,31 @@ export type ProductCopies = {
   atrativo: Record<Locale, AtrativoLeadCopy>;
 };
 
-/** Modo de sucesso por atrativo (seção "Ingresso por atrativo" do admin). */
-export type AttractionOfferMode = "direct" | "agency";
-
-/**
- * Configuração de sucesso de UM atrativo — não tem campos sensíveis (roteamento de lead
- * continua 100% global, seção Agência), então é o MESMO shape no admin e no client.
+/** O antigo `AttractionOfferSetting` (Modo Direto/Agência + Tem link + URL, por atrativo, salvo em
+ * `attraction_offer_settings`) foi EXTINTO na v3.0: os atrativos do catálogo não vendem ingresso, todos
+ * abrem a captura de **reserva de data**. O que o client ainda precisa saber do catálogo é só o NOME de
+ * cada atrativo (seletor "incluir outros atrativos" do modal) — daí `attractionCatalog` abaixo, projeção
+ * magra e estática, sem tabela e sem admin.
  */
-export interface AttractionOfferSetting {
-  slug: string;
-  /** false = atrativo sem ingresso/link (ex.: Compras Paraguai, Feirinha) — sucesso nunca mostra link. */
-  hasLink: boolean;
-  /** "direct" = tela de sucesso sempre mostra o link deste atrativo. "agency" = cai no modo de sucesso global.
-   * Só é editável/relevante quando `hasLink=true` — com `hasLink=false` quem manda é `noLinkMode`. */
-  mode: AttractionOfferMode;
-  officialUrl: string | null;
-  /** Só relevante quando `hasLink=false`: como a tela de sucesso se comporta pra esse atrativo específico
-   * (não tem link nenhum pra oferecer — nem próprio nem o global de fallback). Escolha PRÓPRIA do atrativo,
-   * não herda do bucket global "Atrativos individuais" (seção 1). */
-  noLinkMode: RoteiroSuccessMode;
-}
-
-/** Projeção pública (client-safe) — inclui `name` (catálogo estático) pro seletor "Incluir ingresso de
- * outros atrativos?" no modal poder listar todos os atrativos sem importar o arquivo pesado de conteúdo. */
-export interface AttractionOfferPublic extends AttractionOfferSetting {
-  name: string;
-}
 
 /** Como classificar o VOCABULÁRIO de um pedido de atrativo: o que ele contém decide se a superfície
  * fala em "ingressos", "reservas" ou nos dois. */
 export type ItensKind = "ingressos" | "reservas" | "misto";
 
 /**
- * Classifica os itens de um pedido pelo `hasLink` de cada atrativo (§17-ter — lugares públicos como
- * Compras Paraguai e By Night não vendem ingresso, só reserva de data).
+ * Classifica os itens de um pedido.
  *
- * ⚠️ Fonte ÚNICA das três pontas — modal (client), `/api/leads` e o webhook. Cada uma alcança o
- * `attractionOffers` por um caminho próprio (config assada, `getOfferConfig`, `getOfferConfigCached`),
- * mas a REGRA é esta, num lugar só: com a conta repetida em cada ponta, o mesmo pedido sairia chamado
- * de "ingressos" numa superfície e de "reservas" na outra.
- * ⓘ Derivado da config ATUAL, não gravado no lead: se o admin corrigir o `hasLink` de um atrativo, o
- * vocabulário passa a refletir a verdade — inclusive num pedido antigo.
+ * ⚠️ Desde a v3.0 só existe uma resposta possível: **`"reservas"`**. As variantes `"ingressos"` e
+ * `"misto"` continuam no tipo porque `lib/telegram.ts` monta o rótulo da linha do pedido a partir
+ * delas — removê-las daqui obrigaria a mexer na mensagem operacional da agência na mesma rodada, sem
+ * ganho nenhum. Pedido vazio devolve `"ingressos"` como antes: é o valor neutro que o card trata como
+ * "sem lista de itens".
+ *
+ * ⓘ Fonte ÚNICA das três pontas (modal, `/api/leads`, webhook) — decisão que continua valendo: a regra
+ * mora aqui, cada ponta só alcança a função.
  */
-export function itensKind(
-  slugs: string[],
-  attractionOffers?: Record<string, AttractionOfferPublic> | null,
-): ItensKind {
-  if (!slugs.length) return "ingressos";
-  const reservas = slugs.filter((s) => attractionOffers?.[s]?.hasLink === false).length;
-  if (reservas === 0) return "ingressos";
-  return reservas === slugs.length ? "reservas" : "misto";
+export function itensKind(slugs: string[]): ItensKind {
+  return slugs.length ? "reservas" : "ingressos";
 }
 
 /** O modo de sucesso dos fluxos de atrativo: "close" (mensagem) ou "whatsapp". Sem "link direto" como
@@ -184,9 +157,7 @@ export type RoteiroSuccessMode = "close" | "whatsapp";
 export interface OfferConfig {
   /** Modo de sucesso — roteiro de compras (produto único do modal). */
   roteiroSuccessMode: RoteiroSuccessMode;
-  /** Modo de sucesso — fallback de atrativo em Modo="agency" (seção "Ingresso por atrativo") sem link
-   * próprio. Sem "direct": link direto só existe por atrativo específico (URL própria, seção 7) — nunca
-   * como fallback genérico global (removido — não fazia sentido sem uma URL própria pra apontar). */
+  /** Modo de sucesso dos atrativos (reserva de data) — "Só mensagem" ou "Iniciar conversa". */
   atrativoSuccessMode: RoteiroSuccessMode;
   modalWhatsapp: string | null;
   botMessageMode: BotMessageMode;
@@ -196,8 +167,12 @@ export interface OfferConfig {
   agencyAcceptLocals: boolean;         // a agência aceita morador local? (roteamento server-side)
   agencyDefined: boolean;              // com agência OCULTA: true = agência ativa (registra/roteia); false = item de ingresso FIXO só visual (sem atribuir agência)
   transportOffer: TransportOffer;      // cross-sell de transporte (agência oficial) — pergunta acima do form, só em atrativo
-  /** Config de sucesso por atrativo (Modo/Tem link/URL/nome) — chave = slug. Sempre completo para todo o catálogo. */
-  attractionOffers: Record<string, AttractionOfferPublic>;
+  /**
+   * Catálogo client-safe: `slug → nome` de todo atrativo (montado no servidor a partir de
+   * `app/data/attractions.ts`, que é pesado e NÃO pode ser importado no client). Serve a um único uso:
+   * o seletor "incluir outros atrativos" do modal e o resumo do pedido. Não é configurável.
+   */
+  attractionCatalog: Record<string, string>;
 }
 
 export const PRODUCT_COPY_KINDS: ProductCopyKind[] = [
@@ -218,12 +193,6 @@ export const PRODUCT_COPY_FIELDS: (keyof ProductLeadCopy)[] = [
   "waLeadText",
   "waButtonLabel",
   "duplicateNoticeTitle",
-];
-
-/** Campos EXTRA que só a aba "Ingresso (atrativo)" do 3b tem — ver `AtrativoLeadCopy`. */
-export const ATRATIVO_ONLY_COPY_FIELDS: (keyof AtrativoLeadCopy)[] = [
-  "successDirect",
-  "directButtonLabel",
 ];
 
 /** Defaults Compras Paraguay — seed do admin / fallback se DB vazio. */
@@ -248,8 +217,6 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       waLeadText: "Olá! Vim pelo Compras Paraguay e quero as condições dos ingressos que escolhi:",
       waButtonLabel: "Falar sobre meu ingresso 💬",
       duplicateNoticeTitle: "Já recebemos sua solicitação para este ingresso!",
-      successDirect: "Tudo certo! Para garantir seu ingresso agora mesmo, é só acessar o link oficial abaixo e escolher o seu melhor dia.",
-      directButtonLabel: "Finalizar ingresso →",
     },
     en: {
       title: "Receive the conditions for this ticket",
@@ -267,8 +234,6 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       waLeadText: "Hi! I came from Compras Paraguay and I'd like the conditions for the tickets I picked:",
       waButtonLabel: "Talk about my ticket 💬",
       duplicateNoticeTitle: "We already got your request for this ticket!",
-      successDirect: "All set! To secure your ticket right now, just open the official link below and pick your best day.",
-      directButtonLabel: "Complete ticket →",
     },
     es: {
       title: "Recibe las condiciones de esta entrada",
@@ -286,8 +251,6 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       waLeadText: "¡Hola! Vine por Compras Paraguay y quiero las condiciones de las entradas que elegí:",
       waButtonLabel: "Hablar sobre mi entrada 💬",
       duplicateNoticeTitle: "¡Ya recibimos tu solicitud para esta entrada!",
-      successDirect: "¡Todo listo! Para asegurar tu entrada ahora mismo, solo accede al enlace oficial de abajo y elige tu mejor día.",
-      directButtonLabel: "Finalizar entrada →",
     },
   },
 };
@@ -392,7 +355,7 @@ export const DEFAULT_OFFER: OfferConfig = {
   agencyAcceptLocals: false,
   agencyDefined: false,
   transportOffer: DEFAULT_TRANSPORT_OFFER,
-  attractionOffers: {},
+  attractionCatalog: {},
 };
 
 /**

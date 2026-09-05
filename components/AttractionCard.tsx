@@ -1,18 +1,16 @@
 // Filepath: components/AttractionCard.tsx
-// Version: 1.3
-// Nome da Versão: "Atrativo sem link de ingresso (hasLink=false no admin) → CTA 'Reservar data' + ícone de
-// calendário no lugar de 'Comprar ingresso' + Ticket (lugares públicos: Compras Paraguai, By Night...)"
+// Version: 1.4
+// Nome da Versão: "CTA sempre 'Reservar data' + calendário — a leitura de `hasLink` (config por atrativo) saiu"
 // Baseado na Versão: 1.1
 
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, CalendarDays, MapPin, Ticket } from "lucide-react";
+import { ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import { Attraction } from "@/app/types";
 import { internalUrl } from "@/lib/utm";
 import { useLocale } from "@/components/i18n/LocaleProvider";
-import { useOfferConfig } from "@/components/cta-mode/CtaModeProvider";
 import { SHARED_UI } from "@/lib/i18n/shared";
 import { ATTRACTIONS_I18N, ATTRACTION_NAMES, CARD_LABELS, attractionSubjectI18n } from "@/lib/i18n/attractions";
 import { ATTRACTION_DETAIL_UI } from "@/lib/i18n/attraction-detail";
@@ -40,7 +38,6 @@ export default function AttractionCard({
   sizes?: string;
 }) {
   const { locale } = useLocale();
-  const offer = useOfferConfig();
   const t = SHARED_UI[locale].attractionCard;
   const td = ATTRACTION_DETAIL_UI[locale];
   // Label do card: camada própria CARD_LABELS (nome curto, por locale) → fallback ATTRACTION_NAMES
@@ -50,9 +47,9 @@ export default function AttractionCard({
   const href = source
     ? internalUrl(`/atrativos/${attraction.slug}`, source)
     : `/atrativos/${attraction.slug}`;
-  // "Tem link - NÃO" no admin (hasLink=false): lugar/experiência pública sem venda de ingresso → CTA
-  // "Reservar data" + ícone de calendário (config por atrativo em "5 · Ingresso por atrativo").
-  const hasLink = offer.attractionOffers?.[attraction.slug]?.hasLink ?? true;
+  // CTA fixo: nenhum atrativo do catálogo vende ingresso — todos reservam data. A ramificação que
+  // existia aqui lia `hasLink` no admin e trocava "Comprar ingresso"/Ticket por "Reservar data"/calendário;
+  // o modo por atrativo foi extinto, sobrou a versão reserva.
   return (
     <Link
       href={href}
@@ -105,12 +102,8 @@ export default function AttractionCard({
               background: "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
             }}
           >
-            {hasLink ? (
-              <Ticket className="h-4 w-4" aria-hidden="true" />
-            ) : (
-              <CalendarDays className="h-4 w-4" aria-hidden="true" />
-            )}
-            {attraction.ctaLabel ?? (hasLink ? td.ctaDefault : td.ctaNoLink)}
+            <CalendarDays className="h-4 w-4" aria-hidden="true" />
+            {td.ctaReserva}
           </TicketOfferButton>
 
           {/* Saber mais — centered below */}

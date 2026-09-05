@@ -1,6 +1,6 @@
 // Filepath: app/atrativos/[slug]/page.tsx
-// Version: 4.0
-// Nome da Versão: "Atrativo = produto ingresso (SEO + Offer schema + FAQ compra) — redesign visual no padrão"
+// Version: 4.1
+// Nome da Versão: "FAQ sem bloco de ingresso — a leitura da config de oferta saiu da página"
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -9,7 +9,6 @@ import ViewContentOnLoad from "@/components/analytics/ViewContentOnLoad";
 import { VERTICALS } from "@/lib/tracking-taxonomy";
 import AttractionPageContent from "@/components/atrativos/AttractionPageContent";
 import { attractions, getAttractionBySlug } from "@/app/data/attractions";
-import { getOfferConfigCached } from "@/lib/offer-settings";
 import {
   attractionSchema,
   breadcrumbSchema,
@@ -68,13 +67,10 @@ export default async function AttractionPage({
 
   const related = attractions.filter((x) => x.slug !== a.slug);
 
-  // "Tem link" do admin (`/admin/dashboard/oferta` → "5 · Ingresso por atrativo") é a fonte única
-  // de "este atrativo tem ingresso". `TicketOfferButton` já lê a mesma flag para escolher o CTA;
-  // aqui ela decide se a FAQ ganha o bloco de compra — sem isso, botão e FAQ diziam coisas
-  // diferentes sobre o mesmo atrativo. Config cacheada (o layout raiz já a lê a cada request).
-  const offer = await getOfferConfigCached();
-  const hasTicket = offer.attractionOffers[a.slug]?.hasLink !== false;
-  const faq = attractionDefaultFaq(a, { hasTicket });
+  // FAQ = editorial puro. O bloco de compra por atrativo saiu com a venda de ingresso (a página já
+  // não precisa da config de oferta para nada: o CTA do conteúdo é o modal de reserva, que resolve o
+  // comportamento sozinho).
+  const faq = attractionDefaultFaq(a);
 
   return (
     <>

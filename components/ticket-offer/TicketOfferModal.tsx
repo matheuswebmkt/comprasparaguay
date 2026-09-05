@@ -1,6 +1,7 @@
 // Filepath: components/ticket-offer/TicketOfferModal.tsx
-// Version: 10.6
-// Nome da Versão: "CTA de envio ganha o mesmo spinner+rótulo do CTA final do wizard"
+// Version: 11.0
+// Nome da Versão: "Modo Link direto EXTINTO — todo atrativo é reserva de data: caem successDirect, "
+// "attractionMode/attractionNoLinkMode, o transporte automático e a leitura de hasLink"
 // Baseado na Versão: 10.1 ("Grava transportChecked no handoff pra tela de sucesso — Sprint 7")
 // Baseado na Versão: 10.0 ("Calendário do dia da visita/início (atrativo + roteiro pronto/personalizar) +
 // quantidade de ingressos (só atrativo) — DayCalendar/QuantityStepper, gate sequencial antes da
@@ -16,7 +17,7 @@ import TurnstileWidget, {
   TURNSTILE_ENABLED,
 } from "@/components/ticket-offer/TurnstileWidget";
 import DayCalendar from "@/components/ticket-offer/DayCalendar";
-import { track, getSessionId, getVisitorId } from "@/lib/track";
+import { getSessionId, getVisitorId } from "@/lib/track";
 import { modalTrack, newModalId, type ModalStep } from "@/lib/modal-track";
 import { getInboundUtms } from "@/lib/utm";
 import {
@@ -284,14 +285,6 @@ export default function TicketOfferModal({
       waButtonLabel: leadCopy?.waButtonLabel || fallback.waButtonLabel,
       duplicateNoticeTitle:
         leadCopy?.duplicateNoticeTitle || fallback.duplicateNoticeTitle,
-      // Modo "Link direto" só existe em atrativo (ver `AtrativoLeadCopy`) — lê a aba atrativo do 3b
-      // direto, sem passar por `leadCopy`.
-      successDirect:
-        offer.productCopies?.atrativo?.[locale]?.successDirect ||
-        fallback.successDirect,
-      directButtonLabel:
-        offer.productCopies?.atrativo?.[locale]?.directButtonLabel ||
-        fallback.directButtonLabel,
     };
     if (!leadCopy) return { ...base, ...shared };
     // ⛔ Sem "📍 <nome do item>" colado no subtítulo: o card do assunto, logo abaixo, já mostra o
@@ -308,8 +301,9 @@ export default function TicketOfferModal({
       successWhatsapp: leadCopy.successWhatsapp,
     };
     // O texto deixou de depender do ITEM quando o marcador de local saiu daqui; quem depende dele é
-    // o card do assunto, que lê o `detail` direto.
-  }, [locale, offer.texts, offer.productCopies?.atrativo, leadCopy]);
+    // o card do assunto, que lê o `detail` direto. E desde que o modo "Link direto" saiu, este memo
+    // também não lê mais `offer.productCopies.atrativo` — a dependência saiu junto.
+  }, [locale, offer.texts, leadCopy]);
   const transport = transportText(locale, offer.transportOffer.texts);
   // Card do topo: roteiro ou atrativo (sempre um dos dois — todo CTA real do site define um contexto).
   // Card do assunto: as três versões chegam no `detail` (`subjectI18n`) para o card acompanhar o
@@ -326,23 +320,13 @@ export default function TicketOfferModal({
   const showSubjectCard =
     Boolean(subjectTitle) && (isRoteiroCtx || isAtrativoCtx);
   const effectiveAgencyChecked = true;
-  // Atrativo com Modo="direct" (seção "Ingresso por atrativo") força o link deste atrativo por cima
-  // do modo de sucesso global — único jeito de "direct" acontecer (não existe mais link direto global).
-  // Atrativo sem link (hasLink=false, ex.: Feirinha) tem sua PRÓPRIA escolha close/whatsapp
-  // (attractionNoLinkMode) — não herda o bucket global. Fora isso (Modo="agency" com link, ou contexto
-  // roteiro/personalizar), o modo de sucesso é o que o admin escolheu em "1 · Modal — tela de sucesso"
-  // (close/whatsapp, nos dois buckets — roteiro e atrativo individuais).
-  const attractionForcesDirect =
-    isAtrativoCtx && detail?.attractionMode === "direct" && !!detail?.href;
-  const baseSuccessMode: ModalSuccessMode = isAtrativoCtx
+  // Modo de sucesso: "Só mensagem" ou "Iniciar conversa", escolhido no admin. O antigo
+  // `attractionForcesDirect` (o atrativo em Modo="direct" impor o próprio link oficial por cima do modo
+  // global) saiu com o link direto — não existe mais entrega self-serve na tela de sucesso, e o
+  // `attractionNoLinkMode` por atrativo caiu junto: quem manda é o bucket global de atrativos.
+  const effectiveSuccessMode: ModalSuccessMode = isAtrativoCtx
     ? offer.atrativoSuccessMode
     : offer.roteiroSuccessMode;
-  const effectiveSuccessMode: ModalSuccessMode = attractionForcesDirect
-    ? "direct"
-    : isAtrativoCtx && detail?.attractionNoLinkMode
-      ? detail.attractionNoLinkMode
-      : baseSuccessMode;
-  const showDirectOnSuccess = effectiveSuccessMode === "direct";
   const showWhatsappOnSuccess = effectiveSuccessMode === "whatsapp";
 
   // Gate sequencial do form (jul/2026): só revela o form quando TODAS as perguntas/marcações que de fato
@@ -360,11 +344,6 @@ export default function TicketOfferModal({
   // contextos reais do site. Quantidade só no ingresso de atrativo (roteiro pronto/personalizar já
   // embutem "quantas pessoas" no wizard — MR-9 — não duplicar a pergunta aqui).
   const wantsDate = isAtrativoCtx || isRoteiroCtx;
-  // "Tem link - NÃO" no admin (hasLink=false — lugares públicos como Compras Paraguai e By Night não
-  // vendem ingresso): o CTA do card vira "Reservar data" e o transporte passa a ser assumido.
-  const hasIngressoLink = isAtrativoCtx
-    ? (offer.attractionOffers?.[detail?.itemSlug ?? ""]?.hasLink ?? true)
-    : true;
   /**
    * ⭐ **"Para quantas pessoas?" vale para TODO produto do modal** (decisão do usuário): ingresso,
    * reserva de data e roteiro pronto/personalizar. Antes era `isAtrativoCtx && hasIngressoLink`, o que
@@ -373,18 +352,20 @@ export default function TicketOfferModal({
    * ⓘ O wizard NÃO passa por aqui: ele tem passo próprio de pessoas, em faixa.
    */
   const wantsQty = true;
-  /** Atrativo SEM venda de ingresso (§17-ter): o modal fala em RESERVA DE DATA, não em ingresso —
-   * "Comprar ingresso" num lugar que não vende ingresso contradiz o próprio CTA do card, que já diz
-   * "Reservar data". */
-  const isReservaCtx = isAtrativoCtx && !hasIngressoLink;
+  /** Contexto de atrativo = SEMPRE reserva de data. O nome `isReservaCtx` fica (e não é redudante):
+   * ele escolhe a COPY do modal — "reserva" vs. o vocabulário de ingresso que ainda aparece fora do
+   * contexto de atrativo. A condição que o definia (`!hasIngressoLink`, lida do admin) morreu com a
+   * venda de ingresso: nenhum dos 5 atrativos do catálogo tem ingresso. */
+  const isReservaCtx = isAtrativoCtx;
   /** Itens do pedido, em slugs. Fonte ÚNICA: alimenta o `itemSlugs` do POST (coluna `item_slugs`, que
    * a página /r/[token] lê) E a contagem do resumo curto da mensagem de WhatsApp. Num ingresso são o
    * atrativo de entrada + os extras marcados; num roteiro, o bundle que já veio no `detail`. */
   const pedidoItems: string[] = isAtrativoCtx
     ? [detail?.itemSlug, ...extraAttractions].filter((s): s is string => Boolean(s))
     : (detail?.contentIds ?? []);
-  /** Ingressos, reservas de data ou os dois (§17-ter) — decide o vocabulário do link e do título. */
-  const itensPedido = isAtrativoCtx ? itensKind(pedidoItems, offer.attractionOffers) : undefined;
+  /** Ingressos, reservas de data ou os dois — decide o vocabulário do link e do título. Com o ingresso
+   * extinto, `itensKind` só devolve `"reservas"`; a função continua sendo a fonte única da regra. */
+  const itensPedido = isAtrativoCtx ? itensKind(pedidoItems) : undefined;
   const dateChosen = !wantsDate || visitDate !== null;
   const qualificationDone =
     isLocal === true ||
@@ -398,23 +379,18 @@ export default function TicketOfferModal({
   //    logística do roteiro é a ordem do dia, não o transporte em si).
   // O toggle do admin é a ÚNICA autoridade sobre exibir ou não, em qualquer produto.
   const transportVisible = offer.transportOffer.enabled;
-  // Transporte AUTOMÁTICO (sem perguntar) para atrativos "Tem link - NÃO" (lugares públicos: Compras
-  // Paraguai, By Night...): quem reserva precisa de transporte — o lead sai com `true`, a pergunta não
-  // é exibida e o atributo da pessoa no known-lead é PRESERVADO (o automático é regra do produto, não
-  // preferência — decisão do usuário; o próximo modal segue com a resposta anterior dela).
-  const transporteAutomatico = isAtrativoCtx && !hasIngressoLink;
-  const transportEfetivo = transporteAutomatico
-    ? true
-    : transportVisible
-      ? transportWanted
-      : null;
+  // O `transporteAutomatico` (atrativo "Tem link - NÃO" entrava com transporte = true sem perguntar) foi
+  // REMOVIDO: com TODO atrativo em reserva, ele significaria "todo lead chega marcado como querendo
+  // transporte" sem que ninguém tivesse perguntado — o tri-state de `wants_transport` viria lixo e o
+  // card afirmaria uma preferência que o lead nunca deu. Voltou a ser o que era fora desse atalho: o
+  // toggle do admin é a única autoridade sobre exibir a pergunta, e a resposta é do lead.
+  const transportEfetivo = transportVisible ? transportWanted : null;
   // Transporte BLOQUEIA o form até ser respondido — legítimo porque a pergunta é Sim/Não explícita.
   // (Com o checkbox antigo isto era hostil: dizer "não" custava marcar e desmarcar, já que só havia um
   // toggle. Com dois botões, "Não" é um clique como qualquer outro.) O produto quer a resposta dos dois
   // lados: num roteiro com vários atrativos, saber que a pessoa NÃO precisa de transporte vale tanto
   // quanto saber que precisa.
-  const transportDone =
-    transporteAutomatico || !transportVisible || transportAnswered;
+  const transportDone = !transportVisible || transportAnswered;
   const readyForForm = dateChosen && qualificationDone && transportDone;
 
   // Funil do modal: dispara um PASSO no máximo 1× por abertura (dedupe por `key`). Silencioso/no-op sem DB.
@@ -779,7 +755,7 @@ export default function TicketOfferModal({
       target = qInFozSectionRef.current;
     else if (alreadyInFoz === true && isLocal === null)
       target = qLocalSectionRef.current;
-    else if (transportVisible && !transportAnswered && !transporteAutomatico)
+    else if (transportVisible && !transportAnswered)
       target = transportSectionRef.current;
     else if (readyForForm) target = formSectionRef.current;
     if (target && target !== lastScrollTargetRef.current) {
@@ -887,14 +863,16 @@ export default function TicketOfferModal({
     justAnsweredRef.current = true;
   };
 
-  // "Incluir ingresso de outros atrativos?" — lista todos os atrativos (menos o que o lead já está
-  // comprando), ordenada por nome. Desligar o toggle limpa a seleção (o "cancelar" reusa o mesmo handler).
+  // "Incluir outros atrativos?" — lista todos os atrativos (menos o que o lead já está reservando),
+  // ordenada por nome. Os nomes vêm de `offer.attractionCatalog` (assado no servidor — o modal não
+  // importa `app/data/attractions.ts`). Desligar o toggle limpa a seleção.
   const attractionPickerList = useMemo(
     () =>
-      Object.values(offer.attractionOffers ?? {})
-        .filter((a) => a.slug !== detail?.itemSlug)
+      Object.entries(offer.attractionCatalog ?? {})
+        .filter(([slug]) => slug !== detail?.itemSlug)
+        .map(([slug, name]) => ({ slug, name }))
         .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
-    [offer.attractionOffers, detail?.itemSlug],
+    [offer.attractionCatalog, detail?.itemSlug],
   );
   const toggleIncludeOtherAttractions = () => {
     setIncludeOtherAttractions((v) => {
@@ -1024,44 +1002,11 @@ export default function TicketOfferModal({
     close();
   };
 
-  // Sucesso self-serve: a agência não atende este lead → link direto p/ comprar online (destino = official_url via detail.href).
-  const handleDirectSuccess = (e: React.MouseEvent) => {
-    if (preview) {
-      e.preventDefault();
-      close();
-      return;
-    } // visualização: nunca navega de verdade
-    fire("success_cta");
-    if (detail) {
-      track({
-        type: "cta_click",
-        ctaType: detail.ctaType,
-        itemSlug: detail.itemSlug,
-        destination: detail.href,
-      });
-      const tax = taxonomyParams({
-        vertical: VERTICALS.atrativos,
-        item_slug: detail.itemSlug,
-        partner_slug: offer.transportOffer.agencySlug,
-      });
-      trackConversion(CONVERSIONS.ctaClick, {
-        cta_type: "modal_success_direct",
-        destination: detail.href,
-        ...tax,
-      });
-      // SAÍDA do fluxo — depois do `Lead` (D6).
-      trackConversion(CONVERSIONS.contact, tax);
-    }
-    close();
-  };
-
   // Funil: registra "chegou no sucesso" e, quando há botão de CTA na tela de sucesso, "cta exibido" (1× por abertura).
   // Dedup (`wasDuplicate`) tem prioridade: mostra o CTA de WhatsApp central como fallback mesmo fora do modo "whatsapp".
   const successHasCta = wasDuplicate
     ? !!centralWaUrl()
-    : showDirectOnSuccess
-      ? !!detail?.href
-      : showWhatsappOnSuccess && !!centralWaUrl();
+    : showWhatsappOnSuccess && !!centralWaUrl();
   useEffect(() => {
     if (open && stage === "success") {
       fire("success");
@@ -1210,28 +1155,19 @@ export default function TicketOfferModal({
             // nem curadoria a descrever. Nomes saem de `offer.attractionOffers` (assado no servidor,
             // completo pro catálogo) — o modal não importa `app/data/attractions.ts`.
             if (isAtrativoCtx) {
-              // ⚠️ Separado por `hasLink` (§17-ter): atrativo SEM link não vende ingresso — é lugar
-              // público, o CTA dele é "Reservar data". Dizer "Ingressos para: Compras Paraguai" seria
-              // falso e mandaria a agência cotar algo que não existe. Quem sabe disso é o MODAL (tem a
-              // config assada); o webhook, que reconstrói o card no claim/confirm, só tem este texto —
-              // por isso o rótulo é decidido aqui e viaja pronto na coluna, em vez de o card tentar
-              // redescobrir depois.
-              const comIngresso: string[] = [];
-              const soReserva: string[] = [];
-              const add = (nome: string | null | undefined, temLink: boolean) => {
-                if (nome) (temLink ? comIngresso : soReserva).push(nome);
-              };
-              add(detail?.subjectTitle, hasIngressoLink);
+              // Um rótulo só: sem ingresso no catálogo, tudo o que sai daqui é RESERVA DE DATA. O nome
+              // do item de entrada é o próprio `subjectTitle` (já traduzido no card); os extras vêm do
+              // catálogo assado. ⚠️ O rótulo VIAJA pronto na coluna `roteiro_resumo` — o webhook, que
+              // reconstrói o card no claim/confirm, só tem este texto, não re-deriva nada.
+              const nomes: string[] = [];
+              if (detail?.subjectTitle) nomes.push(detail.subjectTitle);
               for (const slug of extraAttractions) {
-                const extra = offer.attractionOffers?.[slug];
-                add(extra?.name, extra?.hasLink !== false);
+                const nome = offer.attractionCatalog?.[slug];
+                if (nome) nomes.push(nome);
               }
-              const linhas: string[] = [];
-              if (comIngresso.length)
-                linhas.push(`🎫 Ingressos para: ${comIngresso.join(", ")}`);
-              if (soReserva.length)
-                linhas.push(`📅 Reserva de data para: ${soReserva.join(", ")}`);
-              return linhas.length ? linhas.join("\n") : null;
+              return nomes.length
+                ? `📅 Reserva de data para: ${nomes.join(", ")}`
+                : null;
             }
             const parts: string[] = [];
             if (isPersonalizar) {
@@ -1278,9 +1214,7 @@ export default function TicketOfferModal({
         isCustom,
         isLocal,
         alreadyInFoz,
-        wantsTransport: transporteAutomatico
-          ? (loadKnownLeadContact()?.wantsTransport ?? null)
-          : transportEfetivo,
+        wantsTransport: transportEfetivo,
         // Só grava o dia quando ele fez parte DESTE pedido; senão preserva o que já se sabia (um
         // produto sem calendário não pode apagar a data que a pessoa deu noutro).
         visitDate: wantsDate
@@ -1599,7 +1533,11 @@ export default function TicketOfferModal({
                   fontFamily: "var(--font-display)",
                 }}
               >
-                {wasDuplicate ? texts.duplicateNoticeTitle : texts.successTitle}
+                {wasDuplicate
+                  ? texts.duplicateNoticeTitle
+                  : isReservaCtx
+                    ? ui.reservaSuccessTitle
+                    : texts.successTitle}
               </h2>
 
               {wasDuplicate ? (
@@ -1629,29 +1567,6 @@ export default function TicketOfferModal({
                       {texts.waButtonLabel}
                     </a>
                   )}
-                </>
-              ) : showDirectOnSuccess && detail?.href ? (
-                /* Self-serve: a agência não atende este lead → link direto p/ comprar online. */
-                <>
-                  <p
-                    className="text-[15px] leading-relaxed whitespace-pre-line text-left"
-                    style={{ color: "hsl(210,25%,35%)" }}
-                  >
-                    {texts.successDirect}
-                  </p>
-                  <a
-                    href={detail.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={handleDirectSuccess}
-                    className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-2xl py-3 text-sm font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
-                    }}
-                  >
-                    {texts.directButtonLabel}
-                  </a>
                 </>
               ) : showWhatsappOnSuccess && centralWaUrl() ? (
                 /* Modal "botão iniciar conversa": o lead pode adiantar o contato pelo WhatsApp. */
@@ -1683,7 +1598,11 @@ export default function TicketOfferModal({
                     className="text-[15px] leading-relaxed whitespace-pre-line text-left"
                     style={{ color: "hsl(210,25%,35%)" }}
                   >
-                    {texts.successClose}
+                    {/* ⚠️ `reservaSuccessClose` existia no dicionário (3 idiomas) sem NUNCA ser lida:
+                        a tela de sucesso puxava `texts.successClose`, que fala em INGRESSO — a frase
+                        "Solicitação de ingresso recebida!" na tela de um produto que não vende
+                        ingresso. Mesmo padrão das outras três chaves `reserva*`. */}
+                    {isReservaCtx ? ui.reservaSuccessClose : texts.successClose}
                   </p>
                 </>
               )}
@@ -2009,8 +1928,7 @@ export default function TicketOfferModal({
                       Clicar em "Editar" (`editingContact = true`) REEXIBE o bloco mesmo já respondido,
                       senão não haveria como trocar a resposta. */}
                   {(editingContact || !transportAnswered) &&
-                    transportVisible &&
-                    !transporteAutomatico && (
+                    transportVisible && (
                       <div ref={transportSectionRef}>
                         <ModalDivider />
                         <TransportCard

@@ -63,11 +63,6 @@ export interface TicketOfferOpenDetail {
    * Ausente → o modal cai nos campos de snapshot acima.
    */
   subjectI18n?: Record<Locale, { title: string; subtitle: string }>;
-  /** Só context="atrativo": modo de sucesso deste atrativo específico (ver lib/attraction-offers.ts). */
-  attractionMode?: "direct" | "agency";
-  /** Só context="atrativo" + atrativo com hasLink=false: modo de sucesso PRÓPRIO desse atrativo sem link
-   * (close/whatsapp) — sobrescreve o bucket global "Atrativos individuais". */
-  attractionNoLinkMode?: "close" | "whatsapp";
 }
 
 export function isRoteiroLeadContext(

@@ -44,6 +44,15 @@ export interface SharedUI {
     ctaPrincipal: string;
     /** Link de texto → /roteiros. */
     ctaProntos: string;
+    /** CTA dourado do funil de compras (hero + CtaFinal + card/página de atrativo): abre o modal e a
+     * pessoa cai no calendário. ⚠️ É o MESMO texto de `ATTRACTION_DETAIL_UI.ctaReserva` nos 3 idiomas
+     * (§21.8-6: um PT, uma tradução). */
+    ctaReserva: string;
+    /** Título/subtítulo do card do assunto dentro do modal quando o clique vem de um CTA genérico de
+     * reserva. Vem daqui e não de `app/data/attractions.ts`: o catálogo é conteúdo pesado e não entra
+     * no bundle de quem só mostra o botão. */
+    reservaSubject: string;
+    reservaSubjectSub: string;
     /** Linha de rodapé dos fechamentos ("Leva menos de 2 minutos · …"). */
     footnote: string;
   };
@@ -124,6 +133,10 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       text: "Você conta o que quer comprar e um especialista em Ciudad del Este organiza a ordem do seu dia — lojas, horários e a travessia da ponte já resolvidos.",
       ctaPrincipal: "Quero meu roteiro de compras",
       ctaProntos: "Ver atrativos e shoppings",
+      ctaReserva: "Reservar data",
+      reservaSubject: "Compras no Paraguai — Ciudad del Este",
+      reservaSubjectSub:
+        "Dia de compras com carro privativo e guia especialista, saindo do seu hotel em Foz do Iguaçu",
       footnote: "Leva menos de 2 minutos",
     },
     attractionsSection: {
@@ -196,6 +209,10 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       text: "Tell us what you want to buy and a specialist in Ciudad del Este puts together the order of your day — stores, hours and the bridge crossing already sorted.",
       ctaPrincipal: "Get my shopping guide",
       ctaProntos: "See attractions and malls",
+      ctaReserva: "Reserve a date",
+      reservaSubject: "Shopping in Paraguay — Ciudad del Este",
+      reservaSubjectSub:
+        "A shopping day with a private car and an expert guide, leaving from your hotel in Foz do Iguaçu",
       footnote: "Takes less than 2 minutes",
     },
     attractionsSection: {
@@ -268,6 +285,10 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       text: "Cuéntanos qué quieres comprar y un especialista en Ciudad del Este arma el orden de tu día — tiendas, horarios y el cruce del puente ya resueltos.",
       ctaPrincipal: "Quiero mi guía de compras",
       ctaProntos: "Ver atractivos y shoppings",
+      ctaReserva: "Reservar fecha",
+      reservaSubject: "Compras en Paraguay — Ciudad del Este",
+      reservaSubjectSub:
+        "Un día de compras con auto privado y guía especialista, saliendo desde tu hotel en Foz do Iguaçu",
       footnote: "Toma menos de 2 minutos",
     },
     attractionsSection: {

@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/modal.ts
-// Version: 2.1
-// Nome da Versão: "Remove prefItineraryPrefix/itineraryNames do resumo de preferências (bloco 'incluir experiências no roteiro' extinto)"
+// Version: 2.2
+// Nome da Versão: "Rótulo do seletor sem 'ingresso' + as chaves `reservaSuccess*` finalmente ligadas na tela de sucesso"
 //
 // O modal é CLIENT (renderiza na abertura, pós-hidratação) → traduz sem flash. Estratégia:
 //   • UI fixa (placeholders, Sim/Não, LGPD, erros)  → MODAL_UI[locale]  (pt/en/es) — SEMPRE fixa, não editável.
@@ -116,7 +116,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "Solicitação de atrativo recebida!",
     reservaSuccessClose:
       "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste atrativo.",
-    includeOtherAttractions: "Incluir ingresso e reservas de outros atrativos?",
+    includeOtherAttractions: "Incluir outros atrativos no mesmo dia?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",
@@ -163,7 +163,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "Booking request received!",
     reservaSuccessClose:
       "A specialist in Foz do Iguaçu will message you on WhatsApp with the conditions for this attraction.",
-    includeOtherAttractions: "Include tickets and bookings from other attractions?",
+    includeOtherAttractions: "Add other attractions to the same day?",
     cancel: "cancel",
     languageLabel: "Language",
     sent: "Sent",
@@ -210,7 +210,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "¡Solicitud de atractivo recibida!",
     reservaSuccessClose:
       "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de este atractivo.",
-    includeOtherAttractions: "¿Incluir entradas y reservas de otros atractivos?",
+    includeOtherAttractions: "¿Incluir otros atractivos en el mismo día?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",

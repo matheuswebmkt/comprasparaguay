@@ -1,15 +1,17 @@
 // Filepath: app/page.tsx
-// Version: 10.2
-// Nome da Versão: "R3 — home fechada em 5 seções, com CTA final"
+// Version: 10.3
+// Nome da Versão: "TransferPitchCard entra na home depois das Dores, com CTA de reserva (8 seções)"
 //
-// Seções: hero (ganho) → DoresSection (dor/empatia) → AutoridadeSection (prova + mecanismo) →
+// Seções: hero (ganho) → DoresSection (dor/empatia) → TransferPitchCard (o produto como objeto: van,
+// motorista, trajeto) → AutoridadeSection (prova + mecanismo) →
 // roteiros prontos (prova de produto) → AtrativosDestaque (curadoria) → FAQ (objeções) →
 // CtaFinal (a perda: o custo de não planejar).
 // `PilaresFoz` é faixa utilitária de linking interno e não conta.
-// A sequência é deliberada: ganho → dor → prova → como → prova → curadoria → objeção → perda.
-// ⚠️ O teto de 5 seções do §8-bis foi EXCEDIDO por decisão do usuário (aqui são 7).
+// A sequência é deliberada: ganho → dor → produto → prova → como → prova → curadoria → objeção → perda.
+// ⚠️ O teto de 5 seções do §8-bis foi EXCEDIDO por decisão do usuário (aqui são 8).
 // DoresSection/AutoridadeSection foram adicionadas pós-hero por decisão do usuário; os 3 passos
-// do ComoFunciona (removido) foram migrados para a AutoridadeSection.
+// do ComoFunciona (removido) foram migrados para a AutoridadeSection. A TransferPitchCard entrou
+// depois, pelo mesmo motivo: é o único ponto da home em que o serviço aparece como coisa.
 //
 // Saíram na R3: `ExploreFoz` (grade de 4 cards com orbe — padrão catálogo, arquivo DELETADO),
 // `RelatedAttractionsSection` (componente segue vivo, usado em nicho/onde-comer/tríplice) e o
@@ -27,6 +29,7 @@ import { Navbar } from "@/components/navbar";
 import Footer from "@/components/footer";
 import RoteirosHero from "@/components/roteiros/RoteirosHero";
 import DoresSection from "@/components/home/DoresSection";
+import TransferPitchCard from "@/components/niche/TransferPitchCard";
 import AutoridadeSection from "@/components/home/AutoridadeSection";
 import PilaresFoz from "@/components/home/PilaresFoz";
 import CtaFinal from "@/components/home/CtaFinal";
@@ -44,7 +47,9 @@ import { HOME_UI } from "@/lib/i18n/home";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  // ⚠️ A home mira "roteiro de compras em Ciudad del Este" — o comprador, não o piloto editorial.
+  // ⚠️ O `title` segue mirando "roteiro de compras em Ciudad del Este" — o comprador, não o piloto
+  // editorial. Desde a v3.2 do hero, o H1 visível lidera "compras no Paraguai" e o title cobre a
+  // segunda intenção: são duas funções complementares na mesma página, não duplicação.
   // Ver conventions/posicionamento.md §21.6.
   // ⚠️ Sem sufixo `| Compras Paraguay` na home: o título já carrega a marca — o sufixo seria
   // repetição. Ver conventions/seo.md §19.
@@ -84,10 +89,14 @@ export default function Home() {
       <JsonLd data={faqSchema(HOME_UI.pt.faq.items)} />
       <Navbar />
       <main style={{ background: "hsl(40,33%,97%)" }}>
-        {/* Alternância de fundo §7.5: Hero areia → DoresSection branco →
-            AutoridadeSection areia → FAQ branco → PilaresFoz areia → CtaFinal branco. */}
+        {/* Alternância de fundo §7.5: Hero areia → DoresSection branco → TransferPitchCard areia →
+            AutoridadeSection branco → FAQ areia → PilaresFoz branco → CtaFinal areia.
+            ⓘ Inserir a seção de transfer deslocou a paridade de TODAS as demais: as quatro de baixo
+            trocaram de cor na mesma leva. Mexer numa delas sozinho quebra o ritmo (§7.5). */}
         <RoteirosHero />
         <DoresSection />
+        {/* O card é o mesmo do `/transfer`; `placement="home"` só troca o fundo e a telemetria. */}
+        <TransferPitchCard placement="home" />
         <AutoridadeSection />
         <FaqSection />
         <PilaresFoz />
