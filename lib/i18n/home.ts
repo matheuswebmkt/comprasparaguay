@@ -194,34 +194,34 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     autoridade: {
       eyebrow: "A nossa resposta",
-      title: "Nada é automático. É feito por especialistas em Foz.",
-      titleDestaque: "especialistas",
+      title: "Nada é automático. É um roteiro de compras feito por especialistas na fronteira.",
+      titleDestaque: "especialistas na fronteira",
       subtitle:
-        "Qualquer site gera um roteiro em segundos. O que ninguém automatiza é um especialista em Foz olhando para as suas respostas.",
-      imgAlt: "Especialista em Foz do Iguaçu da Compras Paraguay",
+        "Qualquer site te joga no meio das galerias de Ciudad del Este. O que ninguém automatiza é um especialista olhando para o que você quer comprar.",
+      imgAlt: "Especialista em compras na fronteira da Compras Paraguay",
       passos: [
         {
           n: "1",
-          titulo: "Você define suas preferências",
+          titulo: "Você conta o que quer comprar",
           texto:
-            "Quantos dias tem, com quem viaja, o ritmo que prefere e o que não pode ficar de fora.",
+            "Eletrônicos, perfumes, câmbio, orçamento — e o quanto você pode trazer dentro da cota.",
         },
         {
           n: "2",
-          titulo: "Um especialista em Foz revisa",
+          titulo: "Um especialista na fronteira monta o roteiro",
           texto:
-            "Alguém de verdade confere a logística real da cidade e ajusta a ordem das atrações.",
+            "Quem conhece Ciudad del Este de verdade define lojas, horários e a ordem do seu dia de compras.",
         },
         {
           n: "3",
-          titulo: "Você recebe seu roteiro planejado",
+          titulo: "Você recebe seu roteiro de compras",
           texto:
-            "O que vale a pena, quanto tempo reservar em cada atração e o que deixar de fora.",
+            "Onde cada coisa fica, quanto tempo levar e o que evitar — antes de cruzar a ponte.",
         },
       ],
-      afirma1: "Atendimento personalizado de máxima qualidade — é o nosso compromisso.",
-      afirma2: "Revisado por um especialista em Foz do Iguaçu. Nada aqui é gerado automático.",
-      afirma3: "O roteiro é montado para o seu orçamento — feito com suas preferências.",
+      afirma1: "Compras sem perrengue, da travessia à volta — é o nosso compromisso.",
+      afirma2: "Revisado por um especialista que conhece as lojas e os horários da fronteira. Nada aqui é gerado automático.",
+      afirma3: "O roteiro respeita o seu orçamento — do câmbio ao valor que você planeja gastar.",
     },
     pilares: {
       eyebrow: "Explore a fronteira",
@@ -345,34 +345,34 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     autoridade: {
       eyebrow: "Our answer",
-      title: "Nothing is automatic. It's made by specialists in Foz.",
-      titleDestaque: "specialists",
+      title: "Nothing is automatic. It's a shopping plan built by border specialists.",
+      titleDestaque: "border specialists",
       subtitle:
-        "Any website can generate an itinerary in seconds. What no one automates is a specialist in Foz looking at your answers.",
-      imgAlt: "Compras Paraguay specialist in Foz do Iguaçu",
+        "Any website can drop you in the middle of Ciudad del Este's galleries. What no one automates is a specialist looking at what you want to buy.",
+      imgAlt: "Compras Paraguay border-shopping specialist",
       passos: [
         {
           n: "1",
-          titulo: "You set your preferences",
+          titulo: "You tell us what you want to buy",
           texto:
-            "How many days you have, who you travel with, the pace you prefer and what can't be left out.",
+            "Electronics, perfumes, currency, budget — and how much you can bring back within the allowance.",
         },
         {
           n: "2",
-          titulo: "A specialist in Foz reviews it",
+          titulo: "A border specialist builds the plan",
           texto:
-            "A real person checks the city's actual logistics and adjusts the order of the attractions.",
+            "Someone who really knows Ciudad del Este sets the stores, hours and order of your shopping day.",
         },
         {
           n: "3",
-          titulo: "You receive your planned itinerary",
+          titulo: "You receive your shopping plan",
           texto:
-            "What's worth it, how long to spend at each attraction and what to leave out.",
+            "Where each thing is, how long to take and what to skip — before you cross the bridge.",
         },
       ],
-      afirma1: "Personal service of the highest quality — that's our commitment.",
-      afirma2: "Reviewed by a specialist in Foz do Iguaçu. Nothing here is auto-generated.",
-      afirma3: "The itinerary is built around your budget — made with your preferences.",
+      afirma1: "Stress-free shopping, from the crossing to the way back — that's our commitment.",
+      afirma2: "Reviewed by a specialist who knows the border's stores and hours. Nothing here is auto-generated.",
+      afirma3: "The plan respects your budget — from the exchange rate to the amount you plan to spend.",
     },
     pilares: {
       eyebrow: "Explore the frontier",
@@ -496,34 +496,34 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     autoridade: {
       eyebrow: "Nuestra respuesta",
-      title: "Nada es automático. Está hecho por especialistas en Foz.",
-      titleDestaque: "especialistas",
+      title: "Nada es automático. Es una ruta de compras hecha por especialistas en la frontera.",
+      titleDestaque: "especialistas en la frontera",
       subtitle:
-        "Cualquier sitio web genera un itinerario en segundos. Lo que nadie automatiza es un especialista en Foz mirando tus respuestas.",
-      imgAlt: "Especialista en Foz do Iguaçu de Compras Paraguay",
+        "Cualquier sitio web te suelta en medio de las galerías de Ciudad del Este. Lo que nadie automatiza es un especialista mirando lo que quieres comprar.",
+      imgAlt: "Especialista en compras en la frontera de Compras Paraguay",
       passos: [
         {
           n: "1",
-          titulo: "Tú defines tus preferencias",
+          titulo: "Nos cuentas qué quieres comprar",
           texto:
-            "Cuántos días tienes, con quién viajas, el ritmo que prefieres y lo que no puede faltar.",
+            "Electrónicos, perfumes, cambio, presupuesto — y cuánto puedes traer dentro de la cuota.",
         },
         {
           n: "2",
-          titulo: "Un especialista en Foz lo revisa",
+          titulo: "Un especialista en la frontera arma la ruta",
           texto:
-            "Una persona real comprueba la logística real de la ciudad y ajusta el orden de los atractivos.",
+            "Quien conoce Ciudad del Este de verdad define tiendas, horarios y el orden de tu día de compras.",
         },
         {
           n: "3",
-          titulo: "Recibes tu itinerario planificado",
+          titulo: "Recibes tu ruta de compras",
           texto:
-            "Lo que vale la pena, cuánto tiempo reservar en cada atractivo y qué dejar fuera.",
+            "Dónde está cada cosa, cuánto tiempo llevar y qué evitar — antes de cruzar el puente.",
         },
       ],
-      afirma1: "Atención personalizada de máxima calidad — es nuestro compromiso.",
-      afirma2: "Revisado por un especialista en Foz do Iguaçu. Nada aquí es generado automáticamente.",
-      afirma3: "El itinerario se arma para tu presupuesto — hecho con tus preferencias.",
+      afirma1: "Compras sin estrés, del cruce a la vuelta — es nuestro compromiso.",
+      afirma2: "Revisado por un especialista que conoce las tiendas y los horarios de la frontera. Nada aquí es generado automáticamente.",
+      afirma3: "La ruta respeta tu presupuesto — del tipo de cambio al monto que planeas gastar.",
     },
     pilares: {
       eyebrow: "Explora la frontera",
