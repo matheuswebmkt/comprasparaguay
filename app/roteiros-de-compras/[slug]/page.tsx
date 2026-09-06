@@ -42,14 +42,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const a = getAttractionBySlug(slug);
-  if (!a) return { title: "Atrativo não encontrado | Compras Paraguay" };
+  if (!a) return { title: "Destino não encontrado | Compras Paraguay" };
 
   return pageMetadata({
     title: attractionSeoTitle(a),
     description: attractionSeoDescription(a),
     path: `/roteiros-de-compras/${a.slug}`,
     keywords: attractionKeywords(a),
-    silo: "atrativos",
+    silo: "compras",
     image: a.cover,
     imageAlt: `${a.name} — Foz do Iguaçu | Compras Paraguay`,
     type: "article",

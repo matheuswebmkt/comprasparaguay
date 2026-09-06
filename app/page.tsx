@@ -66,11 +66,11 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     title: "Roteiro de compras em Ciudad del Este — Compras Paraguay",
     description:
-      "Onde comprar em Ciudad del Este, horários da ponte, o que vale a levar e como organizar o seu dia de compras no Paraguai.",
+      "Onde comprar em Ciudad del Este, horários da ponte, o que vale a pena levar e como organizar o seu dia de compras no Paraguai.",
     url: "/",
     images: [
       {
-        url: "/og-image.webp",
+        url: "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp",
         width: 1200,
         height: 630,
         alt: "Roteiro de compras em Ciudad del Este — Compras Paraguay",

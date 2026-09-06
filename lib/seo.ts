@@ -1,14 +1,14 @@
 // Filepath: lib/seo.ts
-// Version: 5.1
-// Nome da Versão: "URL dos destinos sob /roteiros-de-compras e título-reserva sem 'ingresso'"
-// Nome da Versão: "SEO absoluto — silos Foz (atrativos, gastronomia, fronteira) + helpers de metadata"
+// Version: 6.0
+// Nome da Versão: "SEO na narrativa Compras PY — silo compras, helpers sem 'ingresso', entidades e @ do social corretos"
 //
-// Identidade SEO do domínio = Compras Paraguay como REFERÊNCIA sobre Foz do Iguaçu:
-// atrativos, o que fazer, onde comer, Tríplice Fronteira e (quando prontos) roteiros.
-// Pacotes são um produto — não o único eixo de ranking.
+// Identidade SEO do domínio = Compras Paraguay como CURADORIA DE COMPRAS na Tríplice Fronteira:
+// roteiro de compras em Ciudad del Este, duty free e By Night em Puerto Iguazú e os shoppings da
+// região de Foz do Iguaçu. O dia de compras sai de Foz com guia especialista; atendimento,
+// reservas e contratação são da agência parceira.
 
 import type { Metadata } from "next";
-import type { Partner, Attraction, Roteiro, PartnerCategory } from "@/app/types";
+import type { Partner, Attraction, PartnerCategory } from "@/app/types";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.comprasparaguay.online"
@@ -16,8 +16,8 @@ export const SITE_URL = (
 
 export const SITE_NAME = "Compras Paraguay";
 
-/** Imagem OG padrão da marca. */
-export const BRAND_OG_IMAGE = "/images/atrativos/cataratas-do-iguacu/cover.webp";
+/** Imagem OG padrão da marca — o destino-carro-chefe (Compras no Paraguai / Ciudad del Este). */
+export const BRAND_OG_IMAGE = "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp";
 
 /**
  * Palavras-chave canônicas de intenção de COMPRAS no Paraguai (Compras PY).
@@ -36,77 +36,23 @@ export const COMPRAS_PRIMARY_KEYWORDS = [
   "Cataratas JL Shopping",
 ];
 
-/**
- * Palavras-chave canônicas de intenção (pesquisa real sobre Foz do Iguaçu).
- * Usar em layout/hubs; páginas filhas especializam.
- */
-export const FOZ_PRIMARY_KEYWORDS = [
-  "Roteiro Foz do Iguaçu",
-  "o que fazer em Foz do Iguaçu",
-  "o que fazer em Foz do Iguaçu em 3 dias",
-  "o que fazer em Foz do Iguaçu em 2 dias",
-  "roteiro de 3 dias em Foz do Iguaçu",
-  "roteiro de 2 dias em Foz do Iguaçu",
-  "roteiro de 1 dia em Foz do Iguaçu",
-  "passeios em Foz do Iguaçu",
-  "pontos turísticos Foz do Iguaçu",
-  "atrativos de Foz do Iguaçu",
-  "Cataratas do Iguaçu",
-  "Tríplice Fronteira",
-  "onde comer em Foz do Iguaçu",
-  "guia completo Foz do Iguaçu",
-  "turismo em Foz do Iguaçu",
-  "roteiro Foz do Iguaçu 3 dias",
-  "roteiros prontos Foz",
-  "ingresso Foz do Iguaçu",
-  "ingressos passeios Foz",
-  // Expansão jul/2026 (auditoria overnight): variações long-tail de intenção real de busca,
-  // sem inventar fatos novos — só cobertura adicional de frases que turistas realmente digitam.
-  "quantos dias ficar em Foz do Iguaçu",
-  "melhor época para ir a Foz do Iguaçu",
-  "vale a pena ir a Foz do Iguaçu",
-  "primeira vez em Foz do Iguaçu",
-  "roteiro de 4 dias em Foz do Iguaçu",
-  "roteiro de 5 dias em Foz do Iguaçu",
-  "o que não pode faltar em Foz do Iguaçu",
-  "Foz do Iguaçu com crianças",
-  "como chegar em Foz do Iguaçu",
-  "melhor época para visitar as Cataratas",
-] as const;
-
 /** Silos de keywords — mesclar com keywords da página (sem duplicar). */
 export const SILO_KEYWORDS = {
-  atrativos: [
-    "atrativos de Foz do Iguaçu",
-    "pontos turísticos Foz do Iguaçu",
-    "o que visitar em Foz do Iguaçu",
-    "passeios em Foz do Iguaçu",
-    "ingresso Foz do Iguaçu",
-    "comprar ingresso Cataratas",
-    "ingressos passeios Foz",
-    "Cataratas do Iguaçu",
-    "Parque das Aves",
-    "Itaipu Binacional",
-    "Marco das Três Fronteiras",
-    // Expansão jul/2026: comparação/diferenciação entre atrativos (padrão real de busca).
-    "Cataratas lado brasileiro ou argentino",
-    "melhores passeios em Foz do Iguaçu",
-    "atrativos imperdíveis em Foz do Iguaçu",
-    "o que ver em Foz do Iguaçu",
-  ],
-  oQueFazer: [
-    "o que fazer em Foz do Iguaçu",
-    "o que fazer em Foz do Iguaçu em 1 dia",
-    "o que fazer em Foz do Iguaçu em 2 dias",
-    "o que fazer em Foz do Iguaçu em 3 dias",
-    "o que fazer em Foz do Iguaçu em 4 dias",
-    "o que fazer em Foz do Iguaçu em 5 dias",
-    "passeios em Foz do Iguaçu",
-    "guia Foz do Iguaçu",
-    // Expansão jul/2026
-    "o que fazer em Foz do Iguaçu com crianças",
-    "o que fazer em Foz do Iguaçu de graça", // copy-ok — keyword de intenção de busca (§21.6), não é copy visível
-    "roteiro de viagem Foz do Iguaçu",
+  /** Eixo-compras do domínio: roteiros de compras na fronteira (home, hub, destinos). */
+  compras: [
+    "compras no Paraguai",
+    "roteiro de compras em Ciudad del Este",
+    "o que comprar em Ciudad del Este",
+    "onde comprar em Ciudad del Este",
+    "compras em Foz do Iguaçu e Paraguai",
+    "duty free Puerto Iguazú",
+    "By Night Puerto Iguazú",
+    "Shopping Catuaí Palladium",
+    "Cataratas JL Shopping",
+    "Ponte da Amizade compras",
+    "cota de compras Paraguai",
+    "melhor dia para compras em Ciudad del Este",
+    "dia de compras no Paraguai com guia",
   ],
   gastronomia: [
     "onde comer em Foz do Iguaçu",
@@ -143,24 +89,6 @@ export const SILO_KEYWORDS = {
     "melhor agência de turismo em Foz do Iguaçu",
     "vale a pena contratar agência em Foz do Iguaçu",
     "transfer aeroporto Foz do Iguaçu",
-  ],
-  /** Páginas estratégicas “roteiro de N dias” (intenção de busca forte). */
-  roteiroDias: [
-    "roteiro Foz do Iguaçu",
-    "roteiro de Foz do Iguaçu",
-    "roteiro Foz do Iguaçu 1 dia",
-    "roteiro Foz do Iguaçu 2 dias",
-    "roteiro Foz do Iguaçu 3 dias",
-    "o que fazer em Foz do Iguaçu em 1 dia",
-    "o que fazer em Foz do Iguaçu em 2 dias",
-    "o que fazer em Foz do Iguaçu em 3 dias",
-    "passeios em Foz do Iguaçu",
-    "plano de viagem Foz do Iguaçu",
-    // Expansão jul/2026
-    "roteiro Foz do Iguaçu 4 dias",
-    "roteiro Foz do Iguaçu 5 dias",
-    "quantos dias preciso em Foz do Iguaçu",
-    "itinerário Foz do Iguaçu",
   ],
 } as const;
 
@@ -277,13 +205,13 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
 export function nichePillar(category: PartnerCategory): { name: string; url: string } {
   switch (category) {
     case "gastronomia":
-      return { name: "Atrativos", url: "/roteiros-de-compras" };
+      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
     case "hotelaria":
-      return { name: "Atrativos", url: "/roteiros-de-compras" };
+      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
     case "turismo":
       return { name: "Transfer em Foz", url: "/transfer" };
     default:
-      return { name: "Atrativos", url: "/roteiros-de-compras" };
+      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
   }
 }
 
@@ -354,8 +282,8 @@ export function attractionSeoDescription(a: Attraction): string {
   const base = a.tagline.replace(/\s+/g, " ").trim();
   const oferta =
     a.country === "BR"
-      ? "Ingresso e roteiro completo em Foz do Iguaçu."
-      : "Ingresso e roteiro a partir de Foz do Iguaçu.";
+      ? "Dia de compras em Foz do Iguaçu com guia especialista e logística resolvida."
+      : "Dia de compras a partir de Foz do Iguaçu com guia especialista e logística resolvida.";
   return `${base} ${oferta}`;
 }
 
@@ -364,14 +292,12 @@ export function attractionKeywords(a: Attraction): string[] {
     [
       a.name,
       `${a.name} ${attractionPlaceLabel(a)}`,
-      `ingresso ${a.name}`,
-      `comprar ingresso ${a.name}`,
-      `preço ingresso ${a.name}`,
+      `compras ${a.name}`,
       `visitar ${a.name}`,
-      `como chegar ${a.name}`,
-      "ingressos Foz do Iguaçu",
+      `como chegar em ${a.name}`,
+      `${a.name} Tríplice Fronteira`,
     ],
-    SILO_KEYWORDS.atrativos,
+    SILO_KEYWORDS.compras,
   );
 }
 
@@ -420,7 +346,7 @@ export function attractionDefaultFaq(
             // ⚠️ Sem caminho de URL cru na prosa e sem nomear o parceiro comercial em copy de
             // marketing (§21.5 — a relação do visitante é com o Compras Paraguay).
             q: `Como encaixar ${a.name} no roteiro de Foz?`,
-            a: `${a.name} entra no dia em que faz sentido pela logística — quem conhece a cidade encaixa junto com os outros passeios, na ordem que evita atravessar Foz sem necessidade.`,
+            a: `${a.name} entra no dia em que faz sentido pela logística — quem conhece a fronteira encaixa junto com os outros destinos de compras, na ordem que evita atravessar a cidade sem necessidade.`,
           },
         ];
 
@@ -432,8 +358,8 @@ export function attractionDefaultFaq(
 // =============================================================================
 
 /**
- * Entidade principal do domínio (Organization + área turística).
- * Sinal de marca Compras Paraguay — referência sobre Foz, não um atrativo único.
+ * Entidade principal do domínio (Organization + área de atuação).
+ * Sinal de marca Compras Paraguay — curadoria de compras na fronteira, não um destino único.
  */
 export function organizationSchema() {
   return {
@@ -442,10 +368,9 @@ export function organizationSchema() {
     "@id": `${SITE_URL}/#organization`,
     name: SITE_NAME,
     alternateName: [
-      "Roteiro Foz do Iguaçu",
       "Compras Paraguay",
+      "Compras PY",
       "Guia Compras Paraguay",
-      "Guia de Foz do Iguaçu",
     ],
     url: SITE_URL,
     logo: {
@@ -454,7 +379,7 @@ export function organizationSchema() {
     },
     image: abs(BRAND_OG_IMAGE),
     description:
-      "Compras Paraguay é o guia de roteiros e ingressos em Foz do Iguaçu e na Tríplice Fronteira: o que fazer, atrativos, onde comer e o planejamento dos dias na cidade, revisado por especialistas em Foz.",
+      "Compras Paraguay é a curadoria de compras na Tríplice Fronteira: roteiro de compras em Ciudad del Este, duty free e By Night em Puerto Iguazú e os shoppings da região — dias de compras conduzidos por guias especialistas, com atendimento da agência parceira.",
     areaServed: {
       "@type": "City",
       name: "Foz do Iguaçu",
@@ -465,20 +390,20 @@ export function organizationSchema() {
       },
     },
     knowsAbout: [
-      "O que fazer em Foz do Iguaçu",
-      "Atrativos de Foz do Iguaçu",
-      "Ingressos de passeios em Foz do Iguaçu",
-      "Cataratas do Iguaçu",
+      "Compras no Paraguai",
+      "Compras em Ciudad del Este",
+      "Duty free em Puerto Iguazú",
+      "By Night em Puerto Iguazú",
+      "Shopping Catuaí Palladium",
+      "Cataratas JL Shopping",
       "Tríplice Fronteira",
-      "Parque das Aves",
-      "Itaipu Binacional",
-      "Gastronomia em Foz do Iguaçu",
-      "Turismo em Foz do Iguaçu",
-      "Roteiros em Foz do Iguaçu",
+      "Cota de compras na fronteira",
+      "Ponte da Amizade",
+      "Transfer em Foz do Iguaçu",
     ],
     sameAs: [
-      "https://instagram.com/comprasparaguay",
-      "https://www.facebook.com/comprasparaguay",
+      "https://instagram.com/roteirosfoz",
+      "https://www.facebook.com/roteirofoz",
     ],
   };
 }
@@ -489,11 +414,11 @@ export function websiteSchema() {
     "@type": "WebSite",
     "@id": `${SITE_URL}/#website`,
     name: SITE_NAME,
-    alternateName: "Roteiro Foz do Iguaçu",
+    alternateName: "Compras PY",
     url: SITE_URL,
     inLanguage: "pt-BR",
     description:
-      "Guia e ingressos em Foz do Iguaçu: o que fazer, atrativos, onde comer, Tríplice Fronteira e roteiros prontos de 1 a 3 dias — curadoria Compras Paraguay, com revisão humana de quem conhece a cidade.",
+      "Curadoria de compras na tríplice fronteira: Ciudad del Este, duty free e By Night em Puerto Iguazú e os shoppings da região — com guia especialista e logística de ida e volta a partir do seu hotel em Foz do Iguaçu.",
     publisher: { "@id": `${SITE_URL}/#organization` },
     about: { "@id": `${SITE_URL}/#organization` },
     // ⚠️ SEM `potentialAction`/`SearchAction`. Havia um aqui declarando busca no site, mas o
@@ -666,139 +591,8 @@ export function attractionSchema(a: Attraction) {
   };
   if (a.officialUrl && !a.officialUrl.includes("google.")) schema.sameAs = [a.officialUrl];
   if (a.highlights?.length) {
-    schema.keywords = [...a.highlights, `ingresso ${a.name}`, attractionPlaceLabel(a)].join(", ");
+    schema.keywords = [...a.highlights, `compras ${a.name}`, attractionPlaceLabel(a)].join(", ");
   }
-  return schema;
-}
-
-/** Título SEO padrão de um plano pronto (se não houver seoTitle no dado). */
-export function defaultRoteiroSeoTitle(r: Roteiro): string {
-  const dias = r.diasCount === 1 ? "1 dia" : `${r.diasCount} dias`;
-  return `Roteiro Foz do Iguaçu ${dias} — ${r.profileLabel}`;
-}
-
-/**
- * ⚠️ Fallback — hoje sem uso real: `buildCatalog()` em `app/data/roteiros.ts` já atribui
- * `seoDescription` a todos os planos gerados. Mantido para plano que venha sem valor próprio.
- * A versão anterior fechava nomeando o parceiro comercial ("condições com a agência…"), que §21.5
- * proíbe em copy de marketing — a relação do visitante é com o Compras Paraguay.
- */
-export function defaultRoteiroSeoDescription(r: Roteiro): string {
-  const dias = r.diasCount === 1 ? "1 dia" : `${r.diasCount} dias`;
-  return `${r.descricao_curta} Plano de ${dias} em Foz do Iguaçu (${r.profileLabel}): manhã, tarde e noite, na ordem que aproveita melhor o seu tempo na cidade.`;
-}
-
-/**
- * FAQ padrão de um roteiro pronto — sintetizada a partir dos campos que o próprio plano já tem
- * (dias, perfil, preço, atrativos do itinerário). Não inventa fato novo: mesma lógica de
- * `attractionDefaultFaq`, adaptada pra página de roteiro (que hoje não tem FAQ nem FAQPage schema).
- * `attractionNames` = nomes já resolvidos dos atrativos do plano (páginas passam via
- * `getRoteiroAttractionSlugs` + `getAttractionBySlug`, evitando import circular aqui).
- */
-/**
- * FAQ da página individual de roteiro.
- *
- * ⚠️ DUAS FORMAS DA MESMA PERGUNTA, de propósito:
- *  · `q` é a VISÍVEL. Curta e natural. Todas as cinco terminavam em "…no roteiro de N dias —
- *    Clássico?", e cinco perguntas seguidas com o mesmo sufixo lêem como texto gerado por
- *    máquina — a página inteira já diz de que roteiro se trata.
- *  · `qSchema` é a do JSON-LD. Ali a repetição TEM função: um resultado rico pode exibir a
- *    pergunta fora do contexto da página, então ela precisa se sustentar sozinha.
- *
- * Quem renderiza usa `q`; quem monta o `faqSchema` usa `qSchema ?? q`.
- */
-export type RoteiroFaqItem = { q: string; a: string; qSchema?: string };
-
-export function roteiroDefaultFaq(
-  r: Roteiro,
-  attractionNames: string[],
-): RoteiroFaqItem[] {
-  const dias = r.diasCount === 1 ? "1 dia" : `${r.diasCount} dias`;
-  const alvo = `o roteiro de ${dias} — ${r.profileLabel}`;
-  const listaAtrativos =
-    attractionNames.length > 0 ? attractionNames.slice(0, 6).join(", ") : null;
-
-  const faq: (RoteiroFaqItem | null)[] = [
-    {
-      q: "O que está incluso neste roteiro?",
-      qSchema: `O que está incluso n${alvo}?`,
-      a: `${r.descricao_curta} O planejamento cobre manhã, tarde e noite de cada dia, com a ordem das atrações resolvida para você não atravessar a cidade sem necessidade.`,
-    },
-    {
-      q: "Quanto custa?",
-      qSchema: `Quanto custa ${alvo}?`,
-      a: `Depende de quando você vai, de quantas pessoas viajam e de quais atrações entram — ingressos, câmbio e alta temporada mudam bastante a conta. Por isso o valor não sai de uma tabela genérica: ele é fechado em cima do roteiro montado para os seus dias.`,
-    },
-    {
-      // ⚠️ RESPOSTA LEGADA REMOVIDA — não reintroduzir. Era "Em /montar-roteiro você ajusta as
-      // experiências e os dias a partir deste plano como ponto de partida", que descrevia a
-      // ferramenta de usar o plano pronto como TEMPLATE editável. Ela não existe mais: o botão
-      // da página abre direto o modal de captura. A antiga ainda citava um caminho de URL cru na
-      // prosa e punha o visitante como sujeito do verbo de montar, o que §21.5 bane.
-      q: "Posso adaptar aos meus dias?",
-      qSchema: `Posso adaptar ${alvo} aos meus dias?`,
-      a: "Sim. A sequência publicada é a mesma para todo mundo, mas o que você recebe é fechado em cima das suas datas, de quem viaja com você e do que não pode ficar de fora — quem faz esse ajuste é um especialista que vive em Foz. Se preferir partir de outro ponto, o seu também pode ser feito do zero.",
-    },
-    listaAtrativos
-      ? {
-          q: "Quais atrativos entram?",
-          qSchema: `Quais atrativos entram n${alvo}?`,
-          a: `Este plano passa por: ${listaAtrativos}. Cada um tem página própria no catálogo de atrativos com detalhes, dicas e tempo sugerido de visita.`,
-        }
-      : null,
-    {
-      q: "Como recebo o roteiro?",
-      qSchema: `Como recebo ${alvo}?`,
-      // ⚠️ Saiu "Toque no botão desta página": narrava a interface e ainda assumia toque, quando
-      // no desktop é clique.
-      a: "Responda algumas perguntas rápidas — leva menos de dois minutos. Um especialista que vive em Foz revisa suas respostas, ajusta a logística e monta a versão final dos seus dias na cidade.",
-    },
-  ];
-
-  return faq.filter((x): x is RoteiroFaqItem => x !== null);
-}
-
-/**
- * TouristTrip — plano de visita curado.
- * Complementa Article (conteúdo) com tipo de viagem.
- */
-export function roteiroTripSchema(r: Roteiro) {
-  const schema: Record<string, unknown> = {
-    "@context": "https://schema.org",
-    "@type": "TouristTrip",
-    "@id": abs(`/roteiros/${r.slug}#trip`),
-    name: r.titulo,
-    description: r.descricao_curta,
-    url: abs(`/roteiros/${r.slug}`),
-    touristType: [r.profileLabel, "Turismo em Foz do Iguaçu"],
-    itinerary: {
-      "@type": "ItemList",
-      name: `${r.titulo} — dias`,
-      numberOfItems: r.diasCount,
-      itemListElement: r.dias.map((d, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: d.title ?? `Dia ${d.day}`,
-      })),
-    },
-    provider: {
-      "@type": "Organization",
-      "@id": `${SITE_URL}/#organization`,
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
-    touristDestination: {
-      "@type": "City",
-      name: "Foz do Iguaçu",
-    },
-  };
-
-  if (r.cover) schema.image = abs(r.cover);
-
-  // ⚠️ SEM `offers` (§21.7). O bloco antigo publicava um `Offer` com `price` no JSON-LD a partir do
-  // `preco_base` — além de violar a proibição de preço, declarava ao Google uma oferta que não
-  // existe: não vendemos nem processamos pagamento. NÃO reintroduzir.
-
   return schema;
 }
 

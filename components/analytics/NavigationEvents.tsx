@@ -38,7 +38,13 @@ export function NavigationEvents() {
         firstLoad.current = false;
       } else {
         fbqTrack('PageView');
-        window.dataLayer?.push({ event: 'page_view', page_path: pathname });
+        // GA4 é o gtag.js DIRETO (não GTM): page_view de rota é enviado pela função global `gtag`,
+        // exposta no window pelo snippet de base. A 1ª PageView já vem do `gtag('config', ...)`.
+        (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.(
+          'event',
+          'page_view',
+          { page_path: pathname },
+        );
       }
     }
 

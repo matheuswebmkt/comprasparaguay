@@ -12,7 +12,7 @@ import { pageMetadata, webPageSchema, breadcrumbSchema } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Contato — Compras Paraguay",
   description:
-    "Fale com o Compras Paraguay: dúvidas sobre atrativos e roteiros em Foz do Iguaçu, sugestões de conteúdo ou pedidos sobre os seus dados pessoais (LGPD).",
+    "Fale com o Compras Paraguay: dúvidas sobre roteiros de compras na fronteira, atendimento da agência parceira, sugestões de conteúdo ou pedidos sobre os seus dados pessoais (LGPD).",
   path: "/contato",
   keywords: ["contato Compras Paraguay", "falar com o Compras Paraguay"],
   type: "website",

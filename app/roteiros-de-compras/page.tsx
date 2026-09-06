@@ -30,7 +30,7 @@ export const metadata: Metadata = pageMetadata({
   description:
     "Ciudad del Este, Duty Free de Puerto Iguazú, By Night e os shoppings Cataratas JL e Catuaí Palladium — o seu roteiro de compras na fronteira, organizado.",
   path: URL_PATH,
-  silo: "atrativos",
+  silo: "compras",
   keywords: [
     "compras no Paraguai",
     "roteiro de compras Ciudad del Este",

@@ -4,7 +4,7 @@
 // Baseado na Versão: 2.5
 
 import MetaPixel from "@/components/analytics/MetaPixel";
-import GoogleTagManager from "@/components/analytics/GoogleTagManager";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import ConsentGate from "@/components/analytics/ConsentGate";
 import CookieBanner from "@/components/CookieBanner";
 import TicketOfferModal from "@/components/ticket-offer/TicketOfferModal";
@@ -24,7 +24,7 @@ import { getOfferConfigCached } from "@/lib/offer-settings";
 import {
   SITE_URL,
   SITE_NAME,
-  FOZ_PRIMARY_KEYWORDS,
+  COMPRAS_PRIMARY_KEYWORDS,
   organizationSchema,
   websiteSchema,
   fozDestinationSchema,
@@ -53,14 +53,14 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    // Default só vale para página sem title próprio (raro). Alinhado ao mapa de intenções (§21.6):
-    // "O que fazer em Foz do Iguaçu" é intenção do pilar /o-que-fazer — a marca não disputa.
-    default: "Roteiro em Foz do Iguaçu — Compras Paraguay",
+    // Default só vale para página sem title próprio (raro). Identidade do domínio: a intenção primária
+    // é "compras no Paraguai" — a marca entrega o serviço, não um guia generalista (§21.6).
+    default: "Compras no Paraguai — Compras Paraguay",
     template: "%s | Compras Paraguay",
   },
   description:
-    "Planeje seu roteiro em Foz do Iguaçu: a melhor sequência de atrativos, horários e recomendações para aproveitar seus dias na cidade.",
-  keywords: [...FOZ_PRIMARY_KEYWORDS],
+    "Compre no Paraguai sem perrengue: dia de compras em Ciudad del Este com guia especialista, veículo privativo de ida e volta a partir do seu hotel em Foz do Iguaçu.",
+  keywords: [...COMPRAS_PRIMARY_KEYWORDS],
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME }],
   openGraph: {
@@ -68,24 +68,24 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "pt_BR",
     url: SITE_URL,
-    title: "Roteiro em Foz do Iguaçu — Compras Paraguay",
+    title: "Compras no Paraguai — Compras Paraguay",
     description:
-      "Organize seus dias em Foz do Iguaçu com a melhor sequência de atrativos e horários — revisados por um especialista que vive em Foz.",
+      "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
     images: [
       {
-        url: "/og-image.webp",
+        url: "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp",
         width: 1200,
         height: 630,
-        alt: "Roteiro em Foz do Iguaçu — Compras Paraguay",
+        alt: "Dia de compras em Ciudad del Este com guia especialista — Compras Paraguay",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Roteiro em Foz do Iguaçu — Compras Paraguay",
+    title: "Compras no Paraguai — Compras Paraguay",
     description:
-      "Organize seus dias em Foz do Iguaçu com a melhor sequência de atrativos e horários — revisados por um especialista que vive em Foz.",
-    images: ["/og-image.webp"],
+      "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
+    images: ["/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp"],
   },
   robots: {
     index: true,
@@ -133,10 +133,10 @@ export default async function RootLayout({
         <JsonLd data={organizationSchema()} />
         <JsonLd data={websiteSchema()} />
         <JsonLd data={fozDestinationSchema()} />
-        {/* Meta Pixel/GTM só carregam depois do aceite no CookieBanner (consentimento próprio, sem CMP externo). */}
+        {/* Meta Pixel/GA4 só carregam depois do aceite no CookieBanner (consentimento próprio, sem CMP externo). */}
         <ConsentGate>
           <MetaPixel />
-          <GoogleTagManager />
+          <GoogleAnalytics />
         </ConsentGate>
         <Suspense fallback={null}>
           <NavigationEvents />
