@@ -1,5 +1,5 @@
 // Filepath: app/admin/dashboard/page.tsx
-// Version: 4.3
+// Version: 4.4
 // Nome da Versão: "Modal: + transporte no funil + painel de leads capturados (transporte/idioma)"
 // Baseado na Versão: 4.2
 
@@ -183,7 +183,7 @@ export default async function DashboardPage({
                   const max = buckets[0]?.n ?? 1;
                   return buckets.length ? (
                     buckets.map((r) => (
-                      <BarRow key={r.key} label={r.label} value={r.n} max={max} color={r.key === "ingresso" ? GOLD : r.key === "roteiro" ? NAVY : BLUE} />
+                      <BarRow key={r.key} label={r.label} value={r.n} max={max} color={r.key === "reserva" ? GOLD : r.key === "roteiro" ? NAVY : BLUE} />
                     ))
                   ) : (
                     <p className="text-xs" style={MUTED}>Sem cliques no período.</p>

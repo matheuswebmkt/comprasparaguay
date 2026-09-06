@@ -1,5 +1,5 @@
 // Filepath: components/atrativos/AttractionPageContent.tsx
-// Version: 3.3
+// Version: 3.4
 // Nome da Versão: "Página do dia de compras: bloco de relacionados com a copy dos destinos da fronteira"
 "use client";
 
@@ -265,9 +265,9 @@ export default function AttractionPageContent({
                     text-sm reprova WCAG AA. */}
                 <TicketOfferButton
                   href={`/roteiros-de-compras/${a.slug}`}
-                  ctaType="atrativo_ingresso"
+                  ctaType="destino_reserva"
                   itemSlug={a.slug}
-                  campaign="atrativos-ingresso"
+                  campaign="destinos-reserva"
                   context="atrativo"
                   subjectTitle={nome}
                   subjectImage={a.cover}

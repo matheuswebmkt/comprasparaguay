@@ -1,5 +1,5 @@
 // Filepath: lib/metrics.ts
-// Version: 2.5
+// Version: 2.6
 // Nome da Versão: "Remove roteiro_preference do LeadRow/SELECT/leadContextChip (Manter/Personalizar extinto)"
 // Baseado na Versão: 2.3
 
@@ -530,8 +530,11 @@ export function pageLabel(path: string): string {
 export function ctaTypeLabel(cta: string): string {
   const t = (cta || "").trim();
   const MAP: Record<string, string> = {
-    atrativo: "Ingresso · atrativo",
-    atrativo_ingresso: "Ingresso · comprar",
+    destino_reserva: "Reserva · destino",
+    // Chaves antigas: continuam aqui para as linhas locais gravadas antes da renomear — o site
+    // ainda não tem deploy, mas o banco local já viu esses rótulos.
+    atrativo: "Reserva · destino (chave antiga)",
+    atrativo_ingresso: "Reserva · destino (chave antiga)",
     atrativo_endereco: "Atrativo · endereço (legado)",
     atrativo_roteiros: "Atrativo · CTA roteiros",
     roteiro_cta: "Roteiro · quero esse plano",
@@ -548,21 +551,22 @@ export function ctaTypeLabel(cta: string): string {
   return t || "(sem tipo)";
 }
 
-/** Agrupa cliques de CTA em buckets de produto (ingresso vs roteiro vs resto). */
+/** Agrupa cliques de CTA em buckets de produto (reserva de destino vs roteiro vs resto). */
 export function groupCtaClicksByProduct(
   clicksByType: { cta_type: string; n: number }[],
 ): { key: string; label: string; n: number }[] {
-  let ingresso = 0;
+  let reservas = 0;
   let roteiro = 0;
   let outros = 0;
   for (const r of clicksByType) {
     const t = r.cta_type || "";
     if (
+      t === "destino_reserva" ||
       t === "atrativo" ||
       t === "atrativo_ingresso" ||
       (t.startsWith("atrativo") && !t.includes("endereco") && !t.includes("roteiros"))
     ) {
-      ingresso += r.n;
+      reservas += r.n;
     } else if (t.startsWith("roteiro") || t.includes("personalizar")) {
       roteiro += r.n;
     } else {
@@ -570,7 +574,7 @@ export function groupCtaClicksByProduct(
     }
   }
   return [
-    { key: "ingresso", label: "Ingressos (atrativos)", n: ingresso },
+    { key: "reserva", label: "Reservas (destinos)", n: reservas },
     { key: "roteiro", label: "Roteiros / personalizar", n: roteiro },
     { key: "outros", label: "Outros CTAs", n: outros },
   ].filter((x) => x.n > 0);
@@ -854,7 +858,7 @@ export async function getLeads(
   };
 }
 
-/** Chip de contexto do lead (ingresso / roteiro / …) para o painel. */
+/** Chip de contexto do lead (reserva de destino / roteiro / …) para o painel. */
 export function leadContextChip(l: Pick<LeadRow, "lead_context" | "cta_type">): {
   label: string;
   color: string;
@@ -862,8 +866,13 @@ export function leadContextChip(l: Pick<LeadRow, "lead_context" | "cta_type">): 
 } {
   const ctx = (l.lead_context || "").toLowerCase();
   const cta = (l.cta_type || "").toLowerCase();
-  if (ctx === "atrativo" || cta.includes("atrativo") || cta.includes("ingresso")) {
-    return { label: "Ingresso", color: "hsl(35,82%,28%)", bg: "hsl(38,85%,92%)" };
+  if (
+    ctx === "atrativo" ||
+    cta === "destino_reserva" ||
+    cta.includes("atrativo") ||
+    cta.includes("ingresso")
+  ) {
+    return { label: "Reserva", color: "hsl(35,82%,28%)", bg: "hsl(38,85%,92%)" };
   }
   if (cta.includes("personalizar")) {
     return { label: "Personalizar", color: "hsl(152,47%,28%)", bg: "hsl(152,40%,93%)" };
@@ -872,7 +881,7 @@ export function leadContextChip(l: Pick<LeadRow, "lead_context" | "cta_type">): 
     return { label: "Roteiro", color: "hsl(210,56%,28%)", bg: "hsl(214,50%,94%)" };
   }
   if (ctx === "ingresso") {
-    return { label: "Ingresso", color: "hsl(35,82%,28%)", bg: "hsl(38,85%,92%)" };
+    return { label: "Reserva", color: "hsl(35,82%,28%)", bg: "hsl(38,85%,92%)" };
   }
   return { label: ctx || cta || "Lead", color: "hsl(210,25%,40%)", bg: "hsl(214,30%,94%)" };
 }

@@ -1,5 +1,6 @@
 // Filepath: lib/seo.ts
-// Version: 5.0
+// Version: 5.1
+// Nome da Versão: "URL dos destinos sob /roteiros-de-compras e título-reserva sem 'ingresso'"
 // Nome da Versão: "SEO absoluto — silos Foz (atrativos, gastronomia, fronteira) + helpers de metadata"
 //
 // Identidade SEO do domínio = Compras Paraguay como REFERÊNCIA sobre Foz do Iguaçu:
@@ -334,7 +335,7 @@ export function attractionPlaceLabel(a: Attraction): string {
  */
 export function attractionSeoTitle(a: Attraction): string {
   if (a.seoTitle) return a.seoTitle;
-  return `${a.name}: ingresso e roteiro completo ${attractionPlaceAnchor(a)}`;
+  return `${a.name}: guia de visita ${attractionPlaceAnchor(a)}`;
 }
 
 /**

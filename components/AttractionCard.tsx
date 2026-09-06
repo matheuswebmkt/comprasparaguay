@@ -1,5 +1,6 @@
 // Filepath: components/AttractionCard.tsx
-// Version: 1.4
+// Version: 1.5
+// Nome da Versão: "Rota nova nos hrefs + telemetria destino_reserva — 'atrativo_ingresso' era legado"
 // Nome da Versão: "CTA sempre 'Reservar data' + calendário — a leitura de `hasLink` (config por atrativo) saiu"
 // Baseado na Versão: 1.1
 
@@ -83,12 +84,12 @@ export default function AttractionCard({
           {tagline}
         </p>
         <div className="mt-4 space-y-2">
-          {/* Comprar ingresso — gold gradient, same size as Adicionar ao meu roteiro */}
+          {/* CTA dourado de reserva — mesmo peso e altura do CTA secundário do card. */}
           <TicketOfferButton
             href={`/roteiros-de-compras/${attraction.slug}`}
-            ctaType="atrativo_ingresso"
+            ctaType="destino_reserva"
             itemSlug={attraction.slug}
-            campaign="atrativos-ingresso"
+            campaign="destinos-reserva"
             context="atrativo"
             subjectTitle={nome}
             subjectImage={attraction.cover}

@@ -1,5 +1,5 @@
 // Filepath: components/ticket-offer/TicketOfferModal.tsx
-// Version: 11.0
+// Version: 11.1
 // Nome da Versão: "Modo Link direto EXTINTO — todo atrativo é reserva de data: caem successDirect, "
 // "attractionMode/attractionNoLinkMode, o transporte automático e a leitura de hasLink"
 // Baseado na Versão: 10.1 ("Grava transportChecked no handoff pra tela de sucesso — Sprint 7")
@@ -170,7 +170,7 @@ interface TicketOfferModalProps {
 function previewDetailFor(_kind: ProductCopyKind = "atrativo"): OpenDetail {
   return {
     href: "#",
-    ctaType: "atrativo_ingresso",
+    ctaType: "destino_reserva",
     context: "atrativo",
     itemSlug: "preview",
     subjectTitle: "Atrativo de exemplo",

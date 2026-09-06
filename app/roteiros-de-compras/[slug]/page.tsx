@@ -1,5 +1,5 @@
 // Filepath: app/roteiros-de-compras/[slug]/page.tsx
-// Version: 5.0
+// Version: 5.1
 // Nome da Versão: "Rota migra de /atrativos/[slug] para /roteiros-de-compras/[slug] — '/atrativos' é legado"
 
 import type { Metadata } from "next";
@@ -85,7 +85,7 @@ export default async function AttractionPage({
       />
       <JsonLd
         data={articleSchema({
-          headline: `${a.name}: ingresso e visita em Foz do Iguaçu`,
+          headline: `${a.name}: guia e visita em Foz do Iguaçu`,
           description: attractionSeoDescription(a),
           url: `/roteiros-de-compras/${a.slug}`,
           datePublished: a.publishedAt ?? PUBLISHED_FALLBACK_ISO,
