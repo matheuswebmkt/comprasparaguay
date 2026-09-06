@@ -114,8 +114,8 @@ export default async function NichesAdminPage() {
                 <div className="mt-auto pt-3 border-t flex items-center justify-between" style={BORDER}>
                   <span className="text-[11px]" style={MUTED}>chave: {n.key}</span>
                   {/* Sem link "ver página": páginas de nicho são LEGADO e nunca existirão como rota.
-                      A superfície viva é o hub /atrativos. */}
-                  <span className="text-[11px]" style={MUTED}>hub: /atrativos</span>
+                      A superfície viva é o hub /roteiros-de-compras. */}
+                  <span className="text-[11px]" style={MUTED}>hub: /roteiros-de-compras</span>
                 </div>
               </div>
             );

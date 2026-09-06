@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/triplice-fronteira.ts
-// Version: 2.0
-// Nome da Versão: "Foco Compras PY — copys da página reescritas para o roteiro de compras"
+// Version: 2.1
+// Nome da Versão: "`finalCta` removido (o fechamento é o padrão do RoteirosCta) + título dos 5 destinos"
 //
 // Cobre só a parte VISÍVEL (client). JSON-LD e `metadata` continuam em pt no page.tsx (SEO canônico).
 // A página é o guia do roteiro de compras na Tríplice Fronteira: Ciudad del Este (PY), Duty Free e
@@ -46,10 +46,6 @@ export interface TripliceFronteiraUI {
     tipCtaBefore: string;
     tipCtaLink: string;
     tipCtaAfter: string;
-  };
-  finalCta: {
-    title: string;
-    text: string;
   };
   /** Cabeçalho da seção de cards do rodapé (os 5 destinos de compras do guia). */
   related: {
@@ -125,13 +121,9 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       tipCtaLink: "recomendação",
       tipCtaAfter: ".",
     },
-    finalCta: {
-      title: "Compras nos três países, em um único roteiro.",
-      text: "Você conta o que quer comprar e recebe o roteiro completo do seu dia de compras — a ordem das lojas, os horários da ponte e o que vale a pena levar, sem improviso.",
-    },
     related: {
       eyebrow: "Os destinos de compras",
-      title: "Os 5 roteiros de compras da região",
+      title: "Os 5 roteiros de compras da Tríplice Fronteira",
       subtitle: "Ciudad del Este, Duty Free, By Night e os shoppings de Foz — os cinco destinos do seu roteiro, com horários e dicas em cada página.",
     },
   },
@@ -195,13 +187,9 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       tipCtaLink: "recommendation",
       tipCtaAfter: ".",
     },
-    finalCta: {
-      title: "Shopping across all three countries in one plan.",
-      text: "Tell us what you want to buy and get your complete shopping plan — the order of stores, bridge hours and what's worth bringing back, with no guesswork.",
-    },
     related: {
       eyebrow: "Shopping destinations",
-      title: "The 5 shopping guides in the region",
+      title: "The 5 shopping guides in the Triple Frontier",
       subtitle: "Ciudad del Este, Duty Free, By Night and the malls of Foz — the five stops of your shopping plan, with hours and tips on each page.",
     },
   },
@@ -265,13 +253,9 @@ export const TRIPLICE_FRONTEIRA_UI: Record<Locale, TripliceFronteiraUI> = {
       tipCtaLink: "recomendación",
       tipCtaAfter: ".",
     },
-    finalCta: {
-      title: "Compras en los tres países en un solo plan.",
-      text: "Cuéntanos qué quieres comprar y recibe tu plan completo de compras — el orden de las tiendas, los horarios del puente y qué vale la pena traer, sin improvisar.",
-    },
     related: {
       eyebrow: "Los destinos de compras",
-      title: "Las 5 guías de compras de la región",
+      title: "Las 5 guías de compras de la Triple Frontera",
       subtitle: "Ciudad del Este, Duty Free, By Night y los shoppings de Foz — las cinco paradas de tu plan, con horarios y consejos en cada página.",
     },
   },

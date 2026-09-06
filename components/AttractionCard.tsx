@@ -45,8 +45,8 @@ export default function AttractionCard({
   const nome = CARD_LABELS[locale][attraction.slug] ?? ATTRACTION_NAMES[locale][attraction.slug] ?? attraction.name;
   const tagline = ATTRACTIONS_I18N[locale][attraction.slug]?.tagline ?? attraction.tagline;
   const href = source
-    ? internalUrl(`/atrativos/${attraction.slug}`, source)
-    : `/atrativos/${attraction.slug}`;
+    ? internalUrl(`/roteiros-de-compras/${attraction.slug}`, source)
+    : `/roteiros-de-compras/${attraction.slug}`;
   // CTA fixo: nenhum atrativo do catálogo vende ingresso — todos reservam data. A ramificação que
   // existia aqui lia `hasLink` no admin e trocava "Comprar ingresso"/Ticket por "Reservar data"/calendário;
   // o modo por atrativo foi extinto, sobrou a versão reserva.
@@ -85,7 +85,7 @@ export default function AttractionCard({
         <div className="mt-4 space-y-2">
           {/* Comprar ingresso — gold gradient, same size as Adicionar ao meu roteiro */}
           <TicketOfferButton
-            href={`/atrativos/${attraction.slug}`}
+            href={`/roteiros-de-compras/${attraction.slug}`}
             ctaType="atrativo_ingresso"
             itemSlug={attraction.slug}
             campaign="atrativos-ingresso"

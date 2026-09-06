@@ -336,9 +336,9 @@ export const niches: Niche[] = [
       "transporte para compras em foz",
     ],
     eyebrow: "Transfer · Compras na Fronteira",
-    h1: "Seu dia de compras sem complicação",
+    h1: "Compras no Paraguai sem complicação",
     heroLead: [
-      "Ciudad del Este, o duty free argentino e os shoppings de Foz ficam a poucos minutos um do outro — mas a fronteira tem horários, filas e travessias que mudam o seu dia. Com um transfer, você atravessa na hora certa e volta com as compras sem estresse.",
+      "Com um transfer/privativo, você atravessa na hora certa e volta com as compras sem estresse.",
     ],
     heroCta: "Ver transfer",
     recommendationEyebrow: "A escolha da nossa equipe",

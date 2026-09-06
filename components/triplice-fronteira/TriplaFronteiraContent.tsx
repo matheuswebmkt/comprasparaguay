@@ -1,6 +1,6 @@
 // Filepath: components/triplice-fronteira/TriplaFronteiraContent.tsx
-// Version: 1.1
-// Nome da Versão: "No mobile, o link do Marco desce para baixo da foto do Marco"
+// Version: 1.3
+// Nome da Versão: "Fechamento usa o padrão do `RoteirosCta` — o override `finalCta` saiu"
 // Baseado na Versão: 1.0 — "Parte VISÍVEL de /triplice-fronteira (client, i18n), extraída do page.tsx"
 "use client";
 
@@ -177,7 +177,7 @@ export default function TriplaFronteiraContent() {
                       return (
                         <li key={h.slug}>
                           <Link
-                            href={internalUrl(`/atrativos/${h.slug}`, "triplice")}
+                            href={internalUrl(`/roteiros-de-compras/${h.slug}`, "triplice")}
                             className="rf-slot block"
                           >
                             <span className="relative block aspect-[4/3] overflow-hidden rounded-xl bg-[hsl(214,50%,96%)]">
@@ -288,7 +288,10 @@ export default function TriplaFronteiraContent() {
           subtitle={t.related.subtitle}
         />
 
-        <RoteirosCta ctaType="triplice_roteiros" title={t.finalCta.title} text={t.finalCta.text} />
+        {/* O fechamento é o MESMO das outras páginas (`SHARED_UI.roteirosCta`): título, texto e CTA
+            de reserva. Antes esta página passava `title`/`text` próprios — um remate de "roteiro
+            completo", que era a voz do projeto de conteúdo e já não existe. */}
+        <RoteirosCta ctaType="triplice_roteiros" />
       </main>
       <Footer />
     </>

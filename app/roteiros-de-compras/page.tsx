@@ -1,9 +1,10 @@
 // Filepath: app/roteiros-de-compras/page.tsx
-// Version: 3.0
-// Nome da Versão: "Hub Roteiros de compras (era /atrativos) — foco Compras PY"
+// Version: 3.1
+// Nome da Versão: "Hub e páginas individuais agora sob /roteiros-de-compras — a rota /atrativos saiu"
 //
-// Central do produto: roteiro de compras pelos 5 atrativos do eixo compras/fronteira.
-// Agora em /roteiros-de-compras (ex-/atrativos). As páginas individuais seguem em /atrativos/[slug].
+// Central do produto: os 5 destinos de compras do eixo compras/fronteira.
+// As páginas individuais vivem em /roteiros-de-compras/[slug]. `/atrativos` era herança do projeto
+// de conteúdo (atraivo = turismo = ingresso) e FOI; o caminho todo é roteiros/destinos de compras.
 
 import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
@@ -57,7 +58,7 @@ const FAQ = [
   },
   {
     q: "Posso ver um atrativo sem seguir um roteiro pronto?",
-    a: "Sim. Cada atrativo tem página própria em /atrativos/[slug] — você abre o que interessa e decide o dia.",
+    a: "Sim. Cada destino tem página própria em /roteiros-de-compras — você abre o que interessa e decide o dia.",
   },
   {
     q: "Quantos dias para as compras na fronteira?",
@@ -86,7 +87,7 @@ export default function RoteirosDeComprasPage() {
             "Catálogo de compras em Ciudad del Este, Duty Free e shoppings da Tríplice Fronteira.",
           items: attractions.map((a) => ({
             name: a.name,
-            url: `/atrativos/${a.slug}`,
+            url: `/roteiros-de-compras/${a.slug}`,
           })),
         })}
       />

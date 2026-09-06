@@ -1,11 +1,14 @@
 // Filepath: components/home/CtaFinal.tsx
-// Version: 3.3
-// Nome da Versão: "Fundo vira AREIA — a seção de transfer deslocou a alternância da home (§7.5)"
+// Version: 4.0
+// Nome da Versão: "Fechamento só com o CTA de reserva: link secundário e a linha de rodapé saíram"
+// Baseado na Versão: 3.3 ("fundo vira AREIA — a seção de transfer deslocou a alternância da home").
 // Baseado na Versão: 3.2 ("fechamento converte pelo mesmo caminho do hero: 'Reservar data' abre o modal").
 //
-// 5ª e última seção da home. A ideia é a ÚNICA que ainda não estava na página: o **custo de não
-// planejar**. O hero vende o ganho, a AutoridadeSection vende o mecanismo, os roteiros vendem a prova e o
-// FAQ derruba objeção — falta a perda.
+// Última seção da home: a promessa dita de frente, no registro do hero — NÓS levamos, com veículo
+// privativo e guia especialista, e o retorno ao Brasil com as compras feitas. Antes este bloco era
+// fechamento por PERDA ("não vá para a ponte sem um plano"); a copy atual não ameaça custo nenhum,
+// ela nomeia o serviço. O encadeamento das outras seções segue: ganho (hero) → cenário (dores) →
+// serviço (transfer, `autoridade`) → objeção (FAQ) → contrato final (aqui).
 //
 // ⚠️ FUNDO AREIA — um dos dois fundos padrão do projeto (o outro é branco). NÃO inventar cor de
 // fundo aqui. Foram reprovados, nesta ordem: gradiente navy→verde escuro, verde-escuro de hue única
@@ -14,22 +17,21 @@
 // deslocou a cor de tudo que vem depois dela. Fechar em areia também deixa o Footer (escuro) tocar
 // um fundo claro — era assim antes da v3.1.
 //
-// ⚠️ §21.2 — promete o resultado, nunca o canal nem o instante. "antes de comprar o primeiro
-// ingresso" é o timing da DECISÃO da pessoa, não uma promessa de entrega nossa.
+// ⚠️ UM CTA, E SÓ ELE. Já houve aqui um link Verde Selva ("Ver atrativos e shoppings →") e uma linha
+//    de reassurance ("Leva menos de 2 minutos"). Os dois saíram por decisão do usuário: o link oferecia
+//    uma saída de leitura exatamente no ponto de conversão, e a linha prometia INSTANTE — §21.2 proíbe
+//    vender canal e velocidade, e o tempo de preencher o modal não é promessa que a gente faça.
+//    Não reintroduzir nenhum dos dois.
 
 "use client";
 
-import Link from "next/link";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { HOME_UI } from "@/lib/i18n/home";
-import { SHARED_UI } from "@/lib/i18n/shared";
-import { internalUrl } from "@/lib/utm";
 import ReservarDataCta from "@/components/ReservarDataCta";
 
 export default function CtaFinal() {
   const { locale } = useLocale();
   const t = HOME_UI[locale].ctaFinal;
-  const cta = SHARED_UI[locale].roteirosCta;
   return (
     <section
       className="rf-section relative overflow-hidden"
@@ -60,47 +62,22 @@ export default function CtaFinal() {
         </div>
 
         {/* O espaço acima vem da margem padrão de `rf-head` — sem `mt` próprio, senão esta seção
-            volta a ter respiro diferente das outras. */}
+            volta a ter respiro diferente das outras. O CTA é `inline-flex`: o `text-center` do
+            invólucro já centraliza, não precisa de flex próprio. */}
         <div className="text-center">
           {/* ⚠️ `text-lg font-bold` NÃO É OPCIONAL. O dourado do projeto com texto branco dá
               3.02:1: reprova WCAG AA para texto normal e só passa como texto GRANDE, cujo
               limiar é 3:1 — margem de 0.02. O tamanho do rótulo é o que sustenta o contraste
-              sozinho (§2). Padrão idêntico ao do hero e ao da AutoridadeSection. */}
-          <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
-            <ReservarDataCta
-              ctaType="home_cta_final_reserva"
-              source="home-cta-final"
-              className="inline-flex items-center justify-center rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
-              style={{
-                background:
-                  "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
-              }}
-            />
-
-            {/* Ação secundária — link Verde Selva, nunca um segundo botão preenchido
-                (§8-bis: o dourado tem de continuar o único objeto cheio). Mesmo par
-                do /triplice-fronteira. */}
-            <Link
-              href={internalUrl("/roteiros-de-compras", "home-cta-final-prontos")}
-              className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"
-              style={{
-                color: "hsl(152,47%,30%)",
-                textDecorationColor: "hsla(152,40%,60%,0.5)",
-              }}
-            >
-              {cta.ctaProntos}
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-0.5"
-              >
-                →
-              </span>
-            </Link>
-          </div>
-
-          <p className="mt-5 text-sm" style={{ color: "hsl(210,25%,45%)" }}>
-            {cta.footnote}
-          </p>
+              sozinho (§2). Padrão idêntico ao do hero e ao da seção de transfer. */}
+          <ReservarDataCta
+            ctaType="home_cta_final_reserva"
+            source="home-cta-final"
+            className="inline-flex items-center justify-center rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
+            style={{
+              background:
+                "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
+            }}
+          />
         </div>
       </div>
     </section>

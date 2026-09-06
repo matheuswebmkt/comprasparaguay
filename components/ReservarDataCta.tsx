@@ -1,5 +1,5 @@
 // Filepath: components/ReservarDataCta.tsx
-// Version: 1.0
+// Version: 1.1
 // Nome da Versão: "Nasce da home: o CTA dourado 'Reservar data' que ABRE O MODAL do dia de compras"
 //
 // Um botão, um produto. O funil do site é um só — o dia de compras no Paraguai com carro privativo e
@@ -58,7 +58,7 @@ export default function ReservarDataCta({
 
   return (
     <TicketOfferButton
-      href={internalUrl(`/atrativos/${RESERVA_ATTRACTION_SLUG}`, source)}
+      href={internalUrl(`/roteiros-de-compras/${RESERVA_ATTRACTION_SLUG}`, source)}
       ctaType={ctaType}
       itemSlug={RESERVA_ATTRACTION_SLUG}
       context="atrativo"

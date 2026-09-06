@@ -1,5 +1,5 @@
 // Filepath: app/sitemap.ts
-// Version: 5.0
+// Version: 5.1
 // Nome da Versão: "Foco Compras PY — sitemap das páginas vivas + 5 atrativos de compras"
 
 import type { MetadataRoute } from "next";
@@ -21,11 +21,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/contato`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  // Atrativos: página canônica de cada ponto do catálogo (5, eixo compras/fronteira).
+  // Destinos de compras: página canônica de cada destino do eixo compras/fronteira (5).
   const attractionPages: MetadataRoute.Sitemap = attractions.map((a) => {
     const iso = a.updatedAt ?? a.publishedAt;
     return {
-      url: `${SITE_URL}/atrativos/${a.slug}`,
+      url: `${SITE_URL}/roteiros-de-compras/${a.slug}`,
       ...(iso ? { lastModified: new Date(iso) } : {}),
       changeFrequency: "monthly" as const,
       priority: a.featured ? 0.9 : 0.82,

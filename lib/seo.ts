@@ -637,9 +637,9 @@ export function partnerSchema(partner: Partner) {
   return schema;
 }
 
-/** TouristAttraction + oferta de ingresso (captura no Compras Paraguay → agência). */
+/** TouristAttraction + oferta de reserva (captura no Compras Paraguay → agência). */
 export function attractionSchema(a: Attraction) {
-  const pageUrl = abs(`/atrativos/${a.slug}`);
+  const pageUrl = abs(`/roteiros-de-compras/${a.slug}`);
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "TouristAttraction",

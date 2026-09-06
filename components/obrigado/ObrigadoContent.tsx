@@ -89,7 +89,7 @@ export default function ObrigadoContent() {
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
           <Link
-            href={internalUrl("/atrativos/compras-paraguai-ciudad-del-este", "obrigado")}
+            href={internalUrl("/roteiros-de-compras/compras-paraguai-ciudad-del-este", "obrigado")}
             className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
             style={{
               background:

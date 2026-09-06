@@ -503,10 +503,10 @@ export function pageLabel(path: string): string {
   };
   if (STATIC[clean]) return STATIC[clean];
 
-  const attraction = clean.match(/^\/atrativos\/(.+)$/);
+  const attraction = clean.match(/^\/roteiros-de-compras\/(.+)$/);
   if (attraction) {
     const a = attractions.find((x) => x.slug === attraction[1]);
-    return a ? `Ingresso · ${a.name}` : `Atrativo: ${attraction[1]}`;
+    return a ? `Destino · ${a.name}` : `Destino: ${attraction[1]}`;
   }
 
   const roteiro = clean.match(/^\/roteiros\/(.+)$/);

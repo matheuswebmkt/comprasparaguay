@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/shared.ts
-// Version: 1.2
-// Nome da Versão: "Tradução única de 'Fazer meu roteiro' em en/es (make/hacer) — §21.8"
+// Version: 1.4
+// Nome da Versão: "RoteirosCta: título/texto do serviço, CTA de reserva — `ctaPrincipal` e `ctaProntos` removidos"
 //
 // Mesma estratégia de lib/i18n/home.ts: só strings de UI fixa. Nomes de nicho (app/data/niches.ts) e dados
 // de atrativos/parceiros (app/data/attractions.ts, app/data/partners.ts) NÃO entram aqui — ficam intactos em
@@ -40,10 +40,8 @@ export interface SharedUI {
   roteirosCta: {
     title: string;
     text: string;
-    /** Botão dourado → /montar-roteiro. */
-    ctaPrincipal: string;
-    /** Link de texto → /roteiros. */
-    ctaProntos: string;
+    /** Destaque verde do título (`TituloComDestaque`) — tem de ser substring EXATA de `title`. */
+    titleDestaque: string;
     /** CTA dourado do funil de compras (hero + CtaFinal + card/página de atrativo): abre o modal e a
      * pessoa cai no calendário. ⚠️ É o MESMO texto de `ATTRACTION_DETAIL_UI.ctaReserva` nos 3 idiomas
      * (§21.8-6: um PT, uma tradução). */
@@ -53,8 +51,6 @@ export interface SharedUI {
      * no bundle de quem só mostra o botão. */
     reservaSubject: string;
     reservaSubjectSub: string;
-    /** Linha de rodapé dos fechamentos ("Leva menos de 2 minutos · …"). */
-    footnote: string;
   };
   attractionsSection: {
     eyebrow: string;
@@ -129,15 +125,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
        disclaimer do footer, onde a lei exige) e antecipava o canal de atendimento, que §21.2
        proíbe antes do submit. Nenhuma das duas é pega pelo checker. */
     roteirosCta: {
-      title: "Pronto para o seu roteiro de compras?",
-      text: "Você conta o que quer comprar e um especialista em Ciudad del Este organiza a ordem do seu dia — lojas, horários e a travessia da ponte já resolvidos.",
-      ctaPrincipal: "Quero meu roteiro de compras",
-      ctaProntos: "Ver atrativos e shoppings",
+      title: "Nós levamos você às compras no Paraguai.",
+      titleDestaque: "compras no Paraguai",
+      text: "Sua logística de ida e volta com segurança, veículo privativo, guia especialista e retorno ao Brasil com as compras feitas.",
       ctaReserva: "Reservar data",
       reservaSubject: "Compras no Paraguai — Ciudad del Este",
       reservaSubjectSub:
         "Dia de compras com carro privativo e guia especialista, saindo do seu hotel em Foz do Iguaçu",
-      footnote: "Leva menos de 2 minutos",
     },
     attractionsSection: {
       eyebrow: "Atrativos turísticos",
@@ -205,15 +199,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       learnMore: "Learn more",
     },
     roteirosCta: {
-      title: "Ready for your shopping plan?",
-      text: "Tell us what you want to buy and a specialist in Ciudad del Este puts together the order of your day — stores, hours and the bridge crossing already sorted.",
-      ctaPrincipal: "Get my shopping guide",
-      ctaProntos: "See attractions and malls",
+      title: "We take you shopping in Paraguay.",
+      titleDestaque: "shopping in Paraguay",
+      text: "Your round trip taken care of, with safety: private vehicle, specialist guide and the return to Brazil with your purchases done.",
       ctaReserva: "Reserve a date",
       reservaSubject: "Shopping in Paraguay — Ciudad del Este",
       reservaSubjectSub:
         "A shopping day with a private car and an expert guide, leaving from your hotel in Foz do Iguaçu",
-      footnote: "Takes less than 2 minutes",
     },
     attractionsSection: {
       eyebrow: "Tourist attractions",
@@ -281,15 +273,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       learnMore: "Saber más",
     },
     roteirosCta: {
-      title: "¿Listo para tu plan de compras?",
-      text: "Cuéntanos qué quieres comprar y un especialista en Ciudad del Este arma el orden de tu día — tiendas, horarios y el cruce del puente ya resueltos.",
-      ctaPrincipal: "Quiero mi guía de compras",
-      ctaProntos: "Ver atractivos y shoppings",
+      title: "Te llevamos de compras por Paraguay.",
+      titleDestaque: "compras por Paraguay",
+      text: "Tu logística de ida y vuelta con seguridad, vehículo privado, guía especialista y regreso a Brasil con las compras hechas.",
       ctaReserva: "Reservar fecha",
       reservaSubject: "Compras en Paraguay — Ciudad del Este",
       reservaSubjectSub:
         "Un día de compras con auto privado y guía especialista, saliendo desde tu hotel en Foz do Iguaçu",
-      footnote: "Toma menos de 2 minutos",
     },
     attractionsSection: {
       eyebrow: "Atractivos turísticos",

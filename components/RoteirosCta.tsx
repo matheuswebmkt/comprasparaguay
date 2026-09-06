@@ -1,6 +1,6 @@
 // Filepath: components/RoteirosCta.tsx
-// Version: 2.0
-// Nome da Versão: "Fechamento no padrão — dourado para o wizard, link para os prontos"
+// Version: 3.0
+// Nome da Versão: "Fechamento converte pelo modal: 'Reservar data' no lugar do botão de página e do link secundário"
 //
 // Fechamento compartilhado por SETE páginas (/atrativos, atrativo individual, nichos, hotel,
 // /onde-comer, parceiro, /triplice-fronteira). Qualquer mudança aqui propaga para todas.
@@ -15,18 +15,20 @@
 //     (design-system.md §2). Agora `text-lg font-bold`, que é o que sustenta o contraste.
 //  4. `max-w-xl` e `text-2xl font-bold` próprios → `.rf-head` + `.rf-title` (§8.1).
 //
-// ── A INVERSÃO DE CTA (decisão do usuário) ───────────────────────────────────────────────────
-// Antes havia UM botão dourado apontando para `/roteiros`. Agora o dourado leva ao wizard
-// (`/montar-roteiro`, o caminho de conversão) e "Roteiros prontos de 1, 2 e 3 dias" fica como
-// link de texto ao lado. Continua UM botão preenchido — §8-bis conta CTA por botão cheio, e
-// link de texto na prosa não conta.
+// ── O CTA NA v3.0: O MODAL ───────────────────────────────────────────────────
+// O dourado é o `ReservarDataCta`: mesmo rótulo, mesmo modal e mesmo calendário do hero, do
+// fechamento da home e do card de transfer — um funil, um caminho. Antes este botão era um `<Link>`
+// para a página do atrativo (e, mais atrás, para o wizard `/montar-roteiro`, que não existe mais):
+// rótulo de "reservar" que navegava para conteúdo é a promessa e a tela desalinhadas (§21.2).
+// O link de texto "Ver atrativos e shoppings →", que ficava ao lado, saiu: oferecia uma saída de
+// leitura exatamente no ponto de conversão. Continua UM botão cheio — §8-bis conta CTA por botão
+// cheio, e link de texto na prosa não conta.
 
 "use client";
 
-import Link from "next/link";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { SHARED_UI } from "@/lib/i18n/shared";
-import { internalUrl } from "@/lib/utm";
+import ReservarDataCta from "@/components/ReservarDataCta";
 import TituloComDestaque from "@/components/TituloComDestaque";
 
 export default function RoteirosCta({
@@ -63,45 +65,23 @@ export default function RoteirosCta({
         {/* Sem eyebrow: é fechamento, não tema novo — a exceção que o §8.1 documenta. */}
         <div className="rf-head">
           <h2 className="rf-title" style={{ marginTop: 0 }}>
-            <TituloComDestaque texto={title ?? t.title} destaque="roteiro" />
+            <TituloComDestaque texto={title ?? t.title} destaque={t.titleDestaque} />
           </h2>
           <p className="rf-sub">{text ?? t.text}</p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
-          <Link
-            href={internalUrl("/atrativos/compras-paraguai-ciudad-del-este", ctaType)}
-            className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
+        {/* ⚠️ `text-lg font-bold` não é opcional: dourado + branco dá 3.02:1 e só passa como texto
+            GRANDE (§2). O `text-center` do invólucro centraliza o `inline-flex` do botão. */}
+        <div className="text-center">
+          <ReservarDataCta
+            ctaType={ctaType}
+            source={ctaType}
+            className="inline-flex items-center justify-center rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
             style={{
               background:
                 "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
             }}
-          >
-            {t.ctaPrincipal}
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            >
-              →
-            </span>
-          </Link>
-
-          <Link
-            href={internalUrl("/roteiros-de-compras", `${ctaType}-atrativos`)}
-            className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"
-            style={{
-              color: "hsl(152,47%,30%)",
-              textDecorationColor: "hsla(152,40%,60%,0.5)",
-            }}
-          >
-            {t.ctaProntos}
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-300 group-hover:translate-x-0.5"
-            >
-              →
-            </span>
-          </Link>
+          />
         </div>
       </div>
     </section>

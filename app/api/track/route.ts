@@ -1,5 +1,5 @@
 // Filepath: app/api/track/route.ts
-// Version: 3.0
+// Version: 3.1
 // Nome da Versão: "Lote (batch): 1 request com N eventos em vez de 1 request por evento"
 // Baseado na Versão: 2.1
 
@@ -39,7 +39,7 @@ const NICHE_PATHS = new Set(niches.map((n) => `/${n.slug}`));
 function isTrackablePath(p: unknown): p is string {
   if (typeof p !== "string" || !p.startsWith("/")) return false;
   if (STATIC_PATHS.has(p) || PARTNER_PATHS.has(p) || NICHE_PATHS.has(p)) return true;
-  if (/^\/atrativos\/[a-z0-9-]+$/.test(p)) return true;
+  if (/^\/roteiros-de-compras\/[a-z0-9-]+$/.test(p)) return true;
   if (/^\/roteiros\/[a-z0-9-]+$/.test(p) && p !== "/roteiros/personalizar") return true;
   return false;
 }

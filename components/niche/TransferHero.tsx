@@ -1,18 +1,22 @@
 // Filepath: components/niche/TransferHero.tsx
-// Version: 1.0
-// Nome da Versão: "Hero data-driven do nicho de transfer — Areia puro, copy protagonista"
+// Version: 1.2
+// Nome da Versão: "Hero vira BRANCO — sobre o Areia do /transfer ela sumia com a seção de baixo"
+// Baseado na Versão: 1.1 ("invólucro do hero abre de 2xl para 3xl — o H1 ganha uma linha a menos").
 //
 // Hero dedicado do nicho de transfer (rendered by NichePageTemplate quando niche.key ===
 // "transfer"). O copy vem 100% do `Niche` (app/data/niches.ts); a única string local é o
 // rótulo do CTA, que é âncora interna (#recomendacao) para o slot de recomendação.
 //
 // Espelha o padrão aprovado do HospedagemHero:
-//   1. FUNDO AREIA PURO + GRÃO (rf-grain). Substitui o gradiente+orbe do hero genérico do
-//      template, que violava §8.2 (fundo de seção só Areia ou branco).
+//   1. FUNDO BRANCO PURO + GRÃO (rf-grain). Dois motivos, nesta ordem: §8.2 admite Areia ou branco
+//      e nada mais; e esta página inteira é Areia por dentro do `<main>` — com o hero Areia também,
+//      a primeira tela emendava na seção seguinte e o hero deixava de existir como abertura.
 //   2. ALTURA PADRÃO DE HERO (conventions/design.md §7.6): `min-h-[100svh]` + `justify-center`
 //      + `pt-16` (64px = navbar). Nada de padding calibrado à mão.
-//   3. COLUNA ÚNICA CENTRALIZADA (max-w-2xl mx-auto text-center), ecoando o slot de
-//      recomendação logo abaixo — o H1 anuncia a recomendação e o CTA leva até ela.
+//   3. COLUNA ÚNICA CENTRALIZADA em `max-w-3xl` (48rem), ecoando o slot de recomendação logo
+//      abaixo — o H1 anuncia a recomendação e o CTA leva até ela. O invólucro largo não alarga a
+//      leitura: o parágrafo tem medida própria (`max-w-[44ch]`), então o que o 3xl muda é só a
+//      largura disponível para o H1. Reduzir de volta para 2xl faz o título quebrar de novo.
 //   4. H1 NA ESCALA ÚNICA (design-system.md §3): clamp(2.7rem, 5.1vw, 4.9rem), peso 600
 //      (nunca font-black), lh 0.98, ls -0.034em. Igual em TODA página de destino.
 //   5. UM ÚNICO OBJETO DOURADO: o CTA (gradiente único §2). Eyebrow é Verde Selva
@@ -38,9 +42,9 @@ export default function TransferHero({ niche }: { niche: Niche }) {
   return (
     <section
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pt-16"
-      style={{ background: "hsl(40,33%,97%)" }}
+      style={{ background: "hsl(0,0%,100%)" }}
     >
-      {/* Grão: dá textura ao Areia sem introduzir cor — impede o claro de ler como chapado. */}
+      {/* Grão: dá textura ao branco sem introduzir cor — impede o claro de ler como chapado. */}
       <div
         className="rf-grain pointer-events-none absolute inset-0 opacity-[0.055]"
         style={{ mixBlendMode: "multiply" }}
@@ -48,7 +52,7 @@ export default function TransferHero({ niche }: { niche: Niche }) {
       />
 
       <div className="section-container relative z-10 py-10">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto max-w-3xl text-center">
           <p className="rf-eyebrow rf-rise rf-d1">{t.eyebrow}</p>
 
           <h1

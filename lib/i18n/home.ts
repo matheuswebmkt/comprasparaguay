@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/home.ts
-// Version: 3.5
-// Nome da Versão: "Chaves `constelacao` removidas dos 3 idiomas — o componente da home foi deletado"
+// Version: 3.16
+// Nome da Versão: "PilaresFoz aponta para /roteiros-de-compras/[slug] — a rota /atrativos saiu do site"
 //
 // Só strings de UI fixa. `exploreFoz` e `buyTicketButton` não existem: o primeiro morreu junto com
 // o componente `ExploreFoz` (virou `PilaresFoz`), o segundo era chave morta.
@@ -164,8 +164,8 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     dores: {
       eyebrow: "O cenário",
-      title: "Comprar no Paraguai é tentador. Planejar a compra é outra história.",
-      titleDestaque: "Planejar a compra",
+      title: "Comprar no Paraguai é tentador. Organizar a logística é outra história.",
+      titleDestaque: "Organizar a logística",
       subtitle: "Quem faz compras na fronteira por conta própria conhece cada um desses momentos:",
       items: [
         "Horas de pesquisa entre lojas, câmbio e cota",
@@ -180,49 +180,61 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       bridge: "É para resolver exatamente isso que o Compras Paraguay existe.",
     },
     autoridade: {
-      eyebrow: "A nossa resposta",
-      title: "Nada é automático. É um roteiro de compras feito por especialistas na fronteira.",
-      titleDestaque: "especialistas na fronteira",
+      /* ⚠️ ESTA SEÇÃO NASCE DA HERO, não de um raciocínio sobre "autoridade". A hero promete: te
+         levamos às compras, ida e volta a partir do seu hotel, guia especialista. Aqui essa promessa
+         vira mecanismo, em três movimentos: a data → o veículo privativo → o guia.
+         ⛔ O que NÃO pode voltar: "montar", "planejar", "receber o roteiro", "dizer o que quer
+         comprar". Não existe catálogo, nem venda online, nem lista de itens — o visitante contrata um
+         dia conduzido, não um documento nem um carrinho.
+         Os passos respondem, um a um, às dores da seção anterior: a logística que alguém tem que
+         fazer, o transporte que come o tempo de comprar, e chegar sem saber a qual loja ir.
+         §21.4 — nenhuma afirmação de gratuidade; §21.5 — "orçamento" é o DINHEIRO DO VISITANTE. */
+      eyebrow: "Compras no Paraguai",
+      title: "Faça suas compras e retorne ao Brasil com segurança.",
+      titleDestaque: "com segurança",
       subtitle:
-        "Qualquer site te joga no meio das galerias de Ciudad del Este. O que ninguém automatiza é um especialista olhando para o que você quer comprar.",
-      imgAlt: "Especialista em compras na fronteira da Compras Paraguay",
+        "Logística, câmbio, loja certa, horário de cada uma, fila da ponte, tudo resolvido. Um dia de compras com quem conhece Ciudad del Este por dentro.",
+      imgAlt: "Guia especialista da Compras Paraguay no dia de compras em Ciudad del Este",
       passos: [
         {
           n: "1",
-          titulo: "Você conta o que quer comprar",
+          titulo: "Você escolhe a data",
           texto:
-            "Eletrônicos, perfumes, câmbio, orçamento — e o quanto você pode trazer dentro da cota.",
+            "Você decide o dia e solicita a reserva.",
         },
         {
           n: "2",
-          titulo: "Um especialista na fronteira monta o roteiro",
+          titulo: "Veículo privativo busca você no seu hotel",
           texto:
-            "Quem conhece Ciudad del Este de verdade define lojas, horários e a ordem do seu dia de compras.",
+            "Ida e volta com um guia especialista a partir da sua hospedagem em Foz do Iguaçu.",
         },
         {
           n: "3",
-          titulo: "Você recebe seu roteiro de compras",
+          titulo: "Você faz suas compras no Paraguai",
           texto:
-            "Onde cada coisa fica, quanto tempo levar e o que evitar — antes de cruzar a ponte.",
+            "Quem conhece Ciudad del Este de verdade te leva às lojas, no horário de cada uma e orienta sobre suas compras pra voltar ao Brasil.",
         },
       ],
-      afirma1: "Compras sem perrengue, da travessia à volta — é o nosso compromisso.",
-      afirma2: "Revisado por um especialista que conhece as lojas e os horários da fronteira. Nada aqui é gerado automático.",
-      afirma3: "O roteiro respeita o seu orçamento — do câmbio ao valor que você planeja gastar.",
+      afirma1: "Compras sem perrengue, da saída do hotel à volta — é o nosso compromisso.",
+      afirma2: "Quem conduz o seu dia de compras é um guia especialista nesse serviço.",
+      afirma3: "O dia respeita o seu orçamento — do câmbio ao valor que você planeja gastar.",
     },
     pilares: {
       eyebrow: "Explore a fronteira",
       items: [
-        { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Compras no Paraguai", hint: "O que comprar e horários" },
-        { href: "/roteiros-de-compras", label: "Roteiros de compras", hint: "Ciudad del Este, duty free e shoppings" },
-        { href: "/transfer", label: "Transfer", hint: "Chegar e voltar" },
+        { href: "/roteiros-de-compras/compras-paraguai-ciudad-del-este", label: "Compras no Paraguai", hint: "Logística em Ciudad del Este" },
+        { href: "/roteiros-de-compras", label: "Roteiros de compras", hint: "Duty Free, Argentina e mais" },
+        { href: "/transfer", label: "Transfer", hint: "Privativo ida e volta" },
         { href: "/triplice-fronteira", label: "Tríplice Fronteira", hint: "Brasil, Argentina e Paraguai" },
       ],
     },
     ctaFinal: {
-      title: "Não vá para a ponte sem um plano.",
+      /* Fechamento: o serviço dito de frente (quem leva, com o quê, e o retorno ao Brasil), no mesmo
+         registro do hero. Não volta para aqui "plano", "roteiro", "receba o seu" — nada de documento,
+         nada de canal (§21.2), nada de preço (§21.7). */
+      title: "Nós levamos você às compras no Paraguai.",
       subtitle:
-        "Um roteiro de compras bem organizado economiza seu tempo e seu dinheiro em Ciudad del Este. Receba o seu com as melhores lojas e os horários que importam.",
+        "Sua logística de ida e volta com segurança, veículo privativo, guia especialista e retorno ao Brasil com as compras feitas.",
     },
     roteirosHome: {
       eyebrow: "Roteiros prontos",
@@ -307,8 +319,8 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     dores: {
       eyebrow: "The scenario",
-      title: "Shopping in Paraguay is tempting. Planning it is another story.",
-      titleDestaque: "Planning it",
+      title: "Shopping in Paraguay is tempting. Organizing the logistics is another story.",
+      titleDestaque: "Organizing the logistics",
       subtitle: "Anyone who shops the border on their own knows each of these moments:",
       items: [
         "Hours of research across stores, exchange rates and allowances",
@@ -323,49 +335,51 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       bridge: "It's exactly this that Compras Paraguay exists to solve.",
     },
     autoridade: {
-      eyebrow: "Our answer",
-      title: "Nothing is automatic. It's a shopping plan built by border specialists.",
-      titleDestaque: "border specialists",
+      /* Tradução da matriz pt: o título espelha a hero ("Te levamos às compras..." → "We take you
+         to..."), não é frase de autoridade solta. `titleDestaque` é substring EXATA do título. */
+      eyebrow: "Shopping in Paraguay",
+      title: "Do your shopping and get back to Brazil safely.",
+      titleDestaque: "safely",
       subtitle:
-        "Any website can drop you in the middle of Ciudad del Este's galleries. What no one automates is a specialist looking at what you want to buy.",
-      imgAlt: "Compras Paraguay border-shopping specialist",
+        "Logistics, currency, the right store, opening hours, the queue at the bridge — all handled. A shopping day with someone who knows Ciudad del Este from the inside.",
+      imgAlt: "Compras Paraguay specialist guide on the shopping day in Ciudad del Este",
       passos: [
         {
           n: "1",
-          titulo: "You tell us what you want to buy",
+          titulo: "You choose the date",
           texto:
-            "Electronics, perfumes, currency, budget — and how much you can bring back within the allowance.",
+            "You decide the day and request the reservation.",
         },
         {
           n: "2",
-          titulo: "A border specialist builds the plan",
+          titulo: "A private vehicle picks you up at your hotel",
           texto:
-            "Someone who really knows Ciudad del Este sets the stores, hours and order of your shopping day.",
+            "Round trip with a specialist guide from your accommodation in Foz do Iguaçu.",
         },
         {
           n: "3",
-          titulo: "You receive your shopping plan",
+          titulo: "You do your shopping in Paraguay",
           texto:
-            "Where each thing is, how long to take and what to skip — before you cross the bridge.",
+            "Someone who truly knows Ciudad del Este takes you to the stores, at each one's hours, and advises on your purchases for the way back to Brazil.",
         },
       ],
-      afirma1: "Stress-free shopping, from the crossing to the way back — that's our commitment.",
-      afirma2: "Reviewed by a specialist who knows the border's stores and hours. Nothing here is auto-generated.",
-      afirma3: "The plan respects your budget — from the exchange rate to the amount you plan to spend.",
+      afirma1: "Stress-free shopping, from leaving the hotel to coming back — that's our commitment.",
+      afirma2: "The one running your shopping day is a guide who specializes in this service.",
+      afirma3: "The day respects your budget — from the exchange rate to what you plan to spend.",
     },
     pilares: {
       eyebrow: "Explore the frontier",
       items: [
-        { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Shopping in Paraguay", hint: "What to buy and hours" },
-        { href: "/roteiros-de-compras", label: "Shopping guides", hint: "Ciudad del Este, duty free and malls" },
-        { href: "/transfer", label: "Transfer", hint: "Getting there and back" },
+        { href: "/roteiros-de-compras/compras-paraguai-ciudad-del-este", label: "Shopping in Paraguay", hint: "Logistics in Ciudad del Este" },
+        { href: "/roteiros-de-compras", label: "Shopping guides", hint: "Duty free, Argentina and more" },
+        { href: "/transfer", label: "Transfer", hint: "Private, round trip" },
         { href: "/triplice-fronteira", label: "Triple Frontier", hint: "Brazil, Argentina and Paraguay" },
       ],
     },
     ctaFinal: {
-      title: "Don't cross the bridge without a plan.",
+      title: "We take you shopping in Paraguay.",
       subtitle:
-        "A well-organized shopping guide saves your time and money in Ciudad del Este. Get yours with the best stores and the hours that matter.",
+        "Your round trip taken care of, with safety: private vehicle, specialist guide and the return to Brazil with your purchases done.",
     },
     roteirosHome: {
       eyebrow: "Ready-made itineraries",
@@ -450,8 +464,8 @@ export const HOME_UI: Record<Locale, HomeUI> = {
     },
     dores: {
       eyebrow: "El escenario",
-      title: "Comprar en Paraguay es tentador. Planear la compra es otra historia.",
-      titleDestaque: "Planear la compra",
+      title: "Comprar en Paraguay es tentador. Organizar la logística es otra historia.",
+      titleDestaque: "Organizar la logística",
       subtitle: "Quien compra en la frontera por su cuenta conoce cada uno de estos momentos:",
       items: [
         "Horas de investigación entre tiendas, cambio y cuota",
@@ -466,49 +480,51 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       bridge: "Es exactamente para resolver esto que existe Compras Paraguay.",
     },
     autoridade: {
-      eyebrow: "Nuestra respuesta",
-      title: "Nada es automático. Es una ruta de compras hecha por especialistas en la frontera.",
-      titleDestaque: "especialistas en la frontera",
+      /* Tradução da matriz pt. Título espelhando a hero ("Te llevamos hasta..."). O topônimo continua
+         "Foz do Iguaçu" também no es — é assim que o resto do site em espanhol escreve a cidade. */
+      eyebrow: "Compras en Paraguay",
+      title: "Haz tus compras y vuelve a Brasil con seguridad.",
+      titleDestaque: "con seguridad",
       subtitle:
-        "Cualquier sitio web te suelta en medio de las galerías de Ciudad del Este. Lo que nadie automatiza es un especialista mirando lo que quieres comprar.",
-      imgAlt: "Especialista en compras en la frontera de Compras Paraguay",
+        "Logística, cambio, la tienda correcta, el horario de cada una, la fila del puente, todo resuelto. Un día de compras con quien conoce Ciudad del Este por dentro.",
+      imgAlt: "Guía especialista de Compras Paraguay en el día de compras en Ciudad del Este",
       passos: [
         {
           n: "1",
-          titulo: "Nos cuentas qué quieres comprar",
+          titulo: "Eliges la fecha",
           texto:
-            "Electrónicos, perfumes, cambio, presupuesto — y cuánto puedes traer dentro de la cuota.",
+            "Tú decides el día y solicitas la reserva.",
         },
         {
           n: "2",
-          titulo: "Un especialista en la frontera arma la ruta",
+          titulo: "Un vehículo privado te recoge en tu hotel",
           texto:
-            "Quien conoce Ciudad del Este de verdad define tiendas, horarios y el orden de tu día de compras.",
+            "Ida y vuelta con un guía especialista desde tu alojamiento en Foz do Iguaçu.",
         },
         {
           n: "3",
-          titulo: "Recibes tu ruta de compras",
+          titulo: "Haces tus compras en Paraguay",
           texto:
-            "Dónde está cada cosa, cuánto tiempo llevar y qué evitar — antes de cruzar el puente.",
+            "Quien conoce Ciudad del Este de verdad te lleva a las tiendas, en el horario de cada una y te orienta sobre tus compras para volver a Brasil.",
         },
       ],
-      afirma1: "Compras sin estrés, del cruce a la vuelta — es nuestro compromiso.",
-      afirma2: "Revisado por un especialista que conoce las tiendas y los horarios de la frontera. Nada aquí es generado automáticamente.",
-      afirma3: "La ruta respeta tu presupuesto — del tipo de cambio al monto que planeas gastar.",
+      afirma1: "Compras sin estrés, de salir del hotel a volver — es nuestro compromiso.",
+      afirma2: "Quien conduce tu día de compras es un guía especialista en este servicio.",
+      afirma3: "El día respeta tu presupuesto — del tipo de cambio al monto que planeas gastar.",
     },
     pilares: {
       eyebrow: "Explora la frontera",
       items: [
-        { href: "/atrativos/compras-paraguai-ciudad-del-este", label: "Compras en Paraguay", hint: "Qué comprar y horarios" },
-        { href: "/roteiros-de-compras", label: "Guías de compras", hint: "Ciudad del Este, duty free y shoppings" },
-        { href: "/transfer", label: "Transfer", hint: "Ir y volver" },
+        { href: "/roteiros-de-compras/compras-paraguai-ciudad-del-este", label: "Compras en Paraguay", hint: "Logística en Ciudad del Este" },
+        { href: "/roteiros-de-compras", label: "Guías de compras", hint: "Duty Free, Argentina y más" },
+        { href: "/transfer", label: "Transfer", hint: "Privado, ida y vuelta" },
         { href: "/triplice-fronteira", label: "Triple Frontera", hint: "Brasil, Argentina y Paraguay" },
       ],
     },
     ctaFinal: {
-      title: "No cruces el puente sin un plan.",
+      title: "Te llevamos de compras por Paraguay.",
       subtitle:
-        "Una guía de compras bien organizada ahorra tu tiempo y tu dinero en Ciudad del Este. Recibe la tuya con las mejores tiendas y los horarios que importan.",
+        "Tu logística de ida y vuelta con seguridad, vehículo privado, guía especialista y regreso a Brasil con las compras hechas.",
     },
     roteirosHome: {
       eyebrow: "Itinerarios listos",

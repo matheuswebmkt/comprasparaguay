@@ -1,5 +1,5 @@
 // Filepath: components/footer.tsx
-// Version: 5.0
+// Version: 5.1
 // Nome da Versão: "Footer claro — Areia, no padrão de fundo do projeto"
 //
 // ⚠️ FUNDO AREIA. O footer era navy escuro (`linear-gradient(160deg, #0F2A47, #0A1C30)`) com texto
@@ -116,7 +116,7 @@ const Footer = () => {
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 md:justify-end">
               {[
-                { href: "/atrativos/compras-paraguai-ciudad-del-este", label: t.roteirosLink },
+                { href: "/roteiros-de-compras/compras-paraguai-ciudad-del-este", label: t.roteirosLink },
                 { href: "/sobre", label: t.aboutLink },
                 { href: "/aviso-legal", label: t.legalLink },
                 { href: "/contato", label: t.contactLink },

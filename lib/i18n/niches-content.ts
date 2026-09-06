@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/niches-content.ts
-// Version: 1.1
-// Nome da Versão: "TRANSFER_PITCH perde `cta`/`message`/`whatsapp` — o card converte pelo modal de reserva"
+// Version: 1.6
+// Nome da Versão: "Saindo o 'roteiro' do título de atrativos: 'Os destinos de compra mais buscados…'"
 //
 // O `pt` é a matriz e vive em `app/data/niches.ts`; aqui só en/es (consumidores usam
 // `NICHES_CONTENT[locale][slug] ?? niche`). Os 6 nichos de gastronomia não têm página própria
@@ -72,10 +72,10 @@ export const NICHES_CONTENT: Record<Locale, Record<string, NicheContentI18n>> = 
   en: {
     transfer: {
       eyebrow: "Transfer · Shopping on the Frontier",
-      h1: "Your shopping day without the hassle",
+      h1: "Shopping in Paraguay without the hassle",
       h1Destaque: "without the hassle",
       heroLead: [
-        "Ciudad del Este, the Argentine duty free and the malls of Foz are minutes apart — but the border has hours, queues and crossings that change your day. With a transfer, you cross at the right time and come back with your bags without stress.",
+        "With a transfer/private car, you cross at the right time and come back with your purchases without stress.",
       ],
       heroCta: "See transfer",
       nicheNoun: "transfer",
@@ -125,10 +125,10 @@ export const NICHES_CONTENT: Record<Locale, Record<string, NicheContentI18n>> = 
   es: {
     transfer: {
       eyebrow: "Transfer · Compras en la Frontera",
-      h1: "Tu día de compras sin complicaciones",
+      h1: "Compras en Paraguay sin complicaciones",
       h1Destaque: "sin complicaciones",
       heroLead: [
-        "Ciudad del Este, el duty free argentino y los shoppings de Foz están a pocos minutos uno del otro — pero la frontera tiene horarios, filas y cruces que cambian tu día. Con un traslado, cruzas a la hora justa y vuelves con las bolsas sin estrés.",
+        "Con un traslado/auto privado, cruzas en el momento justo y vuelves con las compras sin estrés.",
       ],
       heroCta: "Ver transfer",
       nicheNoun: "transfer",
@@ -202,21 +202,21 @@ export const TRANSFER_ATRATIVOS_SLUGS = [
 export const TRANSFER_ATRATIVOS: Record<Locale, TransferAtrativosI18n> = {
   pt: {
     eyebrow: "Transfer na Tríplice Fronteira",
-    title: "Os transfers mais buscados no roteiro de compras",
+    title: "Os destinos de compra mais buscados na Tríplice Fronteira",
     subtitle:
-      "De Ciudad del Este à noite argentina e ao trajeto de chegada: os destinos de compras que quase todo mundo resolve com um transfer em Foz.",
+      "Ciudad del Este, Puerto Iguazú e mais",
   },
   en: {
     eyebrow: "Transfer in the Triple Frontier",
-    title: "The most sought-after transfers for shopping",
+    title: "The most sought-after shopping destinations in the Triple Frontier",
     subtitle:
-      "From Ciudad del Este to the Argentine night and the arrival route: the shopping stops most people sort out with a transfer in Foz.",
+      "Ciudad del Este, Puerto Iguazú and more",
   },
   es: {
     eyebrow: "Transfer en la Triple Frontera",
-    title: "Los traslados más buscados para las compras",
+    title: "Los destinos de compras más buscados en la Triple Frontera",
     subtitle:
-      "De Ciudad del Este a la noche argentina y el trayecto de llegada: los destinos de compras que casi todos resuelven con un traslado en Foz.",
+      "Ciudad del Este, Puerto Iguazú y más",
   },
 };
 
@@ -245,23 +245,23 @@ export const TRANSFER_PITCH: Record<Locale, TransferPitchI18n> & {
   itemSlug: "compras-paraguay-transfer",
   pt: {
     eyebrow: "COMPRAS NA TRÍPLICE FRONTEIRA",
-    title: "Transfers para o roteiro de compras",
+    title: "Transfers e privativos para suas compras no Paraguai",
     description:
-      "Especialistas em Foz do Iguaçu, Paraguai e Argentina — transfers para Ciudad del Este, duty free e shoppings, com a fronteira no horário certo.",
+      "Guias especialistas em Foz do Iguaçu, Paraguai e Argentina — visite Ciudad del Este, Puerto Iguazú, Duty Free e mais na Tríplice Fronteira.",
     tags: ["Roteiro de compras", "Transfers", "Tríplice Fronteira"],
   },
   en: {
     eyebrow: "SHOPPING IN THE TRIPLE FRONTIER",
-    title: "Transfers for your shopping plan",
+    title: "Transfers and private cars for your shopping in Paraguay",
     description:
-      "Specialists in Foz do Iguaçu, Paraguay and Argentina — transfers to Ciudad del Este, the duty free and the malls, with the border timed right.",
+      "Specialist guides in Foz do Iguaçu, Paraguay and Argentina — visit Ciudad del Este, Puerto Iguazú, the duty free and more in the Triple Frontier.",
     tags: ["Shopping plan", "Transfers", "Triple Frontier"],
   },
   es: {
     eyebrow: "COMPRAS EN LA TRIPLE FRONTERA",
-    title: "Traslados para tu plan de compras",
+    title: "Traslados y autos privados para tus compras en Paraguay",
     description:
-      "Especialistas en Foz do Iguaçu, Paraguay y Argentina — traslados a Ciudad del Este, el duty free y los shoppings, con la frontera a la hora justa.",
+      "Guías especialistas en Foz do Iguaçu, Paraguay y Argentina — visita Ciudad del Este, Puerto Iguazú, el Duty Free y más en la Triple Frontera.",
     tags: ["Plan de compras", "Traslados", "Triple Frontera"],
   },
 };

@@ -1,6 +1,6 @@
 // Filepath: components/atrativos/AttractionPageContent.tsx
-// Version: 3.1
-// Nome da Versão: "CTA sempre 'Reservar data' + calendário — a leitura de `hasLink` saiu"
+// Version: 3.3
+// Nome da Versão: "Página do dia de compras: bloco de relacionados com a copy dos destinos da fronteira"
 "use client";
 
 import Image from "next/image";
@@ -17,6 +17,8 @@ import { useLocale } from "@/components/i18n/LocaleProvider";
 import { ATTRACTION_DETAIL_UI } from "@/lib/i18n/attraction-detail";
 import { ATTRACTIONS_I18N, ATTRACTION_NAMES, attractionSubjectI18n } from "@/lib/i18n/attractions";
 import { ATTRACTION_FAQS } from "@/lib/i18n/attraction-faqs";
+import { TRANSFER_ATRATIVOS } from "@/lib/i18n/niches-content";
+import { RESERVA_ATTRACTION_SLUG } from "@/components/ReservarDataCta";
 import FaqAccordion from "@/components/FaqAccordion";
 
 export default function AttractionPageContent({
@@ -262,7 +264,7 @@ export default function AttractionPageContent({
                     contraste 3.02:1 só passa como texto grande (design-system.md §2).
                     text-sm reprova WCAG AA. */}
                 <TicketOfferButton
-                  href={`/atrativos/${a.slug}`}
+                  href={`/roteiros-de-compras/${a.slug}`}
                   ctaType="atrativo_ingresso"
                   itemSlug={a.slug}
                   campaign="atrativos-ingresso"
@@ -313,11 +315,17 @@ export default function AttractionPageContent({
             `items` SEM o atrativo atual (o carrossel não repete a página em que se
             está) e fundo areia (alternância: FAQ branco → este areia → RoteirosCta
             branco). */}
+        {/* ⚠️ Copy do bloco: só na página do PRODUTO (o dia de compras) ele vira "destinos da
+            fronteira". `TRANSFER_ATRATIVOS` traz eyebrow, título e subtítulo nos 3 idiomas — o mesmo
+            trio da seção equivalente do `/transfer`. Não mover para o padrão do dicionário
+            (`relatedAttractions`): o bloco é compartilhado, e lá "destinos de compra" renomearia
+            também as páginas de Cataratas, Itaipu e Parque das Aves. */}
         {related.length > 0 && (
           <RelatedAttractionsSection
             source={`relacionado-${a.slug}`}
             items={related}
             fundo="areia"
+            {...(a.slug === RESERVA_ATTRACTION_SLUG ? TRANSFER_ATRATIVOS[locale] : {})}
           />
         )}
 

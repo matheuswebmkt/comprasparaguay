@@ -1,13 +1,15 @@
 // Filepath: components/home/AutoridadeSection.tsx
-// Version: 2.3
-// Nome da Versão: "Fundo vira BRANCO — a entrada do transfer na home deslocou a alternância (§7.5)."
-// Baseado na Versão: 2.2 ("afirmações reordenadas — humano, compromisso, orçamento — e peso suavizado
-// de semibold para normal").
+// Version: 3.1
+// Nome da Versão: "Copy na chave da hero: te levamos, veículo privativo, guia especialista"
+// Baseado na Versão: 2.3 ("fundo vira branco — a entrada do transfer na home deslocou a alternância").
 //
-// A PROVA (§21.1 camada 4) + o MECANISMO (os 3 passos, migrados do ComoFunciona por decisão do
-// usuário — a seção foi removida da home). O loop de destaque segue o padrão §7.3: um passo em
-// destaque por vez, pausa no hover/foco, e `prefers-reduced-motion` desliga o ciclo E o
-// esmaecimento (todos legíveis ao mesmo tempo).
+// A PROVA (§21.1 camada 4) + o MECANISMO. A estrutura é a mesma de sempre (3 passos em loop §7.3 →
+// divisória fina → 3 afirmações); o que mudou foi o que os números contam: data marcada → carro
+// privativo no hotel → guia especialista da fronteira ao lado. Antes eram três etapas de PLANEJAMENTO
+// ("você conta → montamos → você recebe"), herança do site de conteúdo que EXPLICAVA um roteiro em
+// vez de vender um dia — e cada passo de hoje responde, um a um, a uma das dores da seção anterior.
+// O loop de destaque segue o padrão §7.3: um passo em destaque por vez, pausa no hover/foco, e
+// `prefers-reduced-motion` desliga o ciclo E o esmaecimento (todos legíveis ao mesmo tempo).
 // Ordem (pedido do usuário): mecanismo → divisória fina e sutil → afirmações.
 // Estrelas = COMPROMISSO (não avaliação): contorno dourado (`fill="none"`) — dourado como
 // ACENTO GRÁFICO é permitido (§2 proíbe dourado como COR DE TEXTO, não como desenho).
@@ -155,7 +157,7 @@ export default function AutoridadeSection() {
         />
 
         {/* Afirmações — humano, compromisso, orçamento (ícones combinam com a afirmação, não com a
-            posição: CheckCircle2 = revisão humana, estrelas = compromisso, Wallet = orçamento).
+            posição: CheckCircle2 = quem conduz o dia, estrelas = compromisso, Wallet = orçamento).
             Estrelas: contorno dourado, acento gráfico §2 — são promessa, não avaliação.
             Peso normal (não semibold) por decisão do usuário. */}
         <div className="mx-auto mt-14 grid max-w-5xl gap-8 sm:grid-cols-3">

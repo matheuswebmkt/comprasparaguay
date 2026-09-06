@@ -36,8 +36,8 @@ export function buildTrackedUrl(destination: string, utm: UtmParams = {}): strin
 
 /**
  * Anexa UTM "oculta" de origem INTERNA a um caminho do próprio site.
- * Ex: internalUrl("/atrativos/cataratas", "foz-alem") →
- *     "/atrativos/cataratas?utm_source=interno-foz-alem&utm_medium=interno"
+ * Ex: internalUrl("/roteiros-de-compras/cataratas-jl-shopping", "foz-alem") →
+ *     "/roteiros-de-compras/cataratas-jl-shopping?utm_source=interno-foz-alem&utm_medium=interno"
  * No dashboard, o painel de utm_source separa "interno-*" do tráfego externo (ig, direto).
  * O `canonical` (sem query) de cada página garante que o SEO consolida na URL limpa.
  */

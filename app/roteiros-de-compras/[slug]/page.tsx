@@ -1,6 +1,6 @@
-// Filepath: app/atrativos/[slug]/page.tsx
-// Version: 4.1
-// Nome da Versão: "FAQ sem bloco de ingresso — a leitura da config de oferta saiu da página"
+// Filepath: app/roteiros-de-compras/[slug]/page.tsx
+// Version: 5.0
+// Nome da Versão: "Rota migra de /atrativos/[slug] para /roteiros-de-compras/[slug] — '/atrativos' é legado"
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -47,7 +47,7 @@ export async function generateMetadata({
   return pageMetadata({
     title: attractionSeoTitle(a),
     description: attractionSeoDescription(a),
-    path: `/atrativos/${a.slug}`,
+    path: `/roteiros-de-compras/${a.slug}`,
     keywords: attractionKeywords(a),
     silo: "atrativos",
     image: a.cover,
@@ -80,20 +80,20 @@ export default async function AttractionPage({
         data={breadcrumbSchema([
           { name: "Início", url: "/" },
           { name: "Roteiros de compras", url: "/roteiros-de-compras" },
-          { name: a.name, url: `/atrativos/${a.slug}` },
+          { name: a.name, url: `/roteiros-de-compras/${a.slug}` },
         ])}
       />
       <JsonLd
         data={articleSchema({
           headline: `${a.name}: ingresso e visita em Foz do Iguaçu`,
           description: attractionSeoDescription(a),
-          url: `/atrativos/${a.slug}`,
+          url: `/roteiros-de-compras/${a.slug}`,
           datePublished: a.publishedAt ?? PUBLISHED_FALLBACK_ISO,
           dateModified: a.updatedAt ?? a.publishedAt ?? PUBLISHED_FALLBACK_ISO,
           image: a.cover,
         })}
       />
-      {/* Página de UM item → `ViewContent` (matriz §1.5). O hub `/atrativos` NÃO leva isto: lista é
+      {/* Página de UM item → `ViewContent` (matriz §1.5). O hub `/roteiros-de-compras` NÃO leva isto: lista é
           `view_item_list`, e inflar o evento com pageview de listagem estragaria o retargeting. */}
       <ViewContentOnLoad vertical={VERTICALS.atrativos} item_slug={a.slug} />
       <AttractionPageContent
