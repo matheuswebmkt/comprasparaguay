@@ -1,6 +1,6 @@
 // Filepath: app/sobre/page.tsx
-// Version: 4.1
-// Nome da Versão: "Conteúdo visível extraído para SobreContent (client, i18n)"
+// Version: 4.2
+// Nome da Versão: "Metadata e JSON-LD na narrativa Compras PY (dia de compras na fronteira)"
 
 import type { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
@@ -13,17 +13,15 @@ import { pageMetadata, webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // "Sobre o Compras Paraguay | Compras Paraguay". `pageMetadata` usa título absoluto e ainda traz canonical,
 // OG e robots, que faltavam por completo aqui.
 export const metadata: Metadata = pageMetadata({
-  title: "Sobre o Compras Paraguay — quem faz a curadoria em Foz do Iguaçu",
-  // ⓘ "o seu orçamento" aqui é o DINHEIRO DO VISITANTE — sentido explicitamente permitido por
-  // §21.5 (o banido é orçamento = cotação nossa). Não trocar numa varredura de léxico.
+  title: "Sobre o Compras Paraguay — quem conduz suas compras na fronteira",
   description:
-    "Conheça o Compras Paraguay: curadoria de roteiros em Foz do Iguaçu, feita por especialistas na cidade, para você aproveitar melhor o seu tempo e o seu orçamento.",
+    "Conheça o Compras Paraguay: curadoria de compras na tríplice fronteira, feita por quem vive Foz do Iguaçu — dias de compras em Ciudad del Este e Puerto Iguazú com guia especialista e logística de ida e volta.",
   path: "/sobre",
   keywords: [
     "Compras Paraguay",
     "quem é o Compras Paraguay",
-    "curadoria de roteiros em Foz do Iguaçu",
-    "guia local de roteiros em Foz do Iguaçu",
+    "curadoria de compras na fronteira",
+    "guia especialista em Ciudad del Este",
   ],
   type: "website",
 });
@@ -36,7 +34,7 @@ export default function SobrePage() {
           type: "AboutPage",
           name: "Sobre o Compras Paraguay",
           description:
-            "Curadoria de roteiros e experiências em Foz do Iguaçu, revisada por especialistas na cidade.",
+            "Curadoria de compras na tríplice fronteira: dias de compras em Ciudad del Este e Puerto Iguazú conduzidos por guias especialistas, com atendimento da agência parceira.",
           url: "/sobre",
         })}
       />

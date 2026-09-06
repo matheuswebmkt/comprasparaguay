@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/home.ts
-// Version: 3.16
-// Nome da Versão: "PilaresFoz aponta para /roteiros-de-compras/[slug] — a rota /atrativos saiu do site"
+// Version: 3.17
+// Nome da Versão: "Footer na narrativa Compras PY (tagline/disclaimer) + links hub, transfer e tríplice"
 //
 // Só strings de UI fixa. `exploreFoz` e `buyTicketButton` não existem: o primeiro morreu junto com
 // o componente `ExploreFoz` (virou `PilaresFoz`), o segundo era chave morta.
@@ -36,6 +36,9 @@ export interface HomeUI {
     tagline: string;
     followUs: string;
     roteirosLink: string;
+    roteirosHubLink: string;
+    transferLink: string;
+    tripleLink: string;
     aboutLink: string;
     legalLink: string;
     contactLink: string;
@@ -140,14 +143,17 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       viewMore: "Ver mais detalhes",
     },
     footer: {
-      tagline: "Planejamento de roteiros e experiências em Foz do Iguaçu.",
+      tagline: "O seu dia de compras na tríplice fronteira, conduzido por quem vive Foz do Iguaçu.",
       followUs: "Siga-nos",
       roteirosLink: "Compras no Paraguai",
+      roteirosHubLink: "Roteiros de compras",
+      transferLink: "Transfer",
+      tripleLink: "Tríplice Fronteira",
       aboutLink: "Sobre",
       legalLink: "Aviso Legal",
       contactLink: "Contato",
       disclaimer:
-        "O Compras Paraguay é um portal independente de curadoria turística. Não somos vendedores diretos de roteiros, transfers, hospedagens ou ingressos nem processamos pagamentos. Marcas e atrativos mencionados pertencem aos seus detentores. Orçamentos, reservas e emissões são operados por agências e parceiros homologados.",
+        "O Compras Paraguay é um portal independente de curadoria de compras na fronteira. Não somos vendedores diretos: não processamos pagamentos nem operamos diretamente o transporte ou as reservas. Marcas e destinos mencionados pertencem aos seus detentores; atendimento, reservas e emissões são conduzidos pela agência parceira e pelos estabelecimentos responsáveis.",
     },
     hero: {
       /* ⚠️ `h1Strong` cai dentro do `<em>` verde de `RoteirosHero` — é a KEYWORD EXATA que o H1
@@ -301,14 +307,17 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       viewMore: "See more details",
     },
     footer: {
-      tagline: "Itinerary planning and experiences in Foz do Iguaçu.",
+      tagline: "Your shopping day at the border, run by people who live in Foz do Iguaçu.",
       followUs: "Follow us",
       roteirosLink: "Shopping in Paraguay",
+      roteirosHubLink: "Shopping itineraries",
+      transferLink: "Transfer",
+      tripleLink: "Triple Frontier",
       aboutLink: "About",
       legalLink: "Legal notice",
       contactLink: "Contact",
       disclaimer:
-        "Compras Paraguay is an independent tourism curation portal. We are not direct sellers of itineraries, transfers, accommodation or tickets, nor do we process payments. Mentioned brands and attractions belong to their owners. Quotes, bookings and issuances are operated by accredited agencies and partners.",
+        "Compras Paraguay is an independent border shopping curation portal. We are not direct sellers: we don't process payments or directly run transport or bookings. Mentioned brands and destinations belong to their owners; service, bookings and issuances are handled by the partner agency and the responsible businesses.",
     },
     hero: {
       h1Before: "Your ",
@@ -446,14 +455,17 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       viewMore: "Ver más detalles",
     },
     footer: {
-      tagline: "Planificación de itinerarios y experiencias en Foz do Iguaçu.",
+      tagline: "Tu día de compras en la frontera, conducido por gente que vive Foz do Iguaçu.",
       followUs: "Síguenos",
       roteirosLink: "Compras en Paraguay",
+      roteirosHubLink: "Itinerarios de compras",
+      transferLink: "Transfer",
+      tripleLink: "Triple Frontera",
       aboutLink: "Sobre",
       legalLink: "Aviso legal",
       contactLink: "Contacto",
       disclaimer:
-        "Compras Paraguay es un portal independiente de curaduría turística. No somos vendedores directos de itinerarios, transfers, alojamientos ni entradas, ni procesamos pagos. Las marcas y atractivos mencionados pertenecen a sus titulares. Los presupuestos, reservas y emisiones son operados por agencias y socios acreditados.",
+        "Compras Paraguay es un portal independiente de curaduría de compras en la frontera. No somos vendedores directos: no procesamos pagos ni operamos directamente el transporte o las reservas. Las marcas y destinos mencionados pertenecen a sus titulares; la atención, las reservas y las emisiones las realizan la agencia asociada y los establecimientos responsables.",
     },
     hero: {
       h1Before: "Tus ",

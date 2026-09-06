@@ -1,6 +1,6 @@
 // Filepath: components/footer.tsx
-// Version: 5.1
-// Nome da Versão: "Footer claro — Areia, no padrão de fundo do projeto"
+// Version: 5.2
+// Nome da Versão: "Links do footer espelham o site atual (hub, transfer, tríplice) + social @roteirofoz"
 //
 // ⚠️ FUNDO AREIA. O footer era navy escuro (`linear-gradient(160deg, #0F2A47, #0A1C30)`) com texto
 // branco. Não há mais fundo escuro no site público (design-system §1) — inverter o footer exigiu
@@ -88,10 +88,10 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-3 md:justify-end">
               <a
-                href="https://instagram.com/comprasparaguay"
+                href="https://instagram.com/roteirosfoz"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram Compras Paraguay"
+                aria-label="Instagram @roteirosfoz"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-xl border bg-white transition-colors hover:bg-[hsl(40,33%,95%)]"
                 style={{ borderColor: BORDA }}
               >
@@ -101,10 +101,10 @@ const Footer = () => {
                 />
               </a>
               <a
-                href="https://www.facebook.com/comprasparaguay"
+                href="https://www.facebook.com/roteirofoz"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Facebook Compras Paraguay"
+                aria-label="Facebook @roteirofoz"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-xl border bg-white transition-colors hover:bg-[hsl(40,33%,95%)]"
                 style={{ borderColor: BORDA }}
               >
@@ -117,6 +117,9 @@ const Footer = () => {
             <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 md:justify-end">
               {[
                 { href: "/roteiros-de-compras/compras-paraguai-ciudad-del-este", label: t.roteirosLink },
+                { href: "/roteiros-de-compras", label: t.roteirosHubLink },
+                { href: "/transfer", label: t.transferLink },
+                { href: "/triplice-fronteira", label: t.tripleLink },
                 { href: "/sobre", label: t.aboutLink },
                 { href: "/aviso-legal", label: t.legalLink },
                 { href: "/contato", label: t.contactLink },
