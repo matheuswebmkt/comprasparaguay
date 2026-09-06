@@ -1,5 +1,5 @@
 // Filepath: lib/i18n/atrativos-foz.ts
-// Version: 2.0
+// Version: 2.1
 // Nome da Versão: "Foco Compras PY — dicionário do hub /roteiros-de-compras reescrito"
 //
 // Cobre só a parte VISÍVEL (client). JSON-LD (FAQ/ItemList/Breadcrumb/Article) e `metadata` continuam em
@@ -34,7 +34,7 @@ export const ATRATIVOS_FOZ_UI: Record<Locale, AtrativosFozUI> = {
   pt: {
     grid: {
       eyebrow: "Roteiro de compras",
-      title: "Os 5 destinos de compras da fronteira",
+      title: "Os 5 destinos de compras da Tríplice Fronteira",
       titleDestaque: "compras",
       subtitle:
         "Ciudad del Este, Duty Free e By Night de Puerto Iguazú e os shoppings de Foz — cada um com horários, dicas e a melhor ordem para o seu dia de compras.",
@@ -55,7 +55,7 @@ export const ATRATIVOS_FOZ_UI: Record<Locale, AtrativosFozUI> = {
   en: {
     grid: {
       eyebrow: "Shopping plan",
-      title: "The 5 border shopping destinations",
+      title: "The 5 Triple Frontier shopping destinations",
       titleDestaque: "shopping",
       subtitle:
         "Ciudad del Este, Puerto Iguazú's Duty Free and By Night, and the Foz malls — each with hours, tips and the best order for your shopping day.",
@@ -76,7 +76,7 @@ export const ATRATIVOS_FOZ_UI: Record<Locale, AtrativosFozUI> = {
   es: {
     grid: {
       eyebrow: "Ruta de compras",
-      title: "Los 5 destinos de compras de la frontera",
+      title: "Los 5 destinos de compras de la Triple Frontera",
       titleDestaque: "compras",
       subtitle:
         "Ciudad del Este, Duty Free y By Night de Puerto Iguazú y los shoppings de Foz — cada uno con horarios, consejos y el mejor orden para tu día de compras.",

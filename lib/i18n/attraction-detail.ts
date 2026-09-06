@@ -1,6 +1,6 @@
 // Filepath: lib/i18n/attraction-detail.ts
-// Version: 2.2
-// Nome da Versão: "CTA único 'Reservar data' — o 'Comprar ingresso' saiu junto com o modo Link direto"
+// Version: 2.3
+// Nome da Versão: "Eyebrow do destino: 'Destino · …' ("Atrativo" era legado de ingresso)"
 
 import type { Locale } from "./config";
 
@@ -30,7 +30,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
   pt: {
     breadcrumbHome: "Início",
     breadcrumbIndex: "Atrativos de Foz",
-    eyebrow: "Atrativo · Foz do Iguaçu",
+    eyebrow: "Destino · Foz do Iguaçu",
     about: "Sobre",
     highlights: "Destaques",
     ctaReserva: "Reservar data",
@@ -41,7 +41,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
   en: {
     breadcrumbHome: "Home",
     breadcrumbIndex: "Foz attractions",
-    eyebrow: "Attraction · Foz do Iguaçu",
+    eyebrow: "Destination · Foz do Iguaçu",
     about: "About",
     highlights: "Highlights",
     ctaReserva: "Reserve a date",
@@ -52,7 +52,7 @@ export const ATTRACTION_DETAIL_UI: Record<Locale, AttractionDetailUI> = {
   es: {
     breadcrumbHome: "Inicio",
     breadcrumbIndex: "Atractivos de Foz",
-    eyebrow: "Atractivo · Foz do Iguaçu",
+    eyebrow: "Destino · Foz do Iguaçu",
     about: "Sobre",
     highlights: "Destacados",
     ctaReserva: "Reservar fecha",

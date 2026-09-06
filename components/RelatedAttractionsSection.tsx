@@ -1,5 +1,5 @@
 // Filepath: components/RelatedAttractionsSection.tsx
-// Version: 2.0
+// Version: 2.1
 // Nome da Versão: "Seção de atrativos no padrão — .rf-section + .rf-head, fundo sancionado"
 //
 // Compartilhada por `/onde-comer`, `/triplice-fronteira` e as páginas de nicho. Mudança aqui
@@ -59,7 +59,7 @@ export default function RelatedAttractionsSection({
         <div className="rf-head">
           <p className="rf-eyebrow">{eyebrow ?? t.eyebrow}</p>
           <h2 className="rf-title">
-            <TituloComDestaque texto={title ?? t.title} destaque="Atrativos" />
+            <TituloComDestaque texto={title ?? t.title} destaque={t.titleDestaque} />
           </h2>
           <p className="rf-sub">{subtitle ?? t.subtitle}</p>
         </div>

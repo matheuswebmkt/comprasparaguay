@@ -1,5 +1,5 @@
 // Filepath: lib/i18n/shared.ts
-// Version: 1.4
+// Version: 1.5
 // Nome da Versão: "RoteirosCta: título/texto do serviço, CTA de reserva — `ctaPrincipal` e `ctaProntos` removidos"
 //
 // Mesma estratégia de lib/i18n/home.ts: só strings de UI fixa. Nomes de nicho (app/data/niches.ts) e dados
@@ -26,6 +26,8 @@ export interface SharedUI {
   relatedAttractions: {
     eyebrow: string;
     title: string;
+    /** Substring exata de `title` que recebe o itálico verde (`TituloComDestaque`). */
+    titleDestaque: string;
     subtitle: string;
     /* ⚠️ Saiu `dragHint` ("Arraste para o lado →"). O carrossel ganhou setas de verdade, e o
        texto (a) narrava a interface, (b) assumia arrasto — no desktop é scroll ou seta.
@@ -110,11 +112,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       subtitle: "Guias diretos ao ponto para cada tipo de programa — com a recomendação da nossa equipe em cada um.",
     },
     relatedAttractions: {
-      eyebrow: "Atrativos turísticos",
-      title: "Atrativos imperdíveis de Foz do Iguaçu",
-      subtitle: "Complete o seu roteiro com os principais pontos turísticos da região.",
-      prevLabel: "Ver atrativos anteriores",
-      nextLabel: "Ver próximos atrativos",
+      eyebrow: "Os destinos de compras",
+      title: "Os 5 roteiros de compras da Tríplice Fronteira",
+      titleDestaque: "5 roteiros de compras",
+      subtitle:
+        "Ciudad del Este, Duty Free, By Night e os shoppings de Foz — os cinco destinos do seu roteiro, com horários e dicas em cada página.",
+      prevLabel: "Ver destinos anteriores",
+      nextLabel: "Ver próximos destinos",
     },
     attractionCard: {
       learnMore: "Saber mais",
@@ -189,11 +193,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       subtitle: "Straight-to-the-point guides for every type of plan — with our team's recommendation in each one.",
     },
     relatedAttractions: {
-      eyebrow: "Tourist attractions",
-      title: "Must-see attractions in Foz do Iguaçu",
-      subtitle: "Complete your itinerary with the region's main tourist spots.",
-      prevLabel: "View previous attractions",
-      nextLabel: "View next attractions",
+      eyebrow: "Shopping destinations",
+      title: "The 5 shopping guides in the Triple Frontier",
+      titleDestaque: "5 shopping guides",
+      subtitle:
+        "Ciudad del Este, the Duty Free, By Night and the malls of Foz — the five stops of your shopping plan, with hours and tips on each page.",
+      prevLabel: "View previous destinations",
+      nextLabel: "View next destinations",
     },
     attractionCard: {
       learnMore: "Learn more",
@@ -263,11 +269,13 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       subtitle: "Guías directas al punto para cada tipo de plan — con la recomendación de nuestro equipo en cada una.",
     },
     relatedAttractions: {
-      eyebrow: "Atractivos turísticos",
-      title: "Atractivos imperdibles de Foz do Iguaçu",
-      subtitle: "Completa tu itinerario con los principales puntos turísticos de la región.",
-      prevLabel: "Ver atractivos anteriores",
-      nextLabel: "Ver próximos atractivos",
+      eyebrow: "Los destinos de compras",
+      title: "Las 5 guías de compras de la Triple Frontera",
+      titleDestaque: "5 guías de compras",
+      subtitle:
+        "Ciudad del Este, el Duty Free, el By Night y los shoppings de Foz — las cinco paradas de tu ruta de compras, con horarios y consejos en cada página.",
+      prevLabel: "Ver destinos anteriores",
+      nextLabel: "Ver próximos destinos",
     },
     attractionCard: {
       learnMore: "Saber más",
