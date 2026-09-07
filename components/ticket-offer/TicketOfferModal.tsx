@@ -1,7 +1,7 @@
 // Filepath: components/ticket-offer/TicketOfferModal.tsx
-// Version: 11.1
-// Nome da Versão: "Modo Link direto EXTINTO — todo atrativo é reserva de data: caem successDirect, "
-// "attractionMode/attractionNoLinkMode, o transporte automático e a leitura de hasLink"
+// Version: 11.2
+// Nome da Versão: "content_ids religado: o bundle do pedido (destino de entrada + extras) volta ao InitiateCheckout, ao Lead e ao espelho CAPI; chave local rgf_ticket_offer_draft → cp_"
+// Baseado na Versão: 11.1 ("Modo Link direto EXTINTO — todo atrativo é reserva de data")
 // Baseado na Versão: 10.1 ("Grava transportChecked no handoff pra tela de sucesso — Sprint 7")
 // Baseado na Versão: 10.0 ("Calendário do dia da visita/início (atrativo + roteiro pronto/personalizar) +
 // quantidade de ingressos (só atrativo) — DayCalendar/QuantityStepper, gate sequencial antes da
@@ -94,7 +94,7 @@ function newEventId(): string {
 
 // --- Item 3 (persistência) — sobrevive a fechar/reabrir E a um reload/atualização de página (sessionStorage:
 // dura enquanto a aba estiver aberta; limpa sozinho ao fechá-la — não fica PII pendurada indefinidamente). ---
-const DRAFT_STORAGE_KEY = "rgf_ticket_offer_draft";
+const DRAFT_STORAGE_KEY = "cp_ticket_offer_draft";
 
 interface PersistedDraft {
   nome: string;
@@ -363,6 +363,20 @@ export default function TicketOfferModal({
   const pedidoItems: string[] = isAtrativoCtx
     ? [detail?.itemSlug, ...extraAttractions].filter((s): s is string => Boolean(s))
     : (detail?.contentIds ?? []);
+  /**
+   * `content_ids` do pixel — o pacote deste pedido (matriz §1.3 / D7).
+   *
+   * Precedência: o bundle EXPLÍCITO trazido no `detail` (prop `contentIds` do botão, o caminho de um
+   * produto-pacote) e, na ausência dele, o `pedidoItems`: destino de entrada + extras marcados aqui
+   * dentro. É a mesma coisa que o visitante pediu, só que o encanamento do `contentIds` ficou órfão
+   * quando o produto "roteiro" saiu do site — sobrou o encanamento sem ninguém enchendo.
+   *
+   * Uma const só para as DUAS pontas (G1): o `Lead` do Pixel e o corpo do POST que alimenta o CAPI
+   * precisam mandar o MESMO array no MESMO `event_id`, senão o Meta deduplica e fica com uma das
+   * duas versões, não-determinística. Vazio → omitido por `taxonomyParams` (D8), nunca `[]`.
+   */
+  const leadContentIds: string[] =
+    detail?.contentIds && detail.contentIds.length > 0 ? detail.contentIds : pedidoItems;
   /** Ingressos, reservas de data ou os dois — decide o vocabulário do link e do título. Com o ingresso
    * extinto, `itensKind` só devolve `"reservas"`; a função continua sendo a fonte única da regra. */
   const itensPedido = isAtrativoCtx ? itensKind(pedidoItems) : undefined;
@@ -664,9 +678,17 @@ export default function TicketOfferModal({
           vertical: VERTICALS.atrativos,
           item_slug: d.itemSlug,
           partner_slug: offer.transportOffer.agencySlug,
-          // Mesmo bundle do `Lead` que virá a seguir — sem isto, o funil IC→Lead não pode ser
-          // filtrado pela mesma regra de painel.
-          content_ids: d.contentIds,
+          // Bundle conhecido NESTE instante: o modal dispara na abertura, antes de a pessoa marcar os
+          // extras (e antes de qualquer rascunho restaurado ser confirmado nesta sessão), então o
+          // `Lead` que vem a seguir carrega a lista completa e este carrega o destino de entrada.
+          // Os dois são verdadeiros sobre o próprio momento — não é divergência de regra.
+          // Precedência idêntica à do `leadContentIds`: bundle explícito, se houver.
+          content_ids:
+            d.contentIds && d.contentIds.length > 0
+              ? d.contentIds
+              : d.itemSlug
+                ? [d.itemSlug]
+                : null,
         }),
       });
 
@@ -1069,9 +1091,9 @@ export default function TicketOfferModal({
         ...taxonomyParams({
           vertical: VERTICALS.atrativos,
           partner_slug: offer.transportOffer.agencySlug,
-          // O bundle: `item_slug` é o produto de ENTRADA (o roteiro), `content_ids` é tudo que ele
-          // inclui. Os dois convivem no mesmo evento (D7). Vazio/ausente → omitido (D8).
-          content_ids: detail?.contentIds,
+          // O bundle: `item_slug` é o produto de ENTRADA, `content_ids` é tudo que ele inclui. Os
+          // dois convivem no mesmo evento (D7). Vazio/ausente → omitido (D8).
+          content_ids: leadContentIds,
         }),
       },
       { eventID: eventId },
@@ -1138,9 +1160,9 @@ export default function TicketOfferModal({
           // Contexto Compras Paraguay — tag Telegram + telemetria. MESMA const que alimentou o
           // `lead_kind` do Pixel logo acima (G1).
           leadContext: leadContextValue,
-          // Só para o CAPI espelhar o `content_ids` que o Pixel acabou de mandar (G1). Não é
-          // coluna de `leads` nem entra em regra de negócio nenhuma.
-          contentIds: detail?.contentIds ?? null,
+          // Só para o CAPI espelhar o `content_ids` que o Pixel acabou de mandar (G1): MESMA const,
+          // mesma linha. Não é coluna de `leads` nem entra em regra de negócio nenhuma.
+          contentIds: leadContentIds,
           // Itens do pedido → coluna `item_slugs`, que alimenta a página pública /r/[token].
           itemSlugs: pedidoItems,
           roteiroSlug:

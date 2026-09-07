@@ -1,12 +1,13 @@
 // Filepath: lib/session.ts
-// Version: 1.0
+// Version: 1.1
+// Última mudança: "chaves locais rgf_* → cp_* (vocabulário do satélite de origem — D9; domínio novo, custo zero)"
 // Nome da Versão: "Sessão assinada (HMAC via Web Crypto) — Edge-safe"
 // Baseado na Versão: N/A
 //
 // ⚠️ Edge-safe: usa SOMENTE Web Crypto (crypto.subtle), sem node:crypto nem Neon,
 // para poder ser importado pelo middleware (runtime Edge) e pelos route handlers.
 
-export const SESSION_COOKIE = "rgf_admin_session";
+export const SESSION_COOKIE = "cp_admin_session";
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 dias
 
 const enc = new TextEncoder();

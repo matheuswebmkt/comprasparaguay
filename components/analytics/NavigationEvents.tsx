@@ -1,7 +1,7 @@
 // Filepath: components/analytics/NavigationEvents.tsx
-// Version: 4.0
-// Nome da Versão: "Pageview 1st-party + Pixel + limpeza da UTM interna da URL (dedupe por pathname)"
-// Baseado na Versão: 3.0
+// Version: 4.1
+// Nome da Versão: "pageview de rota volta para o dataLayer (canal Google é o container do GTM do portfólio, não gtag direto)"
+// Baseado na Versão: 4.0
 'use client'
 
 import { useEffect, useRef } from 'react'
@@ -38,13 +38,10 @@ export function NavigationEvents() {
         firstLoad.current = false;
       } else {
         fbqTrack('PageView');
-        // GA4 é o gtag.js DIRETO (não GTM): page_view de rota é enviado pela função global `gtag`,
-        // exposta no window pelo snippet de base. A 1ª PageView já vem do `gtag('config', ...)`.
-        (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.(
-          'event',
-          'page_view',
-          { page_path: pathname },
-        );
+        // Pageview de rota no canal Google: push no dataLayer, que é o que as tags do container do
+        // GTM escutam (o GA4 vive dentro do container — não há gtag direto neste projeto). A 1ª
+        // pageview vem do próprio carregamento da página.
+        window.dataLayer?.push({ event: 'page_view', page_path: pathname });
       }
     }
 

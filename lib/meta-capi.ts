@@ -52,7 +52,7 @@ export interface CapiLeadInput {
   contentIds?: string[] | null;
   // EMQ (Event Match Quality) — identificadores extras, hasheados como em/ph. Não são taxonomia:
   // melhoram só o casamento do evento com a pessoa. ⚠️ NÃO duplicar em `custom_data`.
-  visitorId?: string | null; // rgf_vid → external_id
+  visitorId?: string | null; // cp_vid → external_id
   city?: string | null;      // geo Vercel → ct
   country?: string | null;   // geo Vercel (ISO alpha-2) → country
   // Sinais do `value` — os MESMOS que o client passou a `buildLeadEventParams` (G1). O servidor

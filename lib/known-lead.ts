@@ -1,5 +1,6 @@
 // Filepath: lib/known-lead.ts
-// Version: 1.1
+// Version: 1.2
+// Última mudança: "chaves locais rgf_* → cp_* (vocabulário do satélite de origem — D9; domínio novo, custo zero)"
 // Nome da Versão: "wantsTransport vira atributo ESTÁVEL da pessoa (mesmo padrão de isLocal) — consolida
 // a resposta de transporte entre produtos diferentes"
 // Baseado na Versão: 1.0 ("Lead conhecido (localStorage) — sobrevive ao envio; pré-preenche
@@ -21,7 +22,7 @@
 import { LEAD_DEDUP_WINDOW_MIN } from "./lead-dedup";
 import { isRoteiroLeadContext, isAtrativoLeadContext, type TicketOfferOpenDetail } from "./roteiro-lead";
 
-const STORAGE_KEY = "rgf_known_lead";
+const STORAGE_KEY = "cp_known_lead";
 const TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 dias
 const MAX_SUBMISSIONS = 20; // teto de segurança — ninguém pede 20 produtos diferentes de verdade
 // Validade PRÓPRIA de `alreadyInFoz` (1 dia) — mais curta que o resto do registro (90 dias): a pessoa pode ter

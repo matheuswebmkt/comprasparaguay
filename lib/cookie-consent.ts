@@ -1,11 +1,12 @@
 // Filepath: lib/cookie-consent.ts
-// Version: 1.0
+// Version: 1.1
+// Última mudança: "chaves locais rgf_* → cp_* (vocabulário do satélite de origem — D9; domínio novo, custo zero)"
 // Nome da Versão: "Consentimento de cookies próprio (sem CMP externo) — gate do Meta Pixel/GTM"
 // Baseado na Versão: N/A
 
-const STORAGE_KEY = "rgf_cookie_consent";
+const STORAGE_KEY = "cp_cookie_consent";
 /** Disparado no `window` quando o consentimento é concedido — avisa quem já montou (ex: ConsentGate). */
-export const COOKIE_CONSENT_EVENT = "rgf:cookie-consent-granted";
+export const COOKIE_CONSENT_EVENT = "cp:cookie-consent-granted";
 
 /** Já temos o aceite salvo desta sessão do navegador (localStorage — sobrevive entre visitas)? */
 export function hasCookieConsent(): boolean {

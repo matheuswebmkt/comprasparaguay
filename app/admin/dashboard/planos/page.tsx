@@ -1,6 +1,6 @@
 // Filepath: app/admin/dashboard/planos/page.tsx
-// Version: 2.0
-// Nome da Versão: "Planos + templates + valor + carência + confirmação (topo da hierarquia)"
+// Version: 2.1
+// Nome da Versão: "Portal do parceiro removido do projeto — cai o Acesso painel e o link /comercial/login"
 //
 // Controle manual do ciclo (sem Stripe). Independente de Ativar/Desativar e de /nichos.
 // Carência avaliada em tempo de leitura — sem cron.
@@ -27,9 +27,7 @@ import { TITLE, MUTED, BORDER } from "@/components/admin/dashboard-ui";
 import RefreshButton from "@/components/admin/RefreshButton";
 import PlanPeriodControl from "@/components/admin/PlanPeriodControl";
 import PlanTemplateManager from "@/components/admin/PlanTemplateManager";
-import PortalAccessControl from "@/components/admin/PortalAccessControl";
 import PlanNotesPanel from "@/components/admin/PlanNotesPanel";
-import { listPortalAccounts } from "@/lib/portal-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -120,14 +118,10 @@ export default async function PlanosPage({
   const filterType = sp.type === "partner" || sp.type === "agency" ? sp.type : null;
   const detailSlug = typeof sp.slug === "string" ? sp.slug : null;
 
-  const [rows, templates, portalAccounts] = await Promise.all([
+  const [rows, templates] = await Promise.all([
     listPlanDashboard(),
     listPlanTemplates(true),
-    listPortalAccounts(),
   ]);
-  const portalByKey = new Map(
-    portalAccounts.map((a) => [`${a.entityType}:${a.entitySlug}`, a] as const),
-  );
   const filtered = filterType ? rows.filter((r) => r.entityType === filterType) : rows;
 
   const expiring = rows.filter((r) => r.status === "expiring");
@@ -209,11 +203,7 @@ export default async function PlanosPage({
           <p className="text-sm mt-1 max-w-3xl" style={MUTED}>
             Crie <b>modelos de plano</b> (duração, valor padrão, carência). Ao iniciar/renovar,
             só <b>escolhe o plano</b>, confirma o valor recebido e anota o período. Toda ação pede{" "}
-            <b>confirmação</b>. Use <b>Acesso painel</b> e envie o link{" "}
-            <code className="text-[12px] px-1 rounded" style={{ background: "hsl(214,30%,94%)" }}>
-              /comercial/login
-            </code>{" "}
-            manualmente ao negócio (não está no menu público; noindex). Sem Stripe e sem cron. Este
+            <b>confirmação</b>. Sem Stripe e sem cron. Este
             controle é o <b>topo da hierarquia</b> — sem plano vigente (ou em carência), a entidade
             não aparece no site.
           </p>
@@ -363,15 +353,6 @@ export default async function PlanosPage({
                                 amountCents: r.amountCents,
                                 notes: r.notes,
                               }}
-                            />
-                            <PortalAccessControl
-                              entityType={r.entityType}
-                              entitySlug={r.entitySlug}
-                              entityName={r.entityName}
-                              account={(() => {
-                                const a = portalByKey.get(`${r.entityType}:${r.entitySlug}`);
-                                return a ? { email: a.email, active: a.active } : null;
-                              })()}
                             />
                           </div>
                         </td>

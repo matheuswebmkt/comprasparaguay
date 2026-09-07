@@ -1,14 +1,15 @@
 // Filepath: \_docs-portfolio/pixel-matrix.md
-// Version: 1.1
-// Nome da Versão: "Nicho de transporte unificado em `transfer` nos satélites (D13)"
-// TAXONOMY_VERSION: 2026-08-v1
+// Version: 1.2
+// Nome da Versão: "+ satélite `comprasparaguay` (4º domínio no pixel único) — enum é aditivo, ver D14"
+// TAXONOMY_VERSION: 2026-09-v1
 
 # MATRIZ DO PIXEL — DOCUMENTO DE PORTFÓLIO
 
 > ⚠️ **ESTE ARQUIVO NÃO PERTENCE A ESSE REPOSITÓRIO.**
-> Ele é copiado **verbatim** nos três repositórios. Cada repositório é um satélite plugado
-> no pixel, exatamente como o Roda Gigante Foz, o Roteiro Foz e o Tô em Foz — não é núcleo, não é base, não tem
-> precedência. Alterar esta matriz é alterar o contrato dos três projetos ao mesmo tempo.
+> Ele é copiado **verbatim** em todos os repositórios plugados. Cada repositório é um satélite —
+> hoje `rodagigantefoz`, `roteirofoz` e `comprasparaguay`, com `toemfoz` no caminho — e nenhum deles
+> é núcleo, base, nem tem precedência. Alterar esta matriz é alterar o contrato de todos ao mesmo
+> tempo.
 >
 > **Normativo (o QUE).** O porquê de cada decisão, e o que foi rejeitado, está em
 > `pixel-decisions.md`. Não altere uma regra daqui sem uma entrada correspondente lá.
@@ -18,9 +19,10 @@
 
 ## 0 · Regra zero
 
-**Existe UM pixel para os três domínios.** Não se cria pixel por projeto, por vertical,
+**Existe UM pixel para todos os domínios do portfólio.** Não se cria pixel por projeto, por vertical,
 por parceiro ou por campanha. A separação é feita por **parâmetro** + **Conversão
-Personalizada** no painel do Meta — nunca por pixel novo. Ver decisão D1.
+Personalizada** no painel do Meta — nunca por pixel novo. Ver decisão D1 (e D14, sobre plugar um
+satélite novo).
 
 ---
 
@@ -29,42 +31,49 @@ Personalizada** no painel do Meta — nunca por pixel novo. Ver decisão D1.
 > ⚠️ **ESTA MATRIZ DESCREVE O ALVO.** Ela é normativa (é o contrato). Esta seção — e **só** ela —
 > diz quanto de cada satélite já chegou lá. O resto do arquivo não fala de projeto nenhum.
 >
-> Colunas: **RGF** = `rodagigantefoz` · **RF** = `comprasparaguay` · **TEF** = `toemfoz`.
+> Colunas: **RGF** = `rodagigantefoz` · **RF** = `roteirofoz` · **CP** = `comprasparaguay` ·
+> **TEF** = `toemfoz`.
 > `—` = a superfície não existe naquele satélite (decisão de produto, não pendência).
 
 **No código:**
 
-| | RGF | RF | TEF |
-|---|---|---|---|
-| Contrato + enums (`lib/tracking-taxonomy.ts`) | ✅ | ✅ | ❌ |
-| `property` injetado no funil de disparo | ✅ | ✅ | ❌ |
-| `vertical` / `niche` / `partner_slug` nos eventos | ✅ | ✅ | ❌ |
-| `InitiateCheckout` no início do fluxo; saídas → `Contact` | ✅ | ✅ | ❌ |
-| `ViewModalVIP` fora do código | ✅ | ✅ | ❌ |
-| `content_name` hardcoded fora do `Lead` | ✅ | ✅ | ❌ |
-| `ViewContent` em página/modal de item | ✅ | ✅ | ❌ |
-| `value` no `Lead` (`lib/lead-value.ts`) | ✅ | ✅ | ❌ |
-| `content_ids` no bundle (§1.3) | — produto não é bundle | ✅ | ❌ |
-| `transfer` no 2º ponto de contato | ✅ | — tela não existe | ❌ |
+| | RGF | RF | CP | TEF |
+|---|---|---|---|---|
+| Contrato + enums (`lib/tracking-taxonomy.ts`) | ✅ | ✅ | ✅ | ❌ |
+| `property` injetado no funil de disparo | ✅ | ✅ | ✅ | ❌ |
+| `vertical` / `niche` / `partner_slug` nos eventos | ✅ | ✅ | ✅ | ❌ |
+| `InitiateCheckout` no início do fluxo; saídas → `Contact` | ✅ | ✅ | ✅ | ❌ |
+| `ViewModalVIP` fora do código | ✅ | ✅ | ✅ | ❌ |
+| `content_name` hardcoded fora do `Lead` | ✅ | ✅ | ✅ | ❌ |
+| `ViewContent` em página/modal de item | ✅ | ✅ | ✅ | ❌ |
+| `value` no `Lead` (`lib/lead-value.ts`) | ✅ | ✅ | ✅ | ❌ |
+| `content_ids` no bundle (§1.3) | — produto não é bundle | ✅ | ✅ — bundle = destino de entrada + extras marcados no modal | ❌ |
+| `transfer` no 2º ponto de contato | ✅ | — tela não existe | — tela não existe | ❌ |
+| `lead_kind` emitido (§1.4) | ✅ só `ticket` | ✅ `ticket` + `experience` | ✅ só `ticket` — o slot `experience` existe, nenhum gatilho o dispara ainda | ❌ |
 
 **Fora do código — depende do painel do Meta, e nada disso é retroativo em termos de otimização:**
 
-| | RGF | RF | TEF |
-|---|---|---|---|
-| Domínio verificado no Business Manager | ✅ | ❌ | ❌ |
-| Conversões Personalizadas por `vertical` (§10) | ❌ | ❌ | ❌ |
-| Validação manual Pixel×CAPI (mesmo `event_id`, mesmo `value`) nos Test Events | ✅ | ✅ | ❌ |
+| | RGF | RF | CP | TEF |
+|---|---|---|---|---|
+| Domínio verificado no Business Manager | ✅ | ❌ | ❌ | ❌ |
+| Conversões Personalizadas por `vertical` (§10) | ❌ | ❌ | ❌ | ❌ |
+| Validação manual Pixel×CAPI (mesmo `event_id`, mesmo `value`) nos Test Events | ✅ | ✅ | ⏳ pendente | ❌ |
 
 > As Conversões Personalizadas seguem pendentes em todos os satélites — são filtros **retroativos**
 > e podem esperar.
 >
-> ✅ **G1 validado nos dois satélites plugados.** Cada validação prova a simetria do CÓDIGO daquele
-> repo, por isso não se herda — o `toemfoz` precisará da sua quando nascer.
+> ✅ **G1 validado nos satélites abaixo.** Cada validação prova a simetria do CÓDIGO daquele
+> repo, por isso não se herda — um satélite recém-plugado, ou um com o funil alterado, precisa da
+> própria.
 >
 > | Satélite | `event_id` | `value` | Sinais exercitados |
 > |---|---|---|---|
 > | `rodagigantefoz` | `408080e0…` | 135 | ingresso, transfer, planning, 3 ingressos |
-> | `comprasparaguay` | `b0c248d5…` | 120 | roteiro (`experience`), transfer, planning, **6 `content_ids`** |
+> | `roteirofoz` | `b0c248d5…` | 120 | roteiro (`experience`), transfer, planning, **6 `content_ids`** |
+>
+> ⏳ **Pendente:** `comprasparaguay`. O código está plugado e a simetria é a mesma função
+> (`buildLeadEventParams` nas duas pontas), mas a validação é do código **daquele** repo: sem rodar,
+> a linha não pode ser preenchida — e um `event_id` copiado de outro satélite é um registro falso.
 >
 > Nos dois casos o payload do Pixel foi capturado instrumentando o `fbq` no navegador e o do CAPI
 > lido na aba Testar eventos — os 10 params bateram um a um.
@@ -95,8 +104,9 @@ Personalizada** no painel do Meta — nunca por pixel novo. Ver decisão D1.
 > pixel de portfólio (D9). Não reabrir a decisão por causa disto.
 
 Atualize estas tabelas na mesma rodada em que implementar cada item — tabela de status
-desatualizada é pior que não ter tabela. E atualize **nos dois repos ao mesmo tempo**: o arquivo é
-copiado verbatim, então uma tabela que só um satélite enxerga não é status, é boato.
+desatualizada é pior que não ter tabela. E atualize **em todos os repositórios plugados, na mesma
+rodada**: o arquivo é copiado verbatim, então uma tabela que só um satélite enxerga não é status, é
+boato.
 
 ---
 
@@ -111,7 +121,7 @@ semanas depois.
 
 | Param | Responde | Valores | Origem |
 |---|---|---|---|
-| `property` | onde aconteceu | `rodagigantefoz` · `comprasparaguay` · `toemfoz` | domínio sem TLD |
+| `property` | onde aconteceu | `rodagigantefoz` · `roteirofoz` · `comprasparaguay` · `toemfoz` | domínio sem TLD |
 | `vertical` | qual dos 4 produtos | `atrativos` · `transporte` · `hotelaria` · `gastronomia` | ver §1.1 |
 | `niche` | sub-tipo dentro do vertical | `Niche.key` (ver §1.2) | `app/data/niches.ts` |
 
@@ -253,7 +263,7 @@ preencher.
 ```
 PIXEL (portfólio — não pertence a nenhum site)
 │
-├── property ......... rodagigantefoz | comprasparaguay | toemfoz
+├── property ......... rodagigantefoz | roteirofoz | comprasparaguay | toemfoz
 │
 └── vertical ......... atrativos | transporte | hotelaria | gastronomia
     │
@@ -388,7 +398,10 @@ com `property`, e é impossível esquecer numa chamada nova.
 
 1. Copiar `lib/tracking-taxonomy.ts` **verbatim** (mesmo `TAXONOMY_VERSION`).
 2. Copiar `pixel-matrix.md` e `pixel-decisions.md` **verbatim**.
-3. Adicionar o valor novo de `property` ao enum — **nos três repos**.
+3. Adicionar o valor novo de `property` ao enum — **em todos os repositórios plugados**. O enum é
+   **aditivo**: o nome do projeto novo se SOMA à lista. Substituir um valor existente pelo nome novo
+   apaga o vocabulário dos outros satélites quando o arquivo é copiado verbatim, e o `TAXONOMY_VERSION`
+   igual esconde a divergência (D14).
 4. Verificar o domínio no Business Manager (Segurança da Marca → Domínios). É o passo que se
    esquece, e sem ele o domínio novo não é reconhecido como seu.
    *(Não há mais priorização de eventos a fazer aqui — o AEM saiu do painel, ver §0-bis.)*

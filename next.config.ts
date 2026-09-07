@@ -1,7 +1,7 @@
 // Filepath: next.config.ts
-// Version: 4.0
-// Nome da Versão: "Primeiro deploy comprasparaguay.online — sem redirects de legado"
-// Baseado na Versão: 3.4
+// Version: 4.1
+// Nome da Versão: "Portal do parceiro removido do projeto — cai o noindex de /comercial*"
+// Baseado na Versão: 4.0
 //
 // Domínio novo: nenhum 301 de migração SEO. Rotas canônicas já nascem corretas.
 
@@ -22,20 +22,6 @@ const nextConfig: NextConfig = {
       "next/dist/experimental/testmode/fetch": false,
     };
     return config;
-  },
-  // Rotas PRIVADAS (envio manual 1:1, nunca públicas): /comercial*.
-  // X-Robots-Tag no HTTP cobre toda a árvore — inclusive páginas futuras —
-  // sem depender de cada page lembrar do robots noindex na metadata.
-  // ⚠️ E é por isso que /comercial NÃO pode entrar no `disallow` de `app/robots.ts`: bloqueado
-  // pelo robots.txt, o crawler não chega a ler este header e o noindex vira letra morta. Os dois
-  // arquivos já se contradisseram — o comentário aqui dizia que não havia Disallow enquanto
-  // `robots.ts` tinha um. Mexeu em um, confira o outro.
-  async headers() {
-    const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
-    return [
-      { source: "/comercial", headers: noindex },
-      { source: "/comercial/:path*", headers: noindex },
-    ];
   },
 };
 

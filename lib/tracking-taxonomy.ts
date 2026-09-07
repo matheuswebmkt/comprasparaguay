@@ -1,23 +1,25 @@
 // Filepath: lib/tracking-taxonomy.ts
-// Version: 1.2
-// Nome da Versão: "Nicho de transporte unificado em `transfer` nos satélites (D13)"
-// Baseado na Versão: 1.1
+// Version: 1.3
+// Nome da Versão: "+ `comprasparaguay` ao enum `Property` — satélite novo se SOMA, não substitui (D14)"
+// Baseado na Versão: 1.2
 //
-// ⚠️ TAXONOMY_VERSION MUDA em 1.2 (`2026-07-v1` → `2026-08-v1`): o valor de enum
-// `agencia-de-turismo` passou a ser `transfer`. Valor de enum novo = bump obrigatório nos repos
-// plugados (ver D13 em `_docs-portfolio/pixel-decisions.md`).
+// ⚠️ TAXONOMY_VERSION MUDA em 1.3 (`2026-08-v1` → `2026-09-v1`): valor de enum `Property` novo
+//    (`comprasparaguay`). Valor de enum novo = bump obrigatório nos repos plugados (ver D13 e D14 em
+//    `_docs-portfolio/pixel-decisions.md`).
 //
 // ⚠️ ESTE ARQUIVO NÃO PERTENCE AO RODAGIGANTEFOZ.
 // É a camada de EXECUÇÃO do contrato definido em `_docs-portfolio/pixel-matrix.md` (normativo)
 // e `_docs-portfolio/pixel-decisions.md` (fundamentos + rejeições). O pixel do Meta é um ativo
-// de PORTFÓLIO, compartilhado por rodagigantefoz / roteirofoz / toemfoz. Este projeto é UM
-// SATÉLITE plugado nele — não é núcleo, não é base, não tem precedência.
+// de PORTFÓLIO, compartilhado por rodagigantefoz / roteirofoz / comprasparaguay / toemfoz. Este
+// projeto é UM SATÉLITE plugado nele — não é núcleo, não é base, não tem precedência.
 //
 // A doc impede que alguém não SAIBA o padrão. Este arquivo impede que alguém DIVIRJA dele:
 // nenhum ponto de disparo escreve string literal — todos importam daqui.
 //
 // 🔒 ANTES DE EDITAR: leia a matriz. Param novo, valor de enum novo ou evento novo exigem
-// entrada em `pixel-decisions.md` e bump do TAXONOMY_VERSION nos TRÊS repos.
+// entrada em `pixel-decisions.md` e bump do TAXONOMY_VERSION em todos os repos plugados.
+// ⚠️ ENUM É ADITIVO: plugar um satélite novo SOMA um valor. Substituir um valor existente apaga o
+// vocabulário dos outros projetos quando este arquivo é copiado verbatim (D14).
 
 // =============================================================================
 // ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -26,25 +28,46 @@
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 // =============================================================================
 
-/** Espelha o TAXONOMY_VERSION de `_docs-portfolio/pixel-matrix.md`. Bump = os 3 repos juntos. */
-export const TAXONOMY_VERSION = "2026-08-v1";
-
-/** Domínio sem TLD. Um pixel só para os três — ver decisão D1. */
-export type Property = "rodagigantefoz" | "toemfoz" | "comprasparaguay";
+/** Espelha o TAXONOMY_VERSION de `_docs-portfolio/pixel-matrix.md`. Bump = todos os repos juntos. */
+export const TAXONOMY_VERSION = "2026-09-v1";
 
 /**
- * Produtos do projeto: atrativos (destinos de compra) e transporte (transfer).
- * NÃO é 1:1 com `PartnerCategory`: `turismo` → `transporte`, e `atrativos` não tem categoria de
- * parceiro porque é produto próprio (dia guiado, experiência, transfer).
+ * Domínio sem TLD. Um pixel só para todos os domínios do portfólio — ver decisão D1.
+ * Um valor NOVO se soma à lista; um valor existente nunca é trocado pelo nome do projeto que
+ * está sendo plugado agora (D14).
  */
-export type Vertical = "atrativos" | "transporte";
+export type Property =
+  | "rodagigantefoz"
+  | "roteirofoz"
+  | "comprasparaguay"
+  | "toemfoz";
 
 /**
- * Sub-tipo dentro do vertical: são os valores de `Niche.key` (`transfer`), NUNCA de `Niche.slug`
- * (`transfer`-segmento de URL). É a `key` que casa com `Partner.niches` — mandar o slug quebraria
- * o match em silêncio (D4).
+ * Os 4 produtos do portfólio. Nem todo satélite tem os quatro: cada um usa o subconjunto que
+ * construiu e omite o resto (D8) — ter o valor no enum não obriga ninguém a enviá-lo.
+ * NÃO é 1:1 com `PartnerCategory` (matriz §1.1): `turismo` → `transporte`, e `atrativos`
+ * não tem categoria de parceiro porque é produto próprio (ingresso, experiência, combo).
  */
-export type Niche = "transfer";
+export type Vertical = "atrativos" | "transporte" | "hotelaria" | "gastronomia";
+
+/**
+ * Sub-tipo dentro do vertical. SUPERSET DO PORTFÓLIO — cada projeto usa só o subconjunto que
+ * tem, e omite o param quando não se aplica (D8). Ter o valor no enum não obriga a enviá-lo.
+ *
+ * ⚠️ São os valores de `Niche.key` (`pizzaria`), NUNCA de `Niche.slug`
+ * (`pizzaria-em-foz-do-iguacu`, que é segmento de URL). É a `key` que casa com
+ * `Partner.niches` — mandar o slug quebraria o match em silêncio (D4).
+ */
+export type Niche =
+  | "bar-e-cervejaria"
+  | "churrascaria"
+  | "restaurante"
+  | "pizzaria"
+  | "shawarma"
+  | "sushi"
+  | "hamburgueria"
+  | "hospedagem"
+  | "transfer";
 
 /**
  * Runtime do type `Vertical`. Ponto de disparo NUNCA escreve `"atrativos"` na mão — importa
@@ -54,19 +77,32 @@ export type Niche = "transfer";
 export const VERTICALS = {
   atrativos: "atrativos",
   transporte: "transporte",
+  hotelaria: "hotelaria",
+  gastronomia: "gastronomia",
 } as const satisfies Record<Vertical, Vertical>;
 
 /**
- * Nichos citados EXPLICITAMENTE no código. Mesmo motivo do `VERTICALS`: `"transfer"` escrito à mão
- * em dois arquivos vira `"transfers"` num deles no primeiro refactor, e o pixel perde metade do
- * volume em silêncio.
+ * Nichos citados EXPLICITAMENTE no código (os de gastronomia chegam pelo dado, via `asNiche`).
+ * Mesmo motivo do `VERTICALS`: `"transfer"` escrito à mão em dois arquivos vira `"transfers"` num
+ * deles no primeiro refactor, e o pixel perde metade do volume em silêncio.
  */
 export const NICHE_KEYS = {
+  hospedagem: "hospedagem",
   transfer: "transfer",
 } as const satisfies Record<string, Niche>;
 
 /** Runtime do type `Niche` — existe só para alimentar `asNiche`. Manter os dois em sincronia. */
-export const NICHES: readonly Niche[] = ["transfer"];
+export const NICHES: readonly Niche[] = [
+  "bar-e-cervejaria",
+  "churrascaria",
+  "restaurante",
+  "pizzaria",
+  "shawarma",
+  "sushi",
+  "hamburgueria",
+  "hospedagem",
+  "transfer",
+];
 
 /**
  * Estreita uma string do DADO (`Partner.niches`, que é `string[]` livre) para o enum, ou
@@ -105,8 +141,10 @@ export const PORTFOLIO_EVENTS = {
  */
 export const VERTICALS_WITH_APPROVED_LEAD_VALUE: readonly Vertical[] = ["atrativos"];
 
-/** Mapa `PartnerCategory` → `Vertical`. A divergência é deliberada (matriz §1.1). */
+/** Mapa `PartnerCategory` → `Vertical`. As duas divergências são deliberadas (matriz §1.1). */
 export const VERTICAL_BY_PARTNER_CATEGORY = {
+  gastronomia: "gastronomia",
+  hotelaria: "hotelaria",
   turismo: "transporte",
 } as const satisfies Record<string, Vertical>;
 
@@ -116,11 +154,12 @@ export const VERTICAL_BY_PARTNER_CATEGORY = {
  * por benefício zero, já que ele nunca vira regra (D5).
  *
  * `item_slug` = O QUÊ foi vendido (`app/data/attractions.ts`, `app/data/experiences.ts`).
- * `partner_slug` = QUEM entrega. DUAS fontes alimentam este mesmo param:
- *   • `app/data/partners.ts`  → Partner.slug
+ * `partner_slug` = QUEM entrega. TRÊS fontes alimentam este mesmo param:
+ *   • `app/data/partners.ts`  → Partner.slug       (gastronomia)
  *   • `app/data/agencies.ts`  → AgencyProfile.slug (foz-falls)
- * Nada no código impede colisão de slug entre as duas — conferir ao cadastrar negócio novo.
- * ⚠️ Existem slugs de TESTE no dado (`agencia-teste`): se um ficar ativo por
+ *   • `app/data/hotels.ts`    → HotelProfile.slug  (doubletree-…)
+ * Nada no código impede colisão de slug entre os três — conferir ao cadastrar negócio novo.
+ * ⚠️ Existem slugs de TESTE no dado (`agencia-teste`, `hotel-teste`): se um ficar ativo por
  * engano, entra no pixel de portfólio e não sai mais.
  *
  * Os dois CONVIVEM no mesmo evento: experiência vendida pela agência sai com

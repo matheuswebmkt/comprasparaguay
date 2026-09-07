@@ -1,5 +1,6 @@
 // Filepath: lib/lead-success-handoff.ts
-// Version: 1.2
+// Version: 1.3
+// Última mudança: "chaves locais rgf_* → cp_* (vocabulário do satélite de origem — D9; domínio novo, custo zero)"
 // Nome da Versão: "Handoff lido na página de obrigado /obrigado (era /o-que-fazer)"
 // Baseado na Versão: 1.1 ("Adiciona transportChecked — Sprint 7")
 //
@@ -11,7 +12,7 @@
 import type { TicketOfferOpenDetail } from "@/lib/roteiro-lead";
 import type { ItensKind } from "@/lib/offer-defaults";
 
-export const LEAD_HANDOFF_KEY = "rgf_lead_success_handoff";
+export const LEAD_HANDOFF_KEY = "cp_lead_success_handoff";
 
 /** Rota canônica do pós-submit (página de confirmação). Rota única para todos os produtos. */
 export const OBRIGADO_PATH = "/obrigado";

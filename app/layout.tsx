@@ -1,10 +1,11 @@
 // Filepath: app/layout.tsx
-// Version: 2.6
+// Version: 2.7
+// Última mudança: "canal Google volta a ser o container do GTM do portfólio (era gtag direto com Measurement ID órfão)"
 // Nome da Versão: "+ HotelDetailModal global (mesmo padrão do PartnerDetailModal — hotel nunca teve página própria e continua sem uma)"
 // Baseado na Versão: 2.5
 
 import MetaPixel from "@/components/analytics/MetaPixel";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 import ConsentGate from "@/components/analytics/ConsentGate";
 import CookieBanner from "@/components/CookieBanner";
 import TicketOfferModal from "@/components/ticket-offer/TicketOfferModal";
@@ -133,10 +134,10 @@ export default async function RootLayout({
         <JsonLd data={organizationSchema()} />
         <JsonLd data={websiteSchema()} />
         <JsonLd data={fozDestinationSchema()} />
-        {/* Meta Pixel/GA4 só carregam depois do aceite no CookieBanner (consentimento próprio, sem CMP externo). */}
+        {/* Meta Pixel/GTM só carregam depois do aceite no CookieBanner (consentimento próprio, sem CMP externo). */}
         <ConsentGate>
           <MetaPixel />
-          <GoogleAnalytics />
+          <GoogleTagManager />
         </ConsentGate>
         <Suspense fallback={null}>
           <NavigationEvents />

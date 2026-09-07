@@ -1,11 +1,11 @@
 // Filepath: \_docs-portfolio/pixel-decisions.md
-// Version: 1.1
-// Nome da Versão: "+ D13 — nicho de transporte unificado em `transfer`"
-// TAXONOMY_VERSION: 2026-08-v1
+// Version: 1.2
+// Nome da Versão: "+ D14 — enum aditivo: `comprasparaguay` se SOMA ao `Property`"
+// TAXONOMY_VERSION: 2026-09-v1
 
 # DECISÕES DO PIXEL — FUNDAMENTOS E REJEIÇÕES
 
-> ⚠️ **ESTE ARQUIVO NÃO PERTENCE A ESSE REPOSITÓRIO.** Copiado verbatim nos três repositórios.
+> ⚠️ **ESTE ARQUIVO NÃO PERTENCE A ESSE REPOSITÓRIO.** Copiado verbatim em todos os repositórios plugados.
 >
 > Companheiro de `pixel-matrix.md`. A matriz diz **o quê**; este arquivo diz **por quê**, e
 > principalmente **o que já foi rejeitado**.
@@ -21,7 +21,7 @@
 
 ## D1 · Um pixel único para os três domínios
 
-**Decisão:** `rodagigantefoz.com.br`, `comprasparaguay.online` e `toemfoz.com.br` alimentam **o
+**Decisão:** `rodagigantefoz.com.br`, `roteirofoz.com.br` e `toemfoz.com.br` alimentam **o
 mesmo pixel**.
 
 **Por quê:** é literalmente a mesma pessoa. Quem sobe na roda gigante é quem janta na
@@ -45,6 +45,10 @@ property") que pixel separado tornaria impossível para sempre.
 **Única razão que justificaria um segundo pixel no futuro:** um dos projetos virar negócio
 separado, vendido ou entregue a um sócio — aí o pixel é o ativo que vai junto. Não é
 categoria, não é vertical, não é campanha.
+
+➕ **Adendo (set/2026):** o mesmo pixel passou a receber `comprasparaguay.online`. A lógica é a
+mesma com N domínios — o que se somou foi uma **propriedade**, não um pixel, e o argumento de pooling
+de cima só fica mais forte. O registro do erro de aplicação que isto corrige está em **D14**.
 
 ---
 
@@ -271,7 +275,7 @@ fatura com ele. A escala absoluta é convenção; o que carrega informação é 
 valores.
 
 **Por que isso precisa estar escrito num arquivo de PORTFÓLIO:** o modelo de receita **muda por
-satélite**, e a interpretação de `value` muda junto. Quem for plugar `comprasparaguay`/`toemfoz` no
+satélite**, e a interpretação de `value` muda junto. Quem for plugar **um satélite novo** no
 pixel vai encontrar uma tabela de pesos pronta e presumir que ela representa dinheiro do
 projeto. Não representa — e presumir isso leva direto a configurar meta de ROAS em cima de um
 número que não é receita.
@@ -353,3 +357,54 @@ fallback estático — em silêncio, sem erro visível.
 nicho segue sendo o que cada satélite decidiu por SEO (`/transporte` num, `/transfer` no
 outro). Só a `key` foi unificada, porque só ela vai ao pixel. **Não** unificar slug: isso é
 rota, custa 301 e reindexação, e não muda nada no Meta.
+
+---
+
+## D14 · O enum do portfólio é aditivo — um satélite novo se SOMA, nunca substitui
+
+**Decisão:** ao plugar um projeto novo no pixel, os enums do bloco congelado **crescem**. O nome do
+projeto entra na lista de `Property` ao lado dos existentes; nenhum valor existente é renomeado,
+trocado ou removido — nem o nome do projeto que está sendo plugado agora entra no lugar de outro.
+`TAXONOMY_VERSION`: `2026-08-v1` → `2026-09-v1`.
+
+**O que forçou a decisão (aconteceu, não é hipotético):** ao plugar `comprasparaguay`, o
+`export type Property` daquele repo ficou `rodagigantefoz | toemfoz | comprasparaguay` —
+`roteirofoz` tinha sido **substituído**, não somado. No mesmo movimento, um valor de `Niche`
+(`hospedagem`) desapareceu do enum e os dois arquivos deste portfólio perderam toda menção ao
+`roteirofoz`: a matriz passou a listar `rodagigantefoz · comprasparaguay · toemfoz` como se o segundo
+site da lista fosse outro, e a linha de validação G1 do `roteirofoz` (o `event_id` `b0c248d5…`,
+`value 120`, os 6 `content_ids` do roteiro) foi rebatizada com o nome do projeto novo.
+
+**Por que passou despercebido:** o `TAXONOMY_VERSION` continuou idêntico nos três, e a divergência de
+enum não quebra nada em tempo de execução — cada satélite continua enviando o próprio valor, e o valor
+ausente só faria falta quando alguém o enviasse. O único detector é `diff` entre os repositórios, que
+é exatamente o instrumento que a D13 manda usar e que ninguém rodou.
+
+**Por que é grave mesmo sem quebrar:** o bloco é copiado **verbatim**. Uma substituição feita “dentro
+do meu projeto” torna-se o vocabulário oficial de todos os outros no momento em que a cópia circula —
+e, no caso da matriz, reescrevia a história de uma validação que nunca ocorreu naquele domínio. Um
+“✅” que nenhuma tela viu é pior que um “❌” honesto: ele desliga a verificação que faria alguém rodar
+o teste.
+
+**Rejeitado — cada repositório manter seu próprio enum:** o `property` existe para o painel separar o
+que chegou ao pixel **comum**; um enum que difere por repo permite que um valor suma sem que ninguém
+perceba, e é justamente o mecanismo pelo qual o arquivo é compartilhado.
+
+**Rejeitado — manter a substituição e documentá-la:** deixaria o histórico com um valor órfão, a matriz
+com uma validação falsa e o portfólio com dois nomes para o mesmo satélite.
+
+**Custo aceito:** bump de `TAXONOMY_VERSION` sem mudança de comportamento. Nenhum evento enviado muda;
+a taxonomia passa a conhecer um domínio a mais, e eventos antigos continuam com os valores de sempre.
+
+**Consequência operacional obrigatória:**
+
+- Plugar um projeto **adiciona** um valor ao enum em todos os repositórios plugados e **adiciona**
+  uma coluna/linha nas tabelas do §0-bis da matriz. Nada é renomeado.
+- Cópia verbatim é **cópia**, não busca-e-substituição. Se foi preciso trocar o nome de outro projeto
+  dentro do bloco congelado, a edição não era do seu projeto.
+- Antes de qualquer deploy que toque no bloco (e de vez em quando sem motivo nenhum):
+  `diff --strip-trailing-cr <repo-a>/lib/tracking-taxonomy.ts <repo-b>/lib/tracking-taxonomy.ts`
+  — a única linha diferente autorizada é a do `TRACKING_PROPERTY`. Qualquer outra é o D14 acontecendo
+  de novo.
+- Um registro de validação do §0-bis pertence ao repositório onde o teste foi rodado: **não se copia
+  de um satélite para o outro**. Validade de código não é transitiva.

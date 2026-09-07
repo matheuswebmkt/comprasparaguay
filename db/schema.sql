@@ -521,21 +521,3 @@ create table if not exists plan_entity_notes (
 );
 create index if not exists plan_entity_notes_entity_idx
   on plan_entity_notes (entity_type, entity_slug, created_at desc);
-
--- =============================================================================
--- portal_accounts — login do painel de leitura (magic link por e-mail)
--- Sessão separada do admin (cookie rgf_portal_session). Auto-criada em lib/portal-auth.ts.
--- Tokens reutilizam magic_tokens; verify em /api/portal/verify.
--- =============================================================================
-create table if not exists portal_accounts (
-  entity_type   text not null,             -- partner | agency | hotel
-  entity_slug   text not null,
-  email         text not null,             -- e-mail que recebe o magic link
-  active        boolean not null default true,
-  created_at    timestamptz not null default now(),
-  updated_at    timestamptz not null default now(),
-  primary key (entity_type, entity_slug)
-);
-create unique index if not exists portal_accounts_email_uidx
-  on portal_accounts (lower(email))
-  where email is not null and email <> '';

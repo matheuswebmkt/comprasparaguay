@@ -1,5 +1,6 @@
 // Filepath: lib/track.ts
-// Version: 1.2
+// Version: 1.3
+// Última mudança: "chaves locais rgf_* → cp_* (vocabulário do satélite de origem — D9; domínio novo, custo zero)"
 // Nome da Versão: "Batching client-side: eventos ficam em memória e vão ao /api/track em lote"
 // Baseado na Versão: 1.1
 //
@@ -9,8 +10,8 @@
 
 import type { UtmParams } from "./utm";
 
-const VISITOR_KEY = "rgf_vid";
-const SESSION_KEY = "rgf_sid";
+const VISITOR_KEY = "cp_vid";
+const SESSION_KEY = "cp_sid";
 
 function uid(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
@@ -53,7 +54,7 @@ export interface TrackInput {
   utm?: UtmParams;
 }
 
-const IMPRESSION_KEY = "rgf_imp";
+const IMPRESSION_KEY = "cp_imp";
 
 /**
  * Registra a IMPRESSÃO de um parceiro no máximo UMA vez por sessão — não importa
