@@ -26,9 +26,9 @@ const UPDATED_ISO = "2026-07-11";
 export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Roteiro de compras no Paraguai | Compras Paraguay",
+  title: "Compras na Tríplice Fronteira - Brasil, Paraguai e Argentina",
   description:
-    "Ciudad del Este, Duty Free de Puerto Iguazú, By Night e os shoppings Cataratas JL e Catuaí Palladium — o seu roteiro de compras na fronteira, organizado.",
+    "Ciudad del Este, Duty Free de Puerto Iguazú, By Night Argentina e os shoppings Cataratas JL e Catuaí Palladium — Roteiro de compras na Tríplice Fronteira",
   path: URL_PATH,
   silo: "compras",
   keywords: [

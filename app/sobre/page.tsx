@@ -13,7 +13,7 @@ import { pageMetadata, webPageSchema, breadcrumbSchema } from "@/lib/seo";
 // "Sobre o Compras Paraguay | Compras Paraguay". `pageMetadata` usa título absoluto e ainda traz canonical,
 // OG e robots, que faltavam por completo aqui.
 export const metadata: Metadata = pageMetadata({
-  title: "Sobre o Compras Paraguay — quem conduz suas compras na fronteira",
+  title: "Sobre o Compras Paraguay — Guia especialista e logística",
   description:
     "Conheça o Compras Paraguay: curadoria de compras na tríplice fronteira, feita por quem vive Foz do Iguaçu — dias de compras em Ciudad del Este e Puerto Iguazú com guia especialista e logística de ida e volta.",
   path: "/sobre",

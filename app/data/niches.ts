@@ -322,7 +322,7 @@ export const niches: Niche[] = [
     key: "transfer",
     category: "turismo",
     nicheNoun: "transfer",
-    seoTitle: "Transfer para compras na Tríplice Fronteira | Compras Paraguay",
+    seoTitle: "Transfer para Compras no Paraguai e Duty Free Puerto Iguazú",
     seoDescription:
       "Transfer para Ciudad del Este, Duty Free de Puerto Iguazú e os shoppings de Foz — atravesse a fronteira sem depender de aplicativo e aproveite melhor o seu dia de compras.",
     keywords: [

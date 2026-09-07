@@ -54,19 +54,19 @@ export const metadata: Metadata = {
   // ⚠️ Sem sufixo `| Compras Paraguay` na home: o título já carrega a marca — o sufixo seria
   // repetição. Ver conventions/seo.md §19.
   title: {
-    absolute: "Roteiro de compras em Ciudad del Este — Compras Paraguay",
+    absolute: "Guia especialista de Compras no Paraguai — Ciudad del Este",
   },
   description:
-    "Onde comprar em Ciudad del Este, horários da ponte, o que vale a pena levar e como organizar o seu dia de compras no Paraguai.",
+    "Onde comprar, horários das lojas, documentação, cota da Receita, sua logística com transporte e tudo organizado para o seu dia de compras no Paraguai ser ideal.",
   keywords: [...COMPRAS_PRIMARY_KEYWORDS],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Compras Paraguay",
     locale: "pt_BR",
-    title: "Roteiro de compras em Ciudad del Este — Compras Paraguay",
+    title: "Guia especialista de Compras no Paraguai — Ciudad del Este",
     description:
-      "Onde comprar em Ciudad del Este, horários da ponte, o que vale a pena levar e como organizar o seu dia de compras no Paraguai.",
+      "Onde comprar, horários das lojas, documentação, cota da Receita, sua logística com transporte e tudo organizado para o seu dia de compras no Paraguai ser ideal.",
     url: "/",
     images: [
       {
