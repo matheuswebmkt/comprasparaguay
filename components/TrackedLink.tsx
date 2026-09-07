@@ -1,7 +1,7 @@
 // Filepath: components/TrackedLink.tsx
-// Version: 3.1
-// Nome da Versão: "+ taxonomia de portfólio opcional (vertical/niche/partnerSlug) no CTAClick"
-// Baseado na Versão: 3.0
+// Version: 3.2
+// Nome da Versão: "+ exit prop em TODOS os satélites: saída de parceiro dispara Contact com a mesma taxonomia (simetria de portfólio)"
+// Baseado na Versão: 3.1
 
 "use client";
 
