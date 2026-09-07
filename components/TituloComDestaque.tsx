@@ -5,9 +5,7 @@
 // continua com o comportamento exato de antes."
 //
 // Renderiza um título com UM ou MAIS trechos em itálico Verde Selva. É a assinatura visual das heros do
-// projeto: "Organize seu *roteiro*", "Roteiros prontos de *1, 2 ou 3 dias*", "Os principais
-// *atrativos*", "Descubra o melhor da *gastronomia*", "Mais de três dias? O *roteiro* é *montado*
-// para você".
+// projeto: "Suas *compras no Paraguai* do jeito certo", "Um dia de compras com quem é *da fronteira*".
 //
 // ⓘ Nasceu inline em `/atrativos`, virou helper local em `/onde-comer` (que usa o padrão duas
 // vezes) e foi promovido a componente quando `/triplice-fronteira` precisou dele. Três cópias da

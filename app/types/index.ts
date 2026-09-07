@@ -4,11 +4,11 @@
 // Baseado na Versão: 4.0
 
 // =============================================================================
-// MODELO ATUAL — DIRETÓRIO DE PARCEIROS (negócios locais de Foz do Iguaçu)
-// Categorias fixas (conventions.md §3): Gastronomia e Culinária | Hotelaria | Turismo.
+// MODELO ATUAL — DIRETÓRIO DE PARCEIROS (receptivo de Foz do Iguaçu)
+// Categoria única do projeto Compras PY: Turismo (agências e transfer).
 // =============================================================================
 
-export type PartnerCategory = "gastronomia" | "hotelaria" | "turismo";
+export type PartnerCategory = "turismo";
 
 /** Metadados de apresentação de cada categoria (filtro, heros, ícones). */
 export interface PartnerCategoryMeta {
@@ -54,8 +54,6 @@ export interface Partner {
   whatsappMessage?: string;
   phone?: string;
   instagram?: string; // handle sem "@"
-  /** URL completa do perfil no iFood (ex: cardápio da loja). Renderiza botão "Pedir no iFood" + sameAs. */
-  ifood?: string;
   /** URL completa da página no Facebook. Renderiza botão + sameAs. */
   facebook?: string;
 
@@ -205,8 +203,7 @@ export interface Attraction {
 /** Tipo da referência num slot manhã/tarde/noite. */
 // ⛔ `RoteiroSlotKind` foi REMOVIDO em 10/08/2026, junto com o campo `kind` do slot.
 // Eram três tipos: `attraction`, `partner` e `custom`.
-//  · `custom` era o item livre ("Jantar livre"), herdado de quando o terceiro perfil se chamava
-//    "Compras & Gastronomia". O perfil virou só "Compras" e a gastronomia saiu dos planos prontos.
+//  · `custom` era o item livre ("Jantar livre"), herdado de um formato antigo dos planos prontos.
 //  · `partner` já estava fora por decisão anterior — "planos prontos = atrativos por corredor, sem
 //    forçar parceiro" (cabeçalho de `app/data/roteiros.ts`). Sobrava só o encanamento.
 // Sobrou UM tipo, e com um tipo só o campo `kind` não discriminava nada. Slot de roteiro pronto é
@@ -290,11 +287,9 @@ export interface RoteiroDay {
 }
 
 /**
- * Perfis fixos do hub (sempre 3 por duração 1–7).
- * Alinhados ao que o mercado vende: clássico | natureza/aventura | compras & gastronomia.
+ * Perfis fixos do hub (sempre 3 por duração 1–7). Não existe perfil de comida: comer é
+ * complemento de qualquer dia, não um roteiro. O valor alimenta o slug — `1-dia-compras`.
  */
-// ⚠️ "compras-gastronomia" virou só "compras" em 10/08/2026 (decisão do usuário): comer é
-// complemento de qualquer dia, não um roteiro. O valor alimenta o slug — `1-dia-compras`.
 export type RoteiroProfile = "classico" | "aventura-e-natureza" | "compras";
 
 /** Duração listada no hub (1–7). */

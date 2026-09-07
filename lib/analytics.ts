@@ -75,8 +75,8 @@ const DATALAYER_RESET_KEYS = [
  * ⚠️ **O dataLayer não é uma fila de eventos independentes — é um modelo que ACUMULA.** Cada `push`
  * FUNDE com o estado anterior em vez de substituí-lo, então mandar só as chaves do evento atual
  * deixa as do evento anterior vivas, e a variável do GTM devolve o valor velho sem erro nenhum.
- * Caso concreto: o `begin_checkout` de um atrativo grava `item_slug`; o `cta_click` seguinte, num
- * parceiro de gastronomia, sairia carimbado com aquele atrativo.
+ * Caso concreto: o `begin_checkout` de um atrativo grava `item_slug`; o `cta_click` seguinte,
+ * noutro contexto, sairia carimbado com aquele atrativo.
  *
  * Por isso toda chave da taxonomia que NÃO veio neste evento vai como `null`: o GTM sobrescreve o
  * valor antigo, a variável resolve vazia e o GA4 omite o parâmetro. É a regra de omissão do lado

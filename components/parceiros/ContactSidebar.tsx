@@ -28,17 +28,17 @@ export interface ContactSidebarProps {
   phone?: string;
   email?: string;
   /**
-   * Acento de CATEGORIA da entidade (gastronomia dourado · hotelaria azul · turismo verde,
-   * `partnerCategories` em app/data/partners.ts). ⚠️ Governa APENAS o pin do endereço. Os botões
+   * Acento de CATEGORIA da entidade (`partnerCategories` em app/data/partners.ts).
+   * ⚠️ Governa APENAS o pin do endereço. Os botões
    * contornados (Instagram/Ligar/E-mail) NÃO o usam: ver o comentário na linha deles.
    */
   accent: string;
   campaign: string;
   /**
    * Taxonomia do pixel — vem de FORA porque este bloco é genérico: o mesmo componente serve
-   * parceiro (gastronomia), hotel (hotelaria) e agência (transporte). Quem sabe qual é o vertical é
+   * parceiro e agência. Quem sabe qual é o vertical é
    * quem resolve o perfil, não o sidebar. Ausente → params simplesmente omitidos (D8).
-   * `slug` já é o `partner_slug`: nos três casos o produto É o negócio.
+   * `slug` já é o `partner_slug`: em ambos os casos o produto É o negócio.
    */
   vertical?: Vertical;
   niche?: Niche;
@@ -124,8 +124,8 @@ export default function ContactSidebar({
         )}
 
         {/* ⚠️ Instagram/Ligar/E-mail: texto em azul médio FIXO, nunca `accent`. Ligado à categoria,
-            o mesmo botão saía escuro no hotel, verde na agência e dourado na gastronomia — três cores
-            para a mesma ação, e a dourada mal se lia sobre o branco. O acento de categoria continua
+            o mesmo botão sairia com uma cor diferente por entidade — várias cores
+            para a mesma ação, e algumas mal se liam sobre o branco. O acento de categoria continua
             vivo no pin do endereço, que é onde ele identifica a entidade em vez de disputar leitura. */}
         <div className="flex gap-3">
           {igUrl && (

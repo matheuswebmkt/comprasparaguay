@@ -131,8 +131,8 @@ export default function NichePitchCard({ subject }: { subject: PitchSubject }) {
 
   const t = SHARED_UI[locale].nichePitch;
   const viewMore = SHARED_UI[locale].partnerCard.viewMore;
-  // Dados de negócio de hotel/agência: en/es vêm do dicionário; pt cai no dado. Parceiro
-  // (gastronomia) segue com o dado (copy do próprio parceiro).
+  // Dados de negócio de agência: en/es vêm do dicionário; pt cai no dado. Parceiro segue com o
+  // dado (copy do próprio parceiro).
   const ent = subject.kind !== "partner" ? ENTIDADES_I18N[locale][subject.slug] : undefined;
   const name = ent?.name ?? subject.name;
   const businessType = ent?.businessType ?? subject.businessType;

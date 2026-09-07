@@ -33,29 +33,18 @@ export const TAXONOMY_VERSION = "2026-08-v1";
 export type Property = "rodagigantefoz" | "toemfoz" | "comprasparaguay";
 
 /**
- * Os 4 produtos do portfólio. Todos os três sites têm os quatro.
- * NÃO é 1:1 com `PartnerCategory` (matriz §1.1): `turismo` → `transporte`, e `atrativos`
- * não tem categoria de parceiro porque é produto próprio (ingresso, experiência, combo).
+ * Produtos do projeto: atrativos (destinos de compra) e transporte (transfer).
+ * NÃO é 1:1 com `PartnerCategory`: `turismo` → `transporte`, e `atrativos` não tem categoria de
+ * parceiro porque é produto próprio (dia guiado, experiência, transfer).
  */
-export type Vertical = "atrativos" | "transporte" | "hotelaria" | "gastronomia";
+export type Vertical = "atrativos" | "transporte";
 
 /**
- * Sub-tipo dentro do vertical. SUPERSET DO PORTFÓLIO — cada projeto usa só o subconjunto que
- * tem, e omite o param quando não se aplica (D8). Ter o valor no enum não obriga a enviá-lo.
- *
- * ⚠️ São os valores de `Niche.key` (`pizzaria`), NUNCA de `Niche.slug`
- * (`pizzaria-em-foz-do-iguacu`, que é segmento de URL). É a `key` que casa com
- * `Partner.niches` — mandar o slug quebraria o match em silêncio (D4).
+ * Sub-tipo dentro do vertical: são os valores de `Niche.key` (`transfer`), NUNCA de `Niche.slug`
+ * (`transfer`-segmento de URL). É a `key` que casa com `Partner.niches` — mandar o slug quebraria
+ * o match em silêncio (D4).
  */
-export type Niche =
-  | "bar-e-cervejaria"
-  | "churrascaria"
-  | "restaurante"
-  | "pizzaria"
-  | "shawarma"
-  | "sushi"
-  | "hamburgueria"
-  | "transfer";
+export type Niche = "transfer";
 
 /**
  * Runtime do type `Vertical`. Ponto de disparo NUNCA escreve `"atrativos"` na mão — importa
@@ -65,30 +54,19 @@ export type Niche =
 export const VERTICALS = {
   atrativos: "atrativos",
   transporte: "transporte",
-  hotelaria: "hotelaria",
-  gastronomia: "gastronomia",
 } as const satisfies Record<Vertical, Vertical>;
 
 /**
- * Nichos citados EXPLICITAMENTE no código (os de gastronomia chegam pelo dado, via `asNiche`).
- * Mesmo motivo do `VERTICALS`: `"transfer"` escrito à mão em dois arquivos vira `"transfers"` num
- * deles no primeiro refactor, e o pixel perde metade do volume em silêncio.
+ * Nichos citados EXPLICITAMENTE no código. Mesmo motivo do `VERTICALS`: `"transfer"` escrito à mão
+ * em dois arquivos vira `"transfers"` num deles no primeiro refactor, e o pixel perde metade do
+ * volume em silêncio.
  */
 export const NICHE_KEYS = {
   transfer: "transfer",
 } as const satisfies Record<string, Niche>;
 
 /** Runtime do type `Niche` — existe só para alimentar `asNiche`. Manter os dois em sincronia. */
-export const NICHES: readonly Niche[] = [
-  "bar-e-cervejaria",
-  "churrascaria",
-  "restaurante",
-  "pizzaria",
-  "shawarma",
-  "sushi",
-  "hamburgueria",
-  "transfer",
-];
+export const NICHES: readonly Niche[] = ["transfer"];
 
 /**
  * Estreita uma string do DADO (`Partner.niches`, que é `string[]` livre) para o enum, ou
@@ -127,10 +105,8 @@ export const PORTFOLIO_EVENTS = {
  */
 export const VERTICALS_WITH_APPROVED_LEAD_VALUE: readonly Vertical[] = ["atrativos"];
 
-/** Mapa `PartnerCategory` → `Vertical`. As duas divergências são deliberadas (matriz §1.1). */
+/** Mapa `PartnerCategory` → `Vertical`. A divergência é deliberada (matriz §1.1). */
 export const VERTICAL_BY_PARTNER_CATEGORY = {
-  gastronomia: "gastronomia",
-  hotelaria: "hotelaria",
   turismo: "transporte",
 } as const satisfies Record<string, Vertical>;
 
@@ -140,12 +116,11 @@ export const VERTICAL_BY_PARTNER_CATEGORY = {
  * por benefício zero, já que ele nunca vira regra (D5).
  *
  * `item_slug` = O QUÊ foi vendido (`app/data/attractions.ts`, `app/data/experiences.ts`).
- * `partner_slug` = QUEM entrega. TRÊS fontes alimentam este mesmo param:
- *   • `app/data/partners.ts`  → Partner.slug       (gastronomia)
+ * `partner_slug` = QUEM entrega. DUAS fontes alimentam este mesmo param:
+ *   • `app/data/partners.ts`  → Partner.slug
  *   • `app/data/agencies.ts`  → AgencyProfile.slug (foz-falls)
- *   • `app/data/hotels.ts`    → HotelProfile.slug  (doubletree-…)
- * Nada no código impede colisão de slug entre os três — conferir ao cadastrar negócio novo.
- * ⚠️ Existem slugs de TESTE no dado (`agencia-teste`, `hotel-teste`): se um ficar ativo por
+ * Nada no código impede colisão de slug entre as duas — conferir ao cadastrar negócio novo.
+ * ⚠️ Existem slugs de TESTE no dado (`agencia-teste`): se um ficar ativo por
  * engano, entra no pixel de portfólio e não sai mais.
  *
  * Os dois CONVIVEM no mesmo evento: experiência vendida pela agência sai com

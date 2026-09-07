@@ -52,7 +52,7 @@ export default function PartnerDetailModal() {
 
   // `ViewContent` do parceiro (matriz §1.5): parceiro NÃO tem rota própria — é card em página hub e
   // o clique abre este modal. Logo, não existe page load onde disparar, e a ABERTURA é o único
-  // momento possível. Sem isto o Meta é cego para gastronomia inteira: `partner_slug` é o único
+  // momento possível. Sem isto o Meta fica cego para o parceiro inteiro: `partner_slug` é o único
   // canal desse dado até lá, e param não é retroativo (D5/D11).
   // 🚫 Sem `value`/`currency` — só o `Lead` os carrega (G3).
   useEffect(() => {

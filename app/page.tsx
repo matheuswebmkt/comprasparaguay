@@ -14,11 +14,10 @@
 // depois, pelo mesmo motivo: é o único ponto da home em que o serviço aparece como coisa.
 //
 // Saíram na R3: `ExploreFoz` (grade de 4 cards com orbe — padrão catálogo, arquivo DELETADO),
-// `RelatedAttractionsSection` (componente segue vivo, usado em nicho/onde-comer/tríplice) e o
-// **bloco de parceiros** `HookHero` + `PartnerShowcase` (decisão do usuário: os parceiros ativos são
-// todos de gastronomia e já têm `/onde-comer`; cada categoria hoje tem página própria —
-// `/onde-comer`, `/hospedagem`, `/transfer`). Ver `conventions/visibilidade-parceiros.md`
-// §13-ter: **a home deixou de ser superfície de parceiro.**
+// `RelatedAttractionsSection` (componente segue vivo, usado em nicho/tríplice) e o
+// **bloco de parceiros** `HookHero` + `PartnerShowcase` (decisão do usuário: a home não é
+// superfície de parceiro — cada parceiro vive no seu contexto de atendimento).
+// Ver `conventions/visibilidade-parceiros.md` §13-ter.
 //
 // ⓘ Sem `getVisiblePartnerSlugs()`, a home não lê mais o banco — virou totalmente estática.
 // ⚠️ Não reintroduzir outra seção na home sem cortar uma — a exceção aberta foi

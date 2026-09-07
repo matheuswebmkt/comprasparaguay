@@ -57,10 +57,10 @@ export default function ContactDetailModal() {
     };
   }, [open, close]);
 
-  // `ViewContent` do recomendado (matriz §1.5). Parceiro, hotel e agência NÃO têm rota própria — são
+  // `ViewContent` do recomendado (matriz §1.5). Parceiro, agência e hotel NÃO têm rota própria — são
   // card em página hub/de nicho e o clique abre este mini modal, então a ABERTURA é o único momento
-  // em que o evento pode existir. Sem isto a escada `ViewContent → Contact` (matriz §3) de hotelaria
-  // e gastronomia fica só com o `Contact`: dá pra montar público de "foi falar com o negócio", mas
+  // em que o evento pode existir. Sem isto a escada `ViewContent → Contact` (matriz §3) do recomendado
+  // fica só com o `Contact`: dá pra montar público de "foi falar com o negócio", mas
   // não de "viu o negócio" — e param não é retroativo (D5/D11).
   // 🚫 Sem `value`/`currency`: só o `Lead` os carrega (G3).
   const openKind = open?.kind;

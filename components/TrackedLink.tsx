@@ -30,7 +30,7 @@ interface TrackedLinkProps {
    * Este link é uma **SAÍDA do funil**: leva ao ponto de contato do negócio (WhatsApp, reserva,
    * site, pedido). Quando `true`, além do `CTAClick` dispara **`Contact`** com a mesma taxonomia.
    *
-   * Por que importa: em `gastronomia` e `hotelaria` não existe formulário, então a escada inteira é
+   * Por que importa: na escada de parceiro não existe formulário, então a escada inteira é
    * `ViewContent → Contact` (matriz §3). Sem isto dá para montar um público de "viu o parceiro", mas
    * não de "foi falar com o parceiro" — que é o que tem valor comercial.
    *
@@ -87,7 +87,7 @@ export default function TrackedLink({
     //    (matriz §1.4). Mandar o slug do negócio como `item_slug` é exatamente o defeito que o RG
     //    encontrou no `modal_partner_reservation` — mistura as duas dimensões.
     // Por isso: quando o chamador declara `partnerSlug` igual ao `itemSlug`, o pixel recebe só
-    // `partner_slug`. Em gastronomia/hotelaria não há item — o produto É o negócio.
+    // `partner_slug`. Quando o negócio É o produto (sem item de catálogo), não há item — só parceiro.
     const pixelItemSlug = partnerSlug && partnerSlug === itemSlug ? undefined : itemSlug;
     const tax = taxonomyParams({ vertical, niche, item_slug: pixelItemSlug, partner_slug: partnerSlug });
     trackConversion(CONVERSIONS.ctaClick, { cta_type: ctaType, destination: finalHref, ...tax });

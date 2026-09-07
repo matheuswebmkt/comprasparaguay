@@ -114,8 +114,8 @@ export default function AtrativosFozContent() {
           </div>
         </section>
 
-        {/* Curadoria de parceiros REMOVIDA desta página por decisão do usuário — os parceiros
-            visíveis hoje são de gastronomia e não pertencem ao catálogo de atrativos. */}
+        {/* Curadoria de parceiros REMOVIDA desta página por decisão do usuário — o catálogo
+            desta página é só de destinos. */}
 
         {/* ⚠️ Saiu daqui a seção "Onde comer, beber e se hospedar em Foz" (`NicheClusterLinks`) —
             a grade de cards de bar, cervejaria, hospedagem etc. Decisão do usuário: é legado, e

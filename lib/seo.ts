@@ -54,17 +54,6 @@ export const SILO_KEYWORDS = {
     "melhor dia para compras em Ciudad del Este",
     "dia de compras no Paraguai com guia",
   ],
-  gastronomia: [
-    "onde comer em Foz do Iguaçu",
-    "gastronomia Foz do Iguaçu",
-    "melhores restaurantes Foz do Iguaçu",
-    "comida típica Foz do Iguaçu",
-    "onde comer perto das Cataratas",
-    // Expansão jul/2026
-    "onde comer barato em Foz do Iguaçu",
-    "onde comer bem em Foz do Iguaçu",
-    "restaurante perto do Centro de Foz",
-  ],
   triplice: [
     "Tríplice Fronteira",
     "Tríplice Fronteira Foz do Iguaçu",
@@ -201,18 +190,9 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
 // BREADCRUMB PILLARS (silos)
 // =============================================================================
 
-/** Pilar de breadcrumb conforme categoria do nicho/parceiro. */
-export function nichePillar(category: PartnerCategory): { name: string; url: string } {
-  switch (category) {
-    case "gastronomia":
-      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
-    case "hotelaria":
-      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
-    case "turismo":
-      return { name: "Transfer em Foz", url: "/transfer" };
-    default:
-      return { name: "Roteiros de compras", url: "/roteiros-de-compras" };
-  }
+/** Pilar de breadcrumb do cluster de nicho (hoje: só transfer). */
+export function nichePillar(_category: PartnerCategory): { name: string; url: string } {
+  return { name: "Transfer em Foz", url: "/transfer" };
 }
 
 // =============================================================================
@@ -439,9 +419,9 @@ export function fozDestinationSchema() {
     "@id": `${SITE_URL}/#foz-destino`,
     name: "Foz do Iguaçu",
     description:
-      "Destino na Tríplice Fronteira: Cataratas do Iguaçu, Itaipu, Parque das Aves, compras, gastronomia e fronteiras com Argentina e Paraguai. Guia e curadoria pelo Compras Paraguay.",
+      "Destino na Tríplice Fronteira: Cataratas do Iguaçu, Itaipu, Parque das Aves, compras e fronteiras com Argentina e Paraguai. Guia e curadoria pelo Compras Paraguay.",
     url: SITE_URL,
-    touristType: ["Família", "Casais", "Aventura", "Gastronomia", "Compras", "Natureza"],
+    touristType: ["Família", "Casais", "Aventura", "Compras", "Natureza"],
     includesAttraction: [
       { "@type": "TouristAttraction", name: "Cataratas do Iguaçu" },
       { "@type": "TouristAttraction", name: "Parque das Aves" },
@@ -519,16 +499,9 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
 // =============================================================================
 
 export function partnerSchema(partner: Partner) {
-  const type =
-    partner.category === "gastronomia"
-      ? "Restaurant"
-      : partner.category === "hotelaria"
-        ? "LodgingBusiness"
-        : "TravelAgency";
-
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": type,
+    "@type": "TravelAgency",
     name: partner.name,
     description: partner.tagline,
     url: abs(`/${partner.slug}`),
@@ -557,7 +530,6 @@ export function partnerSchema(partner: Partner) {
   if (partner.instagram) sameAs.push(`https://instagram.com/${partner.instagram}`);
   if (partner.facebook) sameAs.push(partner.facebook);
   if (partner.website) sameAs.push(partner.website);
-  if (partner.ifood) sameAs.push(partner.ifood);
   if (sameAs.length) schema.sameAs = sameAs;
 
   return schema;

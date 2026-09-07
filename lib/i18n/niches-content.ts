@@ -1,10 +1,9 @@
 // Filepath: lib/i18n/niches-content.ts
-// Version: 1.6
-// Nome da Versão: "Saindo o 'roteiro' do título de atrativos: 'Os destinos de compra mais buscados…'"
+// Version: 1.7
+// Nome da Versão: "Cluster só tem transfer — espelho en/es reduzido a ele"
 //
 // O `pt` é a matriz e vive em `app/data/niches.ts`; aqui só en/es (consumidores usam
-// `NICHES_CONTENT[locale][slug] ?? niche`). Os 6 nichos de gastronomia não têm página própria
-// (vivem no hub /onde-comer, cujo conteúdo está em lib/i18n/onde-comer.ts) — não entram aqui.
+// `NICHES_CONTENT[locale][slug] ?? niche`). O cluster tem só o transfer — não há mais o que espelhar.
 
 import type { Locale } from "./config";
 

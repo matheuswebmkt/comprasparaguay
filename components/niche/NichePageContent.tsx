@@ -40,10 +40,7 @@ const PT_CHROME = {
   faqEyebrow: "Perguntas frequentes",
   faqTitle: (noun: string) => `Dúvidas sobre ${noun} em Foz do Iguaçu`,
   verAtrativosLabel: "Ver atrativos de Foz",
-  heroHubLabel: (niche: Niche) =>
-    niche.category === "gastronomia"
-      ? "Ver guia de onde comer em Foz"
-      : "Ver o que fazer em Foz do Iguaçu",
+  heroHubLabel: (_niche: Niche) => "Ver roteiros de compras",
 };
 
 function ptFallback(niche: Niche): NicheContentI18n {

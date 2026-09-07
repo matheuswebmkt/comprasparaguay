@@ -14,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, Compass, MapPin, Clock, Globe, Instagram, Facebook, MessageCircle,
-  Phone, ExternalLink, ShoppingBag, CheckCircle2, ShieldCheck, Award,
+  Phone, ExternalLink, CheckCircle2, ShieldCheck, Award,
 } from "lucide-react";
 import RoteirosCta from "@/components/RoteirosCta";
 import CategoryIcon from "@/components/CategoryIcon";
@@ -232,22 +232,6 @@ export default function PartnerDetailContent({
                   >
                     <MessageCircle className="h-4 w-4" aria-hidden="true" />
                     {t.whatsapp}
-                  </TrackedLink>
-                )}
-
-                {partner.ifood && (
-                  <TrackedLink
-                    href={partner.ifood}
-                    ctaType="ifood"
-                    itemSlug={partner.slug}
-                    campaign="parceiros"
-                    {...partnerTax}
-                    exit
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm border transition-all hover:scale-[1.02]"
-                    style={{ color: "hsl(210,56%,23%)", borderColor: "hsl(214,25%,85%)", background: "white" }}
-                  >
-                    <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-                    {t.ifood}
                   </TrackedLink>
                 )}
 

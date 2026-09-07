@@ -17,7 +17,6 @@ export interface PartnerDetailUI {
   hours: string;
   ctaDefault: string;
   whatsapp: string;
-  ifood: string;
   website: string;
   instagram: string;
   facebook: string;
@@ -48,7 +47,6 @@ export const PARTNER_DETAIL_UI: Record<Locale, PartnerDetailUI> = {
     hours: "Funcionamento",
     ctaDefault: "Acessar",
     whatsapp: "WhatsApp",
-    ifood: "Pedir no iFood",
     website: "Site oficial",
     instagram: "Instagram",
     facebook: "Facebook",
@@ -77,7 +75,6 @@ export const PARTNER_DETAIL_UI: Record<Locale, PartnerDetailUI> = {
     hours: "Hours",
     ctaDefault: "Visit",
     whatsapp: "WhatsApp",
-    ifood: "Order on iFood",
     website: "Official website",
     instagram: "Instagram",
     facebook: "Facebook",
@@ -106,7 +103,6 @@ export const PARTNER_DETAIL_UI: Record<Locale, PartnerDetailUI> = {
     hours: "Horario",
     ctaDefault: "Acceder",
     whatsapp: "WhatsApp",
-    ifood: "Pedir por iFood",
     website: "Sitio oficial",
     instagram: "Instagram",
     facebook: "Facebook",
