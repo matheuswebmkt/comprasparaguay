@@ -64,6 +64,7 @@
 
 "use client";
 
+import Image from "next/image";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { HOME_UI } from "@/lib/i18n/home";
 import { SHARED_UI } from "@/lib/i18n/shared";
@@ -102,53 +103,79 @@ export default function RoteirosHero() {
       />
 
       <div className="section-container relative z-10 py-10">
-        {/* 64rem para o display; o subtítulo volta a 48rem logo abaixo (§4.3). */}
-        <div className="mx-auto max-w-[64rem] text-center">
-          <h1
-            className="rf-rise rf-d1"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 600,
-              fontSize: "clamp(2.7rem, 5.1vw, 4.9rem)",
-              lineHeight: 0.98,
-              letterSpacing: "-0.034em",
-              color: "hsl(210,60%,15%)",
-              textWrap: "balance",
-            }}
-          >
-            {t.h1Before}
-            <em style={{ fontStyle: "italic", fontWeight: 500, color: "hsl(152,47%,30%)" }}>
-              {t.h1Strong}
-            </em>{" "}
-            {t.h1After}
-          </h1>
-
-          <p
-            className="rf-rise rf-d2 mx-auto mt-6 max-w-[46rem] text-[1.0625rem] leading-relaxed"
-            style={{ color: "hsl(210,25%,38%)" }}
-          >
-            {t.subtitle}
-          </p>
-
-          {/* A ÚNICA ação da seção: o dourado cheio. Nada ao lado — §8-bis, um CTA por seção. */}
-          <div className="rf-rise rf-d3 mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
-            <ReservarDataCta
-              ctaType="home_hero_reserva"
-              source="home-hero"
-              className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
+        {/* Grade 2 colunas em lg+: conteúdo à esquerda, imagem contida à direita (decisão do
+            usuário — v13.0, sobrepondo as reprovações v5–v7). Empilha no mobile, texto primeiro.
+            A imagem é CONTIDA (§14 do design system — nunca full-bleed), sem sombra, sem vidro
+            e sem campo de cor: só a foto em cantos arredondados. */}
+        {/* 50/50 a partir de md (tablet) — antes disso empilha, texto primeiro. */}
+        <div className="grid items-center gap-10 md:grid-cols-2 lg:gap-14">
+          {/* Coluna de texto: alinhamento à esquerda, medidas do display (§4.3). */}
+          <div className="max-w-[40rem]">
+            <h1
+              className="rf-rise rf-d1"
               style={{
-                background:
-                  "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
+                fontFamily: "var(--font-display)",
+                fontWeight: 600,
+                fontSize: "clamp(3.5rem, 5.1vw, 4.9rem)",
+                lineHeight: 0.98,
+                letterSpacing: "-0.034em",
+                color: "hsl(210,60%,15%)",
+                textWrap: "balance",
               }}
             >
-              {cta.ctaReserva}
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-1"
+              {t.h1Before}
+              <em style={{ fontStyle: "italic", fontWeight: 500, color: "hsl(152,47%,30%)" }}>
+                {t.h1Strong}
+              </em>
+              {t.h1LineBreakAfterStrong ? <br /> : " "}
+              {t.h1After}
+            </h1>
+
+            <p
+              className="rf-rise rf-d2 mt-6 max-w-[30rem] text-[1.0625rem] leading-relaxed"
+              style={{ color: "hsl(210,25%,38%)" }}
+            >
+              {t.subtitle}
+            </p>
+
+            {/* A ÚNICA ação da seção: o dourado cheio. Nada ao lado — §8-bis, um CTA por seção. */}
+            <div className="rf-rise rf-d3 mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <ReservarDataCta
+                ctaType="home_hero_reserva"
+                source="home-hero"
+                className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
+                }}
               >
-                →
-              </span>
-            </ReservarDataCta>
+                {cta.ctaReserva}
+                <span
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </ReservarDataCta>
+            </div>
+          </div>
+
+          {/* Coluna da imagem: contida, arredondada, prioridade alta (é above the fold).
+              ⚠️ A ALTURA É ENQUADRADA PELO VIEWPORT: em lg+ o palco tem altura derivada de svh
+              (`min(72svh, 42rem)`) e a foto é `fill` + `object-cover` — ela CORTA, nunca estoura
+              nem empurra a hero além da viewport, qualquer que seja a proporção do arquivo.
+              No mobile a altura vem da própria proporção 4/5 do card (também limitada).
+              ⚠️ hover:scale em CSS direto falhou neste projeto (design system §6) — a imagem é
+              estática, sem utilitário de hover. */}
+          <div className="rf-rise rf-d2 relative mx-auto aspect-[4/5] w-full max-w-[26rem] overflow-hidden rounded-[2rem] md:aspect-auto md:h-[min(72svh,42rem)] md:max-w-none" style={{ background: "hsl(214,50%,96%)" }}>
+            <Image
+              src="/images/especialista-2-compras-paraguay.webp"
+              alt="Dia de compras no Paraguai com carro privativo e guia — Compras Paraguay"
+              fill
+              priority
+              sizes="(max-width: 768px) 90vw, 50vw"
+              className="object-cover"
+            />
           </div>
         </div>
       </div>

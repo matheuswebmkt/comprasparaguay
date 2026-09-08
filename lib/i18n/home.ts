@@ -48,6 +48,9 @@ export interface HomeUI {
     h1Before: string;
     h1Strong: string;
     h1After: string;
+    /* true → o componente quebra linha depois do <em> em vez de espaço (teste do usuário na
+       home pt: "Compras no Paraguai⏎do jeito certo!"). */
+    h1LineBreakAfterStrong: boolean;
     subtitle: string;
   };
   dores: {
@@ -165,6 +168,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1Before: "Suas ",
       h1Strong: "compras no Paraguai",
       h1After: "do jeito certo",
+      h1LineBreakAfterStrong: false,
       subtitle:
         "Te levamos às compras no Paraguai — Ciudad del Este, com ida e volta a partir do seu hotel em Foz do Iguaçu. Segurança para você e suas compras com nossos guias especialistas.",
     },
@@ -323,6 +327,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1Before: "Your ",
       h1Strong: "shopping in Paraguay",
       h1After: "done right",
+      h1LineBreakAfterStrong: false,
       subtitle:
         "We take you shopping in Paraguay — Ciudad del Este, round trip from your hotel in Foz do Iguaçu. You and your purchases stay safe with our expert guides.",
     },
@@ -471,6 +476,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1Before: "Tus ",
       h1Strong: "compras en Paraguay",
       h1After: "como deben ser",
+      h1LineBreakAfterStrong: false,
       subtitle:
         "Te llevamos de compras por Paraguay — Ciudad del Este, con ida y vuelta desde tu hotel en Foz do Iguaçu. Seguridad para ti y tus compras con nuestros guías especialistas.",
     },
