@@ -6,7 +6,7 @@
 // Regra dura (conventions §4 e §12): AMBIENTE SERVERLESS. NADA de long-polling nem de
 // bibliotecas com `.on('message')` — toda comunicação com o Telegram é via requisição HTTP
 // (Bot API) e webhook. Este módulo é puro (sem dependência de banco): só fala com o Telegram.
-// No-op silencioso se faltar TELEGRAM_BOT_TOKEN; nunca lança (falhas logam via console.error, sempre).
+// No-op silencioso se faltar TELEGRAM_BOT_TOKEN; nunca lança (falha logada só em dev).
 
 import { DEFAULT_WA_GREETING } from "./offer-defaults";
 import type { ItensKind, ProductCopyKind } from "./offer-defaults";
@@ -47,14 +47,14 @@ async function call<T = Record<string, unknown>>(
       | { ok?: boolean; result?: T; description?: string }
       | null;
     if (!json?.ok) {
-      // Loga SEMPRE (não só em dev): em produção é a única pista de falhas silenciosas do cron
-      // (pinged:false) — ex.: bot removido do grupo, chat_id errado. Nunca contém PII nem token.
-      console.error(`telegram ${method} error:`, res.status, json?.description ?? "(sem corpo)");
+      if (process.env.NODE_ENV === "development") {
+        console.error(`telegram ${method} error:`, res.status, json?.description ?? "(sem corpo)");
+      }
       return null;
     }
     return (json.result ?? null) as T | null;
   } catch (err) {
-    console.error(`telegram ${method} exception:`, err);
+    if (process.env.NODE_ENV === "development") console.error(`telegram ${method} exception:`, err);
     return null;
   }
 }
@@ -202,7 +202,11 @@ function profileLine(isLocal?: boolean | null, alreadyInFoz?: boolean | null): s
  * dizer duas vezes a mesma coisa nas duas primeiras linhas. O título diz o QUE chegou; o assunto diz
  * qual produto.
  */
-const LEAD_TITLE = "🟢 <b>NOVA QUALIFICAÇÃO</b>";
+/** Título do card PENDENTE: bola VERMELHA = aguardando Assumir/Confirmar (o verde passa a marcar
+ * atendido). Decisão do usuário: a cor é o estado, o texto do título não muda. */
+const LEAD_TITLE = "🔴 <b>NOVA QUALIFICAÇÃO</b>";
+/** Título pós-atendimento (Assumir OU Confirmar) — o verde marca o lead resolvido. */
+const CONFIRMED_TITLE = "🟢 <b>CONFIRMADO - COMPRAS PARAGUAY</b>";
 /** Cenário sem agência — visualmente distinto de propósito: não é um lead pra "Assumir", é registro. */
 const LEAD_TITLE_INFO_ONLY = "ℹ️ <b>REGISTRO DE NOVA QUALIFICAÇÃO</b>";
 
@@ -231,11 +235,13 @@ function baseLines(
      * foi reservado: o link /r/[token] que a justificava foi removido neste projeto). */
     itemNames?: string[];
     infoOnly?: boolean;
+    /** Sobrepõe o título do card (só as edições pós-Assumir/Confirmar usam: `CONFIRMED_TITLE`). */
+    headline?: string;
     /** Token do pedido — vira a linha de link, onde a lista completa vive. */
     pedidoToken?: string | null;
   },
 ): string[] {
-  const lines = [leadHeadline(opts?.infoOnly)];
+  const lines = [opts?.headline ?? leadHeadline(opts?.infoOnly)];
   const assunto = opts?.roteiroTitulo || opts?.roteiroSlug;
 
   // O card É o briefing do vendedor: a página de pedido foi removida deste projeto, então os NOMES
@@ -697,6 +703,7 @@ export interface ClaimedEdit extends NewLeadNotice {
  */
 export async function editClaimedMessage(e: ClaimedEdit): Promise<void> {
   const linhas = baseLines({
+    headline: CONFIRMED_TITLE, // bola vermelha (pendente) → verde "CONFIRMADO - COMPRAS PARAGUAY"
     roteiroTitulo: e.roteiroTitulo,
     roteiroSlug: e.roteiroSlug,
     productKind: e.productKind,
@@ -742,6 +749,7 @@ export interface ConfirmedEdit extends NewLeadNotice {
  */
 export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
   const linhas = baseLines({
+    headline: CONFIRMED_TITLE, // bola vermelha (pendente) → verde "CONFIRMADO - COMPRAS PARAGUAY"
     roteiroTitulo: e.roteiroTitulo,
     roteiroSlug: e.roteiroSlug,
     productKind: e.productKind,
