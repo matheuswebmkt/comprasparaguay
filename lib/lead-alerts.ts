@@ -15,9 +15,10 @@ const KEY = "pending_alert_message_id";
 /** Idade mínima (minutos) pra um lead sem resposta contar como "aguardando" — mesma régua usada tanto
  * pra DISPARAR o ping (cron) quanto pra APAGAR (webhook, ao confirmar/assumir o último atrasado). Um
  * lead recém-chegado (ainda dentro dessa janela) não impede o aviso de sumir.
- * ⚠️ No RG este valor está como `2`, marcado no próprio código como TEMP de teste — aqui entra direto
- * com o valor real (30). */
-export const LEAD_ALERT_MIN = 30;
+ * ⚠️ Calibrado pro CADENCE do cron (cron-job.org a cada 60 min): com a janela em 2 min, TODO lead sem
+ * resposta acaba pingado no próximo ciclo (pior caso ~62 min de espera até o 1º aviso) — a régua baixa
+ * garante que nenhum recém-chegado escape do disparo por pouco tempo. */
+export const LEAD_ALERT_MIN = 2;
 
 /**
  * Chat de destino do ping. Em DEV, se `TELEGRAM_TEST_CHAT_ID` estiver setado, usa ele em vez do grupo

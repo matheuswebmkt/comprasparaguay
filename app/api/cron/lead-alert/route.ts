@@ -1,5 +1,5 @@
 // Filepath: app/api/cron/lead-alert/route.ts
-// POST/GET — chamado por um scheduler EXTERNO (ex: cron-job.org, a cada 30min; Vercel Hobby não libera
+// POST/GET — chamado por um scheduler EXTERNO (cron-job.org, a cada 60 min; Vercel Hobby não libera
 // cron frequente) pra avisar o grupo da agência quando há lead(s) sem "Assumir"/"Confirmar" há mais de
 // LEAD_ALERT_MIN minutos. Protegido por `?secret=` (CRON_SECRET) — não é chamado pelo navegador, não dá
 // pra usar same-origin (mesmo padrão de proteção do /api/telegram-webhook, mas via query em vez de

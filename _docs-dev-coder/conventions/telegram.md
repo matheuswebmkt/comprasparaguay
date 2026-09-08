@@ -12,7 +12,9 @@
   nunca lança).
 - **Rotas com papéis separados:** saída = `/api/leads` (postagem do card, junto do CAPI); entrada =
   `/api/telegram-webhook` (callback_query + `/start lead_<id>`); saída agendada = `/api/cron/lead-alert`
-  (scheduler EXTERNO, ex.: cron-job.org a cada 30 min, `?secret=CRON_SECRET`).
+  (scheduler EXTERNO, cron-job.org a cada 60 min, `?secret=CRON_SECRET`; régua do atraso:
+  `LEAD_ALERT_MIN` = 2 min — com cadência horária, todo lead sem resposta é pingado no ciclo
+  seguinte, e o webhook apaga o ping ao assumir/confirmar o último).
 - **Segurança por segredo, não same-origin:** o webhook valida `X-Telegram-Bot-Api-Secret-Token`
   (definido no `setWebhook`); o cron valida `?secret=`. NÃO adicionar guard same-origin a esses dois.
 - **Registro do webhook:** `pnpm telegram:setup` (1× por ambiente, ou ao trocar domínio/secret).
