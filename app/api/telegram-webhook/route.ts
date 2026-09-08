@@ -335,6 +335,21 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
       return OK();
     }
 
+    // ⚠️ Confirmar TAMBÉM marca o lead como atendido (mesmas colunas do claim): sem isto, o lead
+    // confirmado ficava com `claimed_at is null` pra sempre — continuava contando como atrasado
+    // (countOverdueLeads), o ping "⏰ Aguardando confirmação" NUNCA sumia do grupo e o cron o
+    // re-anunciava a cada ciclo. Guarda "primeiro vence", igual ao claim.
+    try {
+      await sql`
+        update leads
+           set claimed_by = ${confirmer}, claimed_by_id = ${cq.from.id ?? null}, claimed_at = now()
+         where id = ${leadId} and claimed_by is null
+      `;
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") console.error("webhook confirm-mark error:", err);
+      // best-effort: sem a marcação o ping ficaria preso — mas o card editado ainda vale como log
+    }
+
     await answerCallback(cq.id, "✅ Confirmado! Toque em “Iniciar conversa”.");
     const pedido = await pedidoDoLead(lead);
     await editConfirmedMessage({

@@ -73,7 +73,9 @@ export async function setPendingAlertMessageId(id: number | null): Promise<void>
  * 2) `telegram_message_id is not null` — cobre o caso do LEAD DUPLICADO reconciliado (Sprint 6): o lead
  *    SUPERADO tem o `telegram_message_id` zerado de propósito (migrou pro lead novo) — sem essa 2ª
  *    checagem, ele ficaria contando como atrasado pra sempre, sem card nenhum em lugar nenhum pra
- *    confirmar (só o lead que HERDOU o card, com `telegram_message_id` preenchido, é real). */
+ *    confirmar (só o lead que HERDOU o card, com `telegram_message_id` preenchido, é real).
+ * ⓘ Confirmar no modo central também grava `claimed_at` (webhook) — lead atendido sai da régua na
+ * hora, e o ping é apagado no mesmo clique quando não sobra nenhum outro atrasado. */
 export async function countOverdueLeads(minutes: number): Promise<number> {
   const sql = getSql();
   if (!sql) return 0;
