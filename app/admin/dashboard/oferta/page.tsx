@@ -8,7 +8,7 @@ import { SlidersHorizontal, LogOut, ArrowLeft, Inbox, Building2 } from "lucide-r
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import {
   getOfferConfig, getAgencyAcceptLocals, getAgencyChatIdRaw, getAgencyGroupNotifyEnabled,
-  getTransportEnabledRaw, getTransportNoAgencyEnabled, getAgencyInfoOnlyWhenNoPlan,
+  getAgencyInfoOnlyWhenNoPlan,
 } from "@/lib/offer-settings";
 import { getActiveAgencySlug, getActiveAgencySlugRaw } from "@/lib/agencies";
 import { MUTED, TITLE } from "@/components/admin/dashboard-ui";
@@ -25,7 +25,7 @@ export default async function OfferPage() {
 
   const [
     config, agencyAcceptLocals, agencyChatId, agencyGroupNotifyEnabled,
-    transportEnabledRaw, transportNoAgencyEnabled, agencyInfoOnlyNoPlan,
+    agencyInfoOnlyNoPlan,
     activeAgencySlugRaw, activeAgencySlug,
   ] = await Promise.all([
     getOfferConfig(),
@@ -33,8 +33,6 @@ export default async function OfferPage() {
     getAgencyChatIdRaw(),
 
     getAgencyGroupNotifyEnabled(),
-    getTransportEnabledRaw(),
-    getTransportNoAgencyEnabled(),
     getAgencyInfoOnlyWhenNoPlan(),
     getActiveAgencySlugRaw(), // placement puro (ignora plano) — distingue "sem agência" de "plano vencido"
     getActiveAgencySlug(),    // já plan-gated internamente (null se plano não vigente)
@@ -90,8 +88,6 @@ export default async function OfferPage() {
           agencyChatId={agencyChatId}
           agencyGroupNotifyEnabled={agencyGroupNotifyEnabled}
 
-          transportEnabledRaw={transportEnabledRaw}
-          transportNoAgencyEnabled={transportNoAgencyEnabled}
           agencyInfoOnlyNoPlan={agencyInfoOnlyNoPlan}
           agencyActive={agencyActive}
           agencyPlanActive={agencyPlanActive}

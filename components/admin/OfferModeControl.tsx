@@ -1,6 +1,6 @@
 // Filepath: components/admin/OfferModeControl.tsx
-// Version: 12.0
-// Nome da Versão: "Seção 5 'Ingresso por atrativo' sai inteira — modo Direto/Agência, Tem link e URL por atrativo não existem mais"
+// Version: 13.0
+// Nome da Versão: "config de transporte extinta — transporte sempre incluído (fato do produto), sem toggle no admin"
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -16,15 +16,11 @@ import {
   type RoteiroSuccessMode,
   type BotMessageMode,
   type LocalizedTexts,
-  type TransportOfferTexts,
   type ProductCopies,
   type ProductCopyKind,
 } from "@/lib/offer-defaults";
-import { officialAgencyName } from "@/app/data/agencies";
 import { LOCALES, LOCALE_META, type Locale } from "@/lib/i18n/config";
 import TicketOfferModal from "@/components/ticket-offer/TicketOfferModal";
-
-const OFFICIAL_AGENCY_NAME = officialAgencyName();
 
 interface Draft {
   roteiroSuccessMode: RoteiroSuccessMode;
@@ -37,10 +33,7 @@ interface Draft {
   agencyDefined: boolean;
   agencyChatId: string;
   agencyGroupNotifyEnabled: boolean;
-  /** Toggle INDEPENDENTE de `transportOffer.enabled` — vale só sem agência definida. */
-  transportNoAgencyEnabled: boolean;
-  transportOffer: { enabled: boolean; texts: Record<Locale, TransportOfferTexts> };
-  /** Modo SÓ INFO — vale só sem agência com plano vigente (mesmo cenário de `transportNoAgencyEnabled`). */
+  /** Modo SÓ INFO — vale só sem agência com plano vigente. */
   agencyInfoOnlyNoPlan: boolean;
 }
 const toDraft = (
@@ -48,11 +41,6 @@ const toDraft = (
   acceptLocals: boolean,
   agencyChatId: string,
   agencyGroupNotifyEnabled: boolean,
-  transportNoAgencyEnabled: boolean,
-  // Valor BRUTO da chave da seção Agência — NÃO usar `c.transportOffer.enabled`, que é o valor EFETIVO
-  // (sem agência vigente ele reflete `transportNoAgencyEnabled`, e o Salvar gravaria uma chave por cima
-  // da outra).
-  transportEnabledRaw: boolean,
   agencyInfoOnlyNoPlan: boolean,
 ): Draft => ({
   roteiroSuccessMode: c.roteiroSuccessMode,
@@ -67,13 +55,7 @@ const toDraft = (
   agencyDefined: c.agencyDefined,
   agencyChatId,
   agencyGroupNotifyEnabled,
-  transportNoAgencyEnabled,
   agencyInfoOnlyNoPlan,
-  transportOffer: {
-    // Bruto, não `c.transportOffer.enabled` (efetivo) — ver o comentário do parâmetro.
-    enabled: transportEnabledRaw,
-    texts: { pt: { ...c.transportOffer.texts.pt }, en: { ...c.transportOffer.texts.en }, es: { ...c.transportOffer.texts.es } },
-  },
 });
 
 // Atalhos (só PRÉ-PREENCHEM o rascunho — nada é salvo até clicar em Salvar).
@@ -131,17 +113,13 @@ const inputStyle = { borderColor: "hsl(214,25%,88%)", color: "hsl(210,60%,15%)",
 
 export default function OfferModeControl({
   initial, agencyAcceptLocals, agencyChatId, agencyGroupNotifyEnabled,
-  transportEnabledRaw, transportNoAgencyEnabled, agencyInfoOnlyNoPlan,
+  agencyInfoOnlyNoPlan,
   agencyActive, agencyPlanActive,
 }: {
   initial: OfferConfig;
   agencyAcceptLocals: boolean;
   agencyChatId: string | null;
   agencyGroupNotifyEnabled: boolean;
-  /** Valor BRUTO da chave da seção Agência (COM agência) — nunca o efetivo de `initial.transportOffer`. */
-  transportEnabledRaw: boolean;
-  /** Valor BRUTO do toggle "Sem agência com plano ativo". */
-  transportNoAgencyEnabled: boolean;
   /** Valor BRUTO do toggle "Receber os leads no grupo e atender você mesmo" (cenário SEM agência). */
   agencyInfoOnlyNoPlan: boolean;
   /** Placement puro (/admin/dashboard/agencia, ignora plano) — distingue "sem agência selecionada" de
@@ -150,8 +128,8 @@ export default function OfferModeControl({
   /** Agência com plano vigente (placement + /admin/dashboard/planos) — sem isso, "Definir agência" fica travado em Não. */
   agencyPlanActive: boolean;
 }) {
-  const [baseline, setBaseline] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, transportNoAgencyEnabled, transportEnabledRaw, agencyInfoOnlyNoPlan));
-  const [d, setD] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, transportNoAgencyEnabled, transportEnabledRaw, agencyInfoOnlyNoPlan));
+  const [baseline, setBaseline] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, agencyInfoOnlyNoPlan));
+  const [d, setD] = useState<Draft>(toDraft(initial, agencyAcceptLocals, agencyChatId ?? "", agencyGroupNotifyEnabled, agencyInfoOnlyNoPlan));
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   // const [showTexts, setShowTexts] = useState(false);            // seção 3 — desativada (ago/2026)
@@ -168,11 +146,7 @@ export default function OfferModeControl({
   // Plano manual: sem entidade ativa → força rascunho desligado (não dá pra habilitar no editor).
   useEffect(() => {
     if (!agencyPlanActive) {
-      setD((p) => ({
-        ...p,
-        agencyDefined: false,
-        transportOffer: { ...p.transportOffer, enabled: false },
-      }));
+      setD((p) => ({ ...p, agencyDefined: false }));
     }
   }, [agencyPlanActive]);
   // Trocar o produto no seletor "Ver como" re-simula o preview do zero com o contexto certo (mesmo
@@ -194,17 +168,11 @@ export default function OfferModeControl({
     productCopies: d.productCopies,
     agencyAcceptLocals: d.agencyAcceptLocals,
     agencyDefined: d.agencyDefined,
-    // Espelha a MESMA regra do server (getOfferConfig): com agência definida manda o toggle da seção
-    // Agência; sem agência, o toggle "Sem agência com plano ativo". Sem isso o preview mostraria o card
-    // de transporte num cenário em que o modal real não mostra (ou o contrário).
-    transportOffer: {
-      ...d.transportOffer,
-      enabled: d.agencyDefined ? d.transportOffer.enabled : d.transportNoAgencyEnabled,
-      // `agencySlug` é `partner_slug` do pixel e só é resolvido no server (agência com plano ativo).
-      // No preview fica `null` de propósito: o rascunho não conhece a agência ativa, e o modal em
-      // modo `preview` não dispara evento nenhum (G9) — então não há param a preencher.
-      agencySlug: null,
-    },
+    // Transporte é fato do produto (sempre incluído) — não é configurável. `agencySlug` é
+    // `partner_slug` do pixel e só é resolvido no server (agência com plano ativo). No preview fica
+    // `null` de propósito: o rascunho não conhece a agência ativa, e o modal em modo `preview` não
+    // dispara evento nenhum (G9) — então não há param a preencher.
+    transportOffer: { agencySlug: null },
     // O preview não precisa do catálogo de nomes: o seletor "incluir outros atrativos" fica vazio na
     // pré-visualização de propósito — o que se valida aqui é o fluxo, não a lista.
     attractionCatalog: {},
@@ -235,13 +203,6 @@ export default function OfferModeControl({
   //     },
   //   }));
   // };
-  // const setTransportText = (locale: Locale, patch: Partial<TransportOfferTexts>) => {
-  //   setSaved(false);
-  //   setD((p) => ({ ...p, transportOffer: { ...p.transportOffer, texts: { ...p.transportOffer.texts, [locale]: { ...p.transportOffer.texts[locale], ...patch } } } }));
-  // };
-  const setTransportMeta = (patch: Partial<Pick<Draft["transportOffer"], "enabled">>) => {
-    setSaved(false); setD((p) => ({ ...p, transportOffer: { ...p.transportOffer, ...patch } }));
-  };
   const applyPreset = (patch: Partial<Draft>) => { setSaved(false); setD((p) => ({ ...p, ...patch })); };
 
   // Campos de TEXTO protegidos: travados por padrão; edita pelo ícone; ✓ confirma, ✗ cancela e reverte.
@@ -282,20 +243,14 @@ export default function OfferModeControl({
       // também ignora (ver o bloco ⛔ em `saveOfferConfig`); esta é a primeira das duas trancas.
       // ↩️ Pra reativar a edição no admin, volte `texts`/`productCopies` aqui e descomente lá.
       const { texts: _texts, productCopies: _productCopies, ...behaviorOnly } = d;
-      const payload = {
-        ...behaviorOnly,
-        // Do transporte só o toggle atravessa; título/descrição são código.
-        transportOffer: { enabled: d.transportOffer.enabled, texts: undefined },
-      };
+      // ⓘ `transportOffer` NÃO vai no payload: o transporte é sempre incluído (fato do produto) e o
+      // único campo do tipo (`agencySlug`) é resolvido no server — não há nada a salvar.
+      const payload = behaviorOnly;
       const res1 = await fetch("/api/admin/offer-config", { method: "POST", headers: H, body: JSON.stringify(payload) });
       if (res1.ok) {
         const cfg = (await res1.json()) as OfferConfig;
-        // As duas chaves de transporte voltam do PRÓPRIO draft (acabaram de ser gravadas): o `cfg` que a
-        // rota devolve traz só o valor EFETIVO em `transportOffer.enabled`, que sem agência vigente é o
-        // da outra chave — reidratar a partir dele embaralharia os dois toggles no primeiro Salvar.
         const nd = toDraft(
-          cfg, d.agencyAcceptLocals, d.agencyChatId, d.agencyGroupNotifyEnabled,
-          d.transportNoAgencyEnabled, d.transportOffer.enabled, d.agencyInfoOnlyNoPlan,
+          cfg, d.agencyAcceptLocals, d.agencyChatId, d.agencyGroupNotifyEnabled, d.agencyInfoOnlyNoPlan,
         );
         setBaseline(nd); setD(nd);
       }
@@ -382,20 +337,6 @@ export default function OfferModeControl({
           )}
 
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-semibold" style={LABEL}>Exibir o checkbox de transporte no modal</span>
-            <Segmented
-              options={[{ v: true, label: "Sim" }, { v: false, label: "Não" }]}
-              value={d.transportNoAgencyEnabled}
-              onChange={(v) => set("transportNoAgencyEnabled", v)}
-            />
-          </div>
-          <p className="text-xs mt-1.5" style={HINT}>
-            {d.transportNoAgencyEnabled
-              ? "✅ Ligado: o card de transporte continua aparecendo no formulário mesmo sem agência pra atender. O lead NÃO é enviado a grupo nenhum — a resposta só é registrada (alimenta sinais de otimização de campanha). ⚠️ A copy do card (seção “Agência” → Transporte) continua sendo o que o turista lê: revise se ela promete algo que não vamos entregar agora."
-              : "Desligado (padrão): sem agência vigente o card de transporte não aparece, e nenhum lead registra interesse em transporte nesse período."}
-          </p>
-
-          <div className="flex items-center gap-3 flex-wrap mt-4">
             <span className="text-xs font-semibold" style={LABEL}>Receber os leads no grupo e atender você mesmo</span>
             <Segmented
               options={[{ v: true, label: "Sim" }, { v: false, label: "Não" }]}
@@ -539,7 +480,7 @@ export default function OfferModeControl({
         </Section>
       </div>
 
-      {/* 4 · Agência (ingresso + transporte + Telegram) */}
+      {/* 4 · Agência (ingresso + Telegram) */}
       <div className="mt-4 rounded-xl border" style={{ borderColor: "hsl(214,25%,92%)" }}>
         <button
           type="button"
@@ -548,7 +489,7 @@ export default function OfferModeControl({
         >
           {showAgency ? <ChevronDown className="h-4 w-4" style={{ color: "hsl(210,25%,45%)" }} /> : <ChevronRight className="h-4 w-4" style={{ color: "hsl(210,25%,45%)" }} />}
           <span className="text-xs font-bold" style={LABEL}>4 · Agência</span>
-          <span className="text-xs" style={HINT}>(ingresso + transporte + Telegram — plano em /admin/dashboard/agencia)</span>
+          <span className="text-xs" style={HINT}>(ingresso + Telegram — plano em /admin/dashboard/agencia)</span>
         </button>
 
         {showAgency && (
@@ -573,8 +514,8 @@ export default function OfferModeControl({
                     <p>
                       <b>Plano interrompido</b> em{" "}
                       <Link href="/admin/dashboard/planos" className="underline font-semibold">/admin/dashboard/planos</Link>
-                      . A agência está <b>oculta no site</b> (recomendação do nicho + modal). “Definir agência” e o
-                      transporte ficam <b>travados em Não</b> até você <b>renovar/retomar o plano</b>. Textos/Telegram
+                      . A agência está <b>oculta no site</b> (recomendação do nicho + modal). “Definir agência” fica
+                      <b>travado em Não</b> até você <b>renovar/retomar o plano</b>. Textos/Telegram
                       continuam editáveis — e o grupo pode continuar recebendo os leads em modo informativo, ver
                       “Sem agência com plano ativo” no topo.
                     </p>
@@ -582,7 +523,7 @@ export default function OfferModeControl({
                     <p>
                       <b>Nenhuma agência ativa</b> em{" "}
                       <Link href="/admin/dashboard/agencia" className="underline font-semibold">/admin/dashboard/agencia</Link>
-                      . “Definir agência” e o transporte ficam <b>travados em Não</b> até você <b>Ativar</b> uma agência
+                      . “Definir agência” fica <b>travado em Não</b> até você <b>Ativar</b> uma agência
                       no painel. Textos/Telegram continuam editáveis.
                     </p>
                   )}
@@ -590,9 +531,8 @@ export default function OfferModeControl({
               )}
               <p className="text-xs mb-2" style={HINT}>
                 <b>Sim</b> = agência ativa: os leads são roteados pro grupo Telegram abaixo (conforme
-                “Aceitar morador local”), e o cross-sell de Transporte fica disponível em páginas de
-                atrativo. <b>Não</b> = agência desativada: sem roteamento pro grupo, sem Transporte — a
-                tela de sucesso segue o modo definido na seção 1.
+                “Aceitar morador local”). <b>Não</b> = agência desativada: sem roteamento pro grupo —
+                a tela de sucesso segue o modo definido na seção 1.
               </p>
 
               {/* Canais — os dois "endereços" pra onde o lead vai. O número veio da seção 1 em ago/2026:
@@ -642,40 +582,6 @@ export default function OfferModeControl({
                     ? "Quem responde que mora em Foz também é roteado pro grupo da agência."
                     : "Quem responde que mora em Foz fica só gravado em Leads — não vai pro grupo da agência."}
                 </p>
-              </div>
-
-              <div className="rounded-xl border p-3 mt-3" style={{ borderColor: "hsl(214,25%,92%)", background: d.transportOffer.enabled ? "white" : "hsl(0,70%,97%)" }}>
-                <div className="flex items-center gap-3 flex-wrap mb-1.5">
-                  <h5 className="text-xs font-bold" style={LABEL}>Transporte ({OFFICIAL_AGENCY_NAME}) — pergunta acima do formulário</h5>
-                  <span className="text-xs font-semibold inline-flex items-center gap-1.5" style={LABEL}>
-                    Exibir
-                    <Segmented
-                      options={[{ v: true, label: "Sim" }, { v: false, label: "Não" }]}
-                      value={d.transportOffer.enabled}
-                      onChange={(v) => { if (agencyPlanActive && d.agencyDefined) setTransportMeta({ enabled: v }); }}
-                      disabled={!agencyPlanActive || !d.agencyDefined}
-                    />
-                  </span>
-                </div>
-                <p className="text-xs mb-2" style={HINT}>
-                  Só aparece em <b>páginas de atrativo individual</b> — roteiros prontos já embutem a
-                  logística do dia, então nunca mostram essa pergunta. Além disso, exige agência{" "}
-                  <b>definida</b> (acima) e plano de agência <b>ativo</b>. A escolha do lead é registrada e
-                  enviada junto ao grupo da agência.
-                </p>
-                {/* ⛔ Título/Descrição desativados (ago/2026) — texto é código, em `lib/offer-defaults.ts`
-                    (`DEFAULT_TRANSPORT_OFFER.texts`), nos 3 idiomas. Aqui sobra o Sim/Não de exibir.
-                    ↩️ Reativar: descomentar abaixo, restaurar `setTransportText`, e voltar a gravar em
-                    `saveOfferConfig` (bloco ⛔ do transporte) + mandar `transportOffer.texts` no payload.
-                <div className="grid gap-2">
-                  <Field label={`Título — ${LOCALE_META[activeLocale].label}`}>
-                    {lockedField(`transport:title:${activeLocale}`, d.transportOffer.texts[activeLocale].title, (v) => setTransportText(activeLocale, { title: v }), { maxLength: 160 })}
-                  </Field>
-                  <Field label={`Descrição — ${LOCALE_META[activeLocale].label}`}>
-                    {lockedField(`transport:desc:${activeLocale}`, d.transportOffer.texts[activeLocale].desc, (v) => setTransportText(activeLocale, { desc: v }), { multiline: true, maxLength: 400 })}
-                  </Field>
-                </div>
-                */}
               </div>
             </div>
           </div>
@@ -819,9 +725,9 @@ function Segmented<T extends string | boolean>({
 // ↩️ PARA REATIVAR (4 passos — todos necessários, senão a edição fica só na aparência):
 //   1. Descomente este bloco e cole de volta no JSX, entre `</Section></div>` (fim da seção 2) e o
 //      comentário `{/* 4 · Agência ... */}`.
-//   2. Restaure `FORM_FIELDS`, `PRODUCT_FIELD_LABELS`, `setText`, `setProductCopy`, `setTransportText`,
+//   2. Restaure `FORM_FIELDS`, `PRODUCT_FIELD_LABELS`, `setText`, `setProductCopy`,
 //      `showTexts` e `showProductTexts` (comentados nos seus lugares de origem, acima).
-//   3. Em `save()`, volte a mandar `texts`/`productCopies`/`transportOffer.texts` no payload.
+//   3. Em `save()`, volte a mandar `texts`/`productCopies` no payload.
 //   4. Em `lib/offer-settings.ts`, descomente os blocos de gravação (procure por ⛔).
 // A LEITURA nunca foi desligada: chave que exista no `app_settings` continua vencendo o default do
 // código, então o passo 4 é o que faz o que você digitar realmente aparecer no site.
@@ -913,7 +819,7 @@ function Segmented<T extends string | boolean>({
 //             <p className="text-xs" style={HINT}>
 //               Quando o visitante clica em <b>Comprar ingresso</b>, <b>Quero esse roteiro</b> ou
 //               finaliza o <b>personalizar</b>, o modal usa estes textos (não o bloco genérico da seção 3).
-//               Qualificação e transporte continuam iguais em todos os fluxos.
+//               Qualificação continua igual em todos os fluxos.
 //             </p>
 //             <div className="flex flex-wrap gap-2">
 //               {PRODUCT_COPY_KINDS.map((k) => (

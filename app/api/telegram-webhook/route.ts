@@ -23,7 +23,7 @@ import {
   sendPrivateText,
   sendPrivateWa,
 } from "@/lib/telegram";
-import { getProductWaGreeting } from "@/lib/offer-settings";
+import { getWaGreetingFor } from "@/lib/offer-settings";
 import { itensKind } from "@/lib/offer-defaults";
 import { atrativoNomes, productKindOf } from "@/lib/lead-card";
 import { resumoCurto } from "@/lib/pedido-resumo";
@@ -66,7 +66,8 @@ type LeadRow = {
   // Calendário + quantidade (D5/D6) — a coluna `date` do Neon volta como `Date`, não string.
   visit_date: string | Date | null;
   ticket_qty: number | null;
-  // Contexto do produto — resolve QUAL saudação de "3b · Textos por produto" usar no wa.me (ver greetingFor).
+  // Contexto do produto — resolve QUAL saudação de "3b · Textos por produto" usar no wa.me, na voz
+  // portal × agência (ver `greetingFor`).
   lead_context: string | null;
   roteiro_slug: string | null;
   roteiro_titulo: string | null;
@@ -106,8 +107,25 @@ const productCtxOf = (lead: LeadProductCols) => ({
   roteiroTitulo: lead.roteiro_titulo,
   ctaType: lead.cta_type,
 });
-const greetingFor = (lead: LeadRow) =>
-  getProductWaGreeting(
+/**
+ * Saudação pronta do wa.me, no idioma do LEAD (`leads.locale`; legado sem locale → pt) e no bucket de
+ * produto DELE ("3b · Textos por produto"): quem pediu ingresso de atrativo recebe uma abertura
+ * diferente de quem pediu roteiro sob medida. Ver `productKindOf` (lib/lead-card.ts).
+ *
+ * ⚠️ VOZ CONDICIONAL — quem fala depende do estado ATUAL da agência (lido no momento da chamada):
+ *   • AGÊNCIA definida + plano vigente → `waGreetingAgency`, com `{agencia}` já substituído pelo nome
+ *     da agência ativa ("Aqui é a agência Foz Falls. Recebemos...") — o lead vê logo com quem fala.
+ *   • SEM agência ativa (nenhuma definida, plano vencido ou agência desativada) → voz do PORTAL:
+ *     "Aqui é do Compras Paraguay" (`waGreeting`) — independe do toggle "Receber os leads no grupo",
+ *     que só decide se o card vai ao grupo, não quem fala no wa.me.
+ * Os cards/botões criados antes de uma virada de estado guardam a voz do momento em que foram
+ * montados; os caminhos de clique (`wa:<id>`, deep-link) re-resolvem no ato, então o DM chega na voz
+ * corrente.
+ */
+const greetingFor = async (lead: LeadRow): Promise<string> =>
+  // Voz portal × agência resolvida na fonte única (`getWaGreetingFor`, lib/offer-settings.ts) — o
+  // webhook não decide a voz, só deriva produto/idioma do lead e delega.
+  getWaGreetingFor(
     productKindOf(productCtxOf(lead)),
     isLocale(lead.locale) ? lead.locale : DEFAULT_LOCALE,
   );
@@ -233,6 +251,9 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
       claimedBy: claimer,
       nome: lead.nome,
       ...cardProductFields(lead),
+      // ⓘ `itens` acompanha `itemNames` SEMPRE: sem ele o rótulo do assunto regride para "🎫 Ingressos"
+      // na edição pós-claim (o struct original do card vinha do body com a classificação certa).
+      itens: itensKind((lead.item_slugs ?? "").split(",").filter(Boolean)),
       pedidoToken: lead.public_token,
       itemNames: atrativoNomes((lead.item_slugs ?? "").split(",").filter(Boolean)),
       isLocal: lead.is_local,
@@ -360,7 +381,13 @@ async function handleMessage(msg: TgMessage): Promise<NextResponse> {
 
   let lead: LeadRow | undefined;
   try {
-    const rows = (await sql`select nome, whatsapp, claimed_by, claimed_by_id, locale, visit_date, ticket_qty, lead_context, roteiro_slug, roteiro_titulo, cta_type from leads where id = ${leadId}`) as LeadRow[];
+    // ⚠️ Este SELECT precisa trazer TODAS as colunas que `pedidoDoLead` lê — ele alimenta o wa.me do
+    // PRIMEIRO acesso do vendedor (quando o DM direto ainda falha por falta de /start). Sem
+    // `item_slugs`/`wants_transport`/`public_token`/`roteiro_*`, o pedido sai sem lista "Para: …" e sem
+    // o "· com transporte" do resumo — exatamente o card incompleto que o teste em produção acusou.
+    const rows = (await sql`select nome, whatsapp, claimed_by, claimed_by_id, locale, visit_date, ticket_qty, lead_context, roteiro_slug, roteiro_titulo, cta_type,
+               public_token, item_slugs, roteiro_dias, roteiro_pessoas, wants_transport
+          from leads where id = ${leadId}`) as LeadRow[];
     lead = rows[0];
   } catch { /* trata abaixo */ }
   if (!lead) {

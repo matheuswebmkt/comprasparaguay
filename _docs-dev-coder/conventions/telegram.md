@@ -35,6 +35,12 @@
   novo card, log, info-only e as edições pós-claim/confirm reconstroem a lista.
 - Nenhuma edição pode encolher o card: as edições reescrevem a mensagem inteira com todas as linhas
   originais, trocando só o rodapé.
+- **Modo passivo nunca deixa o lead sem canal** (`notifyLeadLog`/`editLeadCard`): com sucesso "Só
+  mensagem", o card do grupo carrega o botão [📲 Iniciar conversa] — wa.me com voz corrente
+  (`getWaGreetingFor`, portal × agência) — porque é o ÚNICO canal (o lead não ganha botão no site);
+  com sucesso "Iniciar conversa", permanece o gate [✅ Confirmar] antes de liberar o botão. A copy
+  dos cards passivos fala em nome de quem atende (agência ativa × portal) — nada de "Modo Central"/
+  "número central", nomeação do cenário antigo.
 - ⛔ Nunca envolver texto do card em `<pre>` (vira bloco de código no Telegram). `esc()` obrigatório
   em todo valor interpolado.
 - Linha de transporte é só `🚐 Transporte: solicitado` (sem nomear agência).
@@ -43,15 +49,21 @@
 
 ## 3. Mensagem wa.me (as três superfícies)
 
-- Estrutura: introdução (texto por produto, editável no admin) → resumo de uma linha → lista
+- Estrutura: introdução (por produto, código — `lib/offer-defaults.ts`) → resumo de uma linha → lista
   `"Para: <nomes>"`. Blocos separados por linha em branco. Fonte única: `buildWaMessage`
   (`lib/pedido-resumo.ts`); modal, webhook (pós-claim/confirm/DM) e página de obrigado usam a MESMA
   lista (`listaPedidos` + `atrativoNomes`).
+- **A introdução tem VOZ CONDICIONAL** (`greetingFor`, webhook): com AGÊNCIA definida e plano vigente,
+  `waGreetingAgency` — "Aqui é a agência {agencia}. Recebemos…" (`{agencia}` = nome da agência ativa,
+  pré-preenchido no webhook); sem agência ativa, `waGreeting`, em nome do portal ("Aqui é do Compras
+  Paraguay. Vi…"). Os resumos/lista seguintes são iguais nas duas vozes. Textos vivem em
+  `DEFAULT_PRODUCT_COPIES` (editores de texto do admin desativados).
 - **Resumo do atrativo NÃO tem contagem** ("5 atrativos" saiu — a lista de nomes conta por si) e a
   data vem com "Para o dia" embutido (`resumoCurto`, voz "lead" × "agencia" muda só o transporte).
-- **`{pedidos}` placeholder** nos textos por produto (`waGreeting`/`waLeadText`,
+- **`{pedidos}` placeholder** nos textos por produto (`waGreeting`/`waGreetingAgency`/`waLeadText`,
   `lib/offer-defaults.ts`): vira "a reserva"/"as reservas" (pt), "the booking(s)" (en),
   "la(s) reserva(s)" (es) conforme o nº de itens — singular/plural obrigatório. Substituído por
-  `fillPedidos` no momento da composição; texto do admin sem placeholder sai intacto.
+  `fillPedidos` no momento da composição; texto sem placeholder sai intacto. Na voz agência existe
+  também `{agencia}` (nome da agência ativa).
 - **Vocabulário do produto é RESERVA, nunca "ingresso"**: os atrativos do catálogo são todos reserva
   de data. `itensKind` só existe como legado de rótulo no card.

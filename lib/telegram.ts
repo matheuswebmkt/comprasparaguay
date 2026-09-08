@@ -324,18 +324,37 @@ export async function notifyNewLead(n: NewLeadNotice, chatId: string | null): Pr
 }
 
 /**
- * Modo CENTRAL (passivo): a agência tem UM número central que atende o lead direto pelo site.
- * O Telegram vira só LOG/histórico — SEM botão "Assumir" (não distribuímos).
+ * Modo passivo: o grupo recebe o lead como LOG/histórico — SEM botão "Assumir" (não distribuímos).
  *
- * `confirmFlow` (item A): quando o sucesso do modal é o botão "Iniciar conversa" central (mesmo
- * WhatsApp compartilhado), o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] —
- * a edição (`editConfirmedMessage`) então libera o botão "Iniciar conversa". SEM claim atômico:
- * qualquer vendedor pode confirmar (não há disputa — é o mesmo número central pra todos, então
- * cair na conversa já iniciada pelo lead não é colisão). Sem `confirmFlow`, mantém o comportamento
- * antigo: WhatsApp visível direto no texto, sem botão (a agência atende sozinha, fora do Telegram).
+ * `confirmFlow` (item A): quando o sucesso do modal é o botão "Iniciar conversa" (mesmo WhatsApp
+ * compartilhado), o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] — a edição
+ * (`editConfirmedMessage`) então libera o botão "Iniciar conversa". SEM claim atômico: qualquer
+ * vendedor pode confirmar (não há disputa — é o mesmo número pra todos, então cair na conversa já
+ * iniciada pelo lead não é colisão).
+ *
+ * Sem `confirmFlow` (sucesso "Só mensagem"): o card carrega [📲 Iniciar conversa] DIRETO — é o ÚNICO
+ * canal de atendimento (o lead não ganha botão no site), e o WhatsApp segue visível no texto: quem
+ * clicar primeiro atende. Antes deste card era log puro sem ação nenhuma — beco-sem-saída.
+ */
+/**
+ * Modo passivo: o grupo recebe o lead como LOG/histórico — SEM botão "Assumir" (não distribuímos).
+ *
+ * `confirmFlow` (item A): quando o sucesso do modal é o botão "Iniciar conversa" (mesmo WhatsApp
+ * compartilhado), o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] — a edição
+ * (`editConfirmedMessage`) então libera o botão "Iniciar conversa". SEM claim atômico: qualquer
+ * vendedor pode confirmar (não há disputa — é o mesmo número pra todos, então cair na conversa já
+ * iniciada pelo lead não é colisão).
+ *
+ * Sem `confirmFlow` (sucesso "Só mensagem"): o card carrega [📲 Iniciar conversa] DIRETO — é o ÚNICO
+ * canal de atendimento (o lead não ganha botão no site), então deixar o card sem ação era um funil
+ * beco-sem-saída. O número continua visível no texto (mesma exceção anti-colisão de antes: não há
+ * disputa — quem clicar primeiro atende).
+ *
+ * `greetingTemplate` = saudação com a voz já resolvida (`getWaGreetingFor`, portal × agência) — só
+ * alimenta o botão de conversa; o texto do card não a usa.
  */
 export async function notifyLeadLog(
-  n: NewLeadNotice & { whatsapp: string; confirmFlow?: boolean },
+  n: NewLeadNotice & { whatsapp: string; confirmFlow?: boolean; greetingTemplate?: string | null },
   chatId: string | null,
 ): Promise<number | null> {
   if (!BOT_TOKEN || !chatId) return null;
@@ -354,8 +373,8 @@ export async function notifyLeadLog(
   linhas.push(
     "",
     n.confirmFlow
-      ? "⚠️ <b>Modo Central Ativo:</b> toque em Confirmar para liberar o botão de iniciar conversa 👇"
-      : "⚠️ <b>Modo Central Ativo:</b> o lead acabou de visualizar o botão para chamar o número central.",
+      ? "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇"
+      : "Modo passivo: o lead não recebe botão de conversa no site — o atendimento começa por aqui 👇",
   );
 
   const result = await call<{ message_id: number }>("sendMessage", {
@@ -364,7 +383,9 @@ export async function notifyLeadLog(
     parse_mode: "HTML",
     ...(n.confirmFlow
       ? { reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] } }
-      : {}), // sem confirmFlow: é log puro, sem "Assumir" nem "Confirmar".
+      : n.whatsapp.replace(/\D/g, "").length >= 10
+        ? { reply_markup: { inline_keyboard: [[{ text: "📲 Iniciar conversa", url: buildWaUrl(n.whatsapp, n.nome, n.greetingTemplate, { resumo: n.resumo, token: n.pedidoToken, kind: n.productKind, locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE, itens: n.itens, itemCount: n.itemNames?.length ?? 0, nomes: n.itemNames }) }]] } }
+        : {}), // sem WhatsApp utilizável: log puro, sem botão — e sem número quebrado.
   });
 
   return result?.message_id ?? null;
@@ -458,6 +479,9 @@ export async function editLeadCard(
     /** `true` = modo passivo (log/central); `false` = modo `assume` (botão "Assumir Lead"). */
     passive?: boolean;
     confirmFlow?: boolean;
+    /** Saudação com a voz resolvida (`getWaGreetingFor`) — alimenta o botão de atendimento no modo
+     * passivo SEM confirmFlow (mesmo teclado do card original, remontado a cada edição). */
+    greetingTemplate?: string | null;
     /** `created_at` do lead ORIGINAL — o card preserva a hora de entrada na fila. */
     sentAt?: Date | null;
   },
@@ -491,7 +515,7 @@ export async function editLeadCard(
     n.passive
       ? n.confirmFlow
         ? "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇"
-        : "⚠️ <b>Modo Central Ativo:</b> o lead acabou de visualizar o botão para chamar o número central."
+        : "Modo passivo: o lead não recebe botão de conversa no site — o atendimento começa por aqui 👇"
       : "Clique para assumir e receber o WhatsApp do cliente 👇",
   );
 
@@ -500,11 +524,13 @@ export async function editLeadCard(
     message_id: messageId,
     text: linhas.join("\n"),
     parse_mode: "HTML",
-    // Sem `reply_markup` o editMessageText REMOVE o teclado — é o que o log puro quer (nunca teve botão).
+    // Sem `reply_markup` o editMessageText REMOVE o teclado — só vale quando não há WhatsApp utilizável.
     ...(n.passive
       ? n.confirmFlow
         ? { reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] } }
-        : {}
+        : n.whatsapp && n.whatsapp.replace(/\D/g, "").length >= 10
+          ? { reply_markup: { inline_keyboard: [[{ text: "📲 Iniciar conversa", url: buildWaUrl(n.whatsapp, n.nome, n.greetingTemplate, { resumo: n.resumo, token: n.pedidoToken, kind: n.productKind, locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE, itens: n.itens, itemCount: n.itemNames?.length ?? 0, nomes: n.itemNames }) }]] } }
+          : {}
       : { reply_markup: { inline_keyboard: [[{ text: "🙋‍♂️ Assumir Lead", callback_data: `claim:${n.leadId}` }]] } }),
   });
   return res !== null;
@@ -598,11 +624,14 @@ export async function answerCallback(
 }
 
 /**
- * Monta o link wa.me do cliente (mesma lógica do cofre de leads: só dígitos, mantém DDI). A saudação é
- * EDITÁVEL no admin (Oferta da agência), por idioma — `template` vem de `getAgencyGreeting(locale)` no
- * caller (lib/offer-settings.ts). Sem template configurado → cai no default (`DEFAULT_WA_GREETING.pt`).
- * Placeholder `{nome}`. `visitDate`/`ticketQty` (D5/D6, opcionais): anexa um resumo curto ("📅 Dia" /
- * "🎟️ Ingressos") — o vendedor já chega sabendo o que o lead escolheu, sem precisar perguntar de novo.
+ * Monta o link wa.me do cliente (mesma lógica do cofre de leads: só dígitos, mantém DDI). A saudação
+ * NÃO é editável no admin — vem por PRODUTO, em código (`DEFAULT_PRODUCT_COPIES`, `lib/offer-defaults.ts`),
+ * e o webhook escolhe a VOZ pela agência: com agência definida/ativa usa `waGreetingAgency` com
+ * `{agencia}` já preenchido; sem, o `waGreeting` do portal (`greetingFor` no webhook). Sem template →
+ * cai no default (`DEFAULT_WA_GREETING.pt`). Placeholders: `{nome}`; `{pedidos}` (contagem, em
+ * `fillPedidos`); `{agencia}` deve chegar JÁ preenchido. `visitDate`/`ticketQty` (D5/D6, opcionais):
+ * anexam o resumo curto ("Para o dia" / pessoas / transporte) — o vendedor já chega sabendo o que o
+ * lead escolheu, sem precisar perguntar de novo.
  */
 export function buildWaUrl(
   whatsapp: string,
@@ -776,8 +805,9 @@ export async function sendPrivateText(userId: number, text: string): Promise<boo
 
 /**
  * DM privado com o botão wa.me do cliente (o dono já abriu o bot via deep-link → o bot pode responder).
- * Aqui o botão URL é OK: é o chat privado do próprio dono, ninguém mais vê. `greetingTemplate` = saudação
- * editável no admin pro idioma do lead (`getAgencyGreeting(locale)` no caller) — undefined usa o default.
+ * Aqui o botão URL é OK: é o chat privado do próprio dono, ninguém mais vê. `greetingTemplate` =
+ * saudação resolvida no webhook (`greetingFor`: por produto, idioma do lead e voz portal × agência) —
+ * undefined usa o default do código.
  */
 export async function sendPrivateWa(
   userId: number,

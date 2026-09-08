@@ -43,15 +43,11 @@ export interface ModalTexts {
 /** `ModalTexts` nos 3 idiomas — é o shape que trafega em `OfferConfig.texts`. */
 export type LocalizedTexts = Record<Locale, ModalTexts>;
 
-/** Textos (por idioma) do cross-sell de transporte. */
-export interface TransportOfferTexts {
-  title: string;        // "Você gostaria de transporte pra esse dia?"
-  desc: string;         // descrição do serviço
-}
-
-/** Cross-sell de transporte (parceiro da agência oficial) — pergunta acima do formulário quando a agência está ativa. */
+/** Cross-sell de transporte — hoje é FATO DO PRODUTO: todo atrativo é reserva com transporte incluso,
+ * o modal não pergunta Sim/Não e não há toggle nem copy configurável
+ * (conventions/tracking-metricas.md §11). O tipo sobrevive só como portador do identificador de
+ * atribuição do pixel. */
 export interface TransportOffer {
-  enabled: boolean;     // exibir ou não o bloco no modal
   /**
    * Slug da agência ATIVA (só leitura, computado no server). **Não é exibido em lugar nenhum:**
    * alimenta o `partner_slug` da taxonomia do pixel (`_docs-portfolio/pixel-matrix.md` §1.4) nos
@@ -63,7 +59,6 @@ export interface TransportOffer {
    * agência com plano ativo → o param é omitido (D8), nunca preenchido com placeholder.
    */
   agencySlug: string | null;
-  texts: Record<Locale, TransportOfferTexts>;
 }
 
 /**
@@ -87,6 +82,12 @@ export interface ProductLeadCopy {
    * um roteiro personalizado precisam de aberturas diferentes. A versão global antiga dizia "ingressos
    * ou roteiro" justamente por não saber qual era. Vale com ou sem agência definida. */
   waGreeting: string;
+  /** Saudação do wa.me quando quem inicia a conversa é a AGÊNCIA ATIVA ("Definir agência" + plano
+   * vigente) — o lead precisa saber desde a 1ª linha QUEM está falando, pois o nome/perfil de quem
+   * atende muda. Sem agência ativa vale o `waGreeting` acima (voz do portal). Mesmo lugar/chave
+   * (`waGreetingAgency`), placeholder extra `{agencia}` = nome da agência ativa — pré-preenchido pelo
+   * webhook (`greetingFor`) antes de o template entrar no card/botão. */
+  waGreetingAgency: string;
   /** Texto pré-preenchido do wa.me que **o VISITANTE** dispara no CTA de conversa da tela de
    * sucesso — a ponta oposta do `waGreeting` acima. Não confundir:
    *   • `waGreeting` → mensagem que VOCÊ (ou a agência) manda AO lead, a partir do Telegram;
@@ -166,7 +167,7 @@ export interface OfferConfig {
   productCopies: ProductCopies;
   agencyAcceptLocals: boolean;         // a agência aceita morador local? (roteamento server-side)
   agencyDefined: boolean;              // com agência OCULTA: true = agência ativa (registra/roteia); false = item de ingresso FIXO só visual (sem atribuir agência)
-  transportOffer: TransportOffer;      // cross-sell de transporte (agência oficial) — pergunta acima do form, só em atrativo
+  transportOffer: TransportOffer;      // transporte sempre incluído (fato do produto) — carrega só o partner_slug da agência ativa
   /**
    * Catálogo client-safe: `slug → nome` de todo atrativo (montado no servidor a partir de
    * `app/data/attractions.ts`, que é pesado e NÃO pode ser importado no client). Serve a um único uso:
@@ -190,6 +191,7 @@ export const PRODUCT_COPY_FIELDS: (keyof ProductLeadCopy)[] = [
   "subjectBadge",
   "subjectIncluded",
   "waGreeting",
+  "waGreetingAgency",
   "waLeadText",
   "waButtonLabel",
   "duplicateNoticeTitle",
@@ -214,6 +216,7 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectBadge: "Ingresso / atrativo",
       subjectIncluded: "Incluído",
       waGreeting: "Olá {nome}! Aqui é do Compras Paraguay. Vi {pedidos} que você escolheu — vou te passar as condições:",
+      waGreetingAgency: "Olá {nome}! Aqui é a agência {agencia}. Recebemos {pedidos} que você escolheu no Compras Paraguay — vou te passar as condições:",
       waLeadText: "Olá! Vim pelo Compras Paraguay. Escolhi {pedidos} e quero as condições:",
       waButtonLabel: "Falar sobre meu ingresso 💬",
       duplicateNoticeTitle: "Já recebemos sua solicitação para este ingresso!",
@@ -231,6 +234,7 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectBadge: "Ticket / attraction",
       subjectIncluded: "Included",
       waGreeting: "Hi {nome}! This is Compras Paraguay. I saw {pedidos} you picked — here are the conditions:",
+      waGreetingAgency: "Hi {nome}! This is the {agencia} agency. We received {pedidos} you picked on Compras Paraguay — here are the conditions:",
       waLeadText: "Hi! I came from Compras Paraguay. I picked {pedidos} and I'd like the conditions:",
       waButtonLabel: "Talk about my ticket 💬",
       duplicateNoticeTitle: "We already got your request for this ticket!",
@@ -248,6 +252,7 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectBadge: "Entrada / atractivo",
       subjectIncluded: "Incluido en el pedido de condiciones",
       waGreeting: "¡Hola {nome}! Aquí Compras Paraguay. Vi {pedidos} que elegiste — te paso las condiciones:",
+      waGreetingAgency: "¡Hola {nome}! Aquí la agencia {agencia}. Recibimos {pedidos} que elegiste en Compras Paraguay — te paso las condiciones:",
       waLeadText: "¡Hola! Vine por Compras Paraguay. Elegí {pedidos} y quiero las condiciones:",
       waButtonLabel: "Hablar sobre mi entrada 💬",
       duplicateNoticeTitle: "¡Ya recibimos tu solicitud para esta entrada!",
@@ -325,26 +330,6 @@ const DEFAULT_TEXTS_ES: ModalTexts = {
 /** Defaults por idioma (seed inicial dos campos ainda não editados no admin). */
 export const DEFAULT_TEXTS: LocalizedTexts = { pt: DEFAULT_TEXTS_PT, en: DEFAULT_TEXTS_EN, es: DEFAULT_TEXTS_ES };
 
-/** Cross-sell de transporte (agência oficial) — default (editável no admin; começa desligado). Nome vem do catálogo. */
-export const DEFAULT_TRANSPORT_OFFER: TransportOffer = {
-  enabled: false,
-  agencySlug: null,
-  texts: {
-    pt: {
-      title: "Incluir transporte no seu roteiro?",
-      desc: "A gente organiza junto, para uma experiência sem filas e com preferência nos corredores da cidade.",
-    },
-    en: {
-      title: "Include transport in your itinerary?",
-      desc: "We arrange it together, for an experience without queues and with priority on the city's corridors.",
-    },
-    es: {
-      title: "¿Incluir transporte en tu itinerario?",
-      desc: "Lo organizamos junto, para una experiencia sin filas y con preferencia en los corredores de la ciudad.",
-    },
-  },
-};
-
 export const DEFAULT_OFFER: OfferConfig = {
   roteiroSuccessMode: "close",
   atrativoSuccessMode: "close",
@@ -354,7 +339,7 @@ export const DEFAULT_OFFER: OfferConfig = {
   productCopies: DEFAULT_PRODUCT_COPIES,
   agencyAcceptLocals: false,
   agencyDefined: false,
-  transportOffer: DEFAULT_TRANSPORT_OFFER,
+  transportOffer: { agencySlug: null },
   attractionCatalog: {},
 };
 
@@ -380,9 +365,6 @@ export const TEXT_KEYS: Record<keyof ModalTexts, string> = {
 export const textKeyFor = (field: keyof ModalTexts, locale: Locale): string =>
   locale === "pt" ? TEXT_KEYS[field] : `${TEXT_KEYS[field]}_${locale}`;
 
-/** Chave singleton `app_settings` de um sufixo dado, para um locale (pt = chave base, sem sufixo). */
-const localizedKey = (base: string, locale: Locale): string => (locale === "pt" ? base : `${base}_${locale}`);
-
 /** Chaves singleton (app_settings) da Ação para parceiros — NÃO são textos do modal. */
 export const PARTNER_ACTION_KEYS = {
   agencyAcceptLocals: "agency_accept_locals", // SERVER-ONLY (roteamento): morador local pode ir p/ o grupo da agência
@@ -390,8 +372,4 @@ export const PARTNER_ACTION_KEYS = {
   agencyGroupNotifyEnabled: "agency_group_notify_enabled", // SERVER-ONLY: liga/desliga o ENVIO ao grupo sem apagar o chat_id salvo (default true)
   agencyDefined: "agency_defined",            // com agência oculta: agência ativa (registra/roteia) vs item de ingresso fixo só visual
   agencyInfoOnlyNoPlan: "agency_info_only_no_plan", // SERVER-ONLY: sem plano de agência vigente, envia o lead ao grupo em modo SÓ INFO (sem WhatsApp/botão) — default false (opt-in)
-  transportEnabled: "transport_offer_enabled",           // cross-sell de transporte (agência oficial): exibir ou não
-  transportNoAgencyEnabled: "transport_no_agency_enabled", // idem, quando NÃO há agência definida (chave independente — nunca cruzar com transportEnabled)
-  transportTitle: (locale: Locale) => localizedKey("transport_offer_title", locale),
-  transportDesc: (locale: Locale) => localizedKey("transport_offer_desc", locale),
 } as const;

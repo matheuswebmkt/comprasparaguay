@@ -1,6 +1,6 @@
 // Filepath: lib/offer-settings.ts
-// Version: 4.2
-// Nome da Versão: "attractionOffers (config por atrativo, com tabela) → attractionCatalog (slug→nome, estático) — link direto extinto"
+// Version: 4.3
+// Nome da Versão: "config de transporte extinta — transporte sempre incluído, sem toggle (§11); transportOffer só carrega agencySlug"
 //
 // Chaves independentes em app_settings (conventions §2/§12): captura + modal + bot + TEXTOS (agora por locale).
 // Tipos/defaults ficam em lib/offer-defaults.ts (client-safe). Aqui só o acesso ao banco.
@@ -10,11 +10,10 @@ import { unstable_cache } from "next/cache";
 import { getSql } from "./db";
 import { getAttractionCatalog } from "./attraction-catalog";
 import { LOCALES, type Locale } from "./i18n/config";
-import { officialAgencyName } from "@/app/data/agencies";
+import { officialAgencyName, getAgencyBySlug } from "@/app/data/agencies";
 import {
   DEFAULT_OFFER,
   DEFAULT_TEXTS,
-  DEFAULT_TRANSPORT_OFFER,
   DEFAULT_PRODUCT_COPIES,
   PRODUCT_COPY_KINDS,
   PRODUCT_COPY_FIELDS,
@@ -24,7 +23,7 @@ import {
   PARTNER_ACTION_KEYS,
   type ModalTexts,
   type LocalizedTexts,
-  type TransportOfferTexts,
+  type TransportOffer,
   type OfferConfig,
   type ProductCopies,
   type ProductCopyKind,
@@ -53,10 +52,6 @@ export type SaveOfferInput = {
   agencyChatId?: string;
   agencyGroupNotifyEnabled?: boolean;
   agencyGreeting?: Partial<Record<Locale, string>>;
-  transportOffer?: { enabled: boolean; image?: string | null; texts: Partial<Record<Locale, Partial<TransportOfferTexts>>> };
-  /** Toggle INDEPENDENTE do `transportOffer.enabled` acima — vale só no cenário SEM agência definida. Ver
-   * getTransportNoAgencyEnabled/getTransportEnabledRaw: nunca cruzar as duas chaves. */
-  transportNoAgencyEnabled?: boolean;
   /** Modo SÓ INFO: registra o lead no grupo (sem botão/WhatsApp) quando não há agência com plano vigente. */
   agencyInfoOnlyNoPlan?: boolean;
 };
@@ -179,30 +174,14 @@ export async function getOfferConfig(): Promise<OfferConfig> {
     const agencyDefinedStored = asBool(m.get(PARTNER_ACTION_KEYS.agencyDefined)) ?? DEFAULT_OFFER.agencyDefined;
     const agencyDefined = agencyPlanActive && agencyDefinedStored;
 
-    const transportOfferTexts = {} as Record<Locale, TransportOfferTexts>;
-    LOCALES.forEach((locale) => {
-      transportOfferTexts[locale] = {
-        title: asStr(m.get(PARTNER_ACTION_KEYS.transportTitle(locale))) ?? DEFAULT_TRANSPORT_OFFER.texts[locale].title,
-        desc: asStr(m.get(PARTNER_ACTION_KEYS.transportDesc(locale))) ?? DEFAULT_TRANSPORT_OFFER.texts[locale].desc,
-      };
-    });
-    const transportEnabledStored = asBool(m.get(PARTNER_ACTION_KEYS.transportEnabled)) ?? DEFAULT_TRANSPORT_OFFER.enabled;
-    const transportNoAgencyStored = asBool(m.get(PARTNER_ACTION_KEYS.transportNoAgencyEnabled)) ?? false;
-    const transportOffer = {
-      // ⭐ FONTE ÚNICA da visibilidade do transporte: antes era `agencyDefined && transportEnabledStored`
-      // aqui E `agencyActive && offer.transportOffer.enabled` repetido em 3 pontos (TicketOfferModal ×2 +
-      // /api/leads). Agora a regra mora só aqui — o modal e a rota só leem `transportOffer.enabled`.
-      //  • COM agência definida (plano vigente) → manda o toggle da seção Agência, como sempre foi.
-      //  • SEM agência → manda o toggle "Sem agência com plano ativo" (default false, opt-in).
-      // Por que exibir sem ter agência pra vender: `wants_transport` alimenta sinais de otimização de
-      // campanha — sem agência o lead não é roteado a grupo nenhum (`sendAgency` já é false em
-      // /api/leads), então o checkbox só COLETA; nada é prometido ao turista além da copy do card.
-      enabled: agencyDefined ? transportEnabledStored : transportNoAgencyStored,
+    // Transporte é SEMPRE incluído — fato do produto, não configuração (conventions/tracking-metricas.md
+    // §11): o modal não pergunta Sim/Não e não existe toggle de transporte no admin. O que sobrou aqui é
+    // só o `agencySlug`, identificador de atribuição do pixel.
+    const transportOffer: TransportOffer = {
       // CLIENT-SAFE e sem fallback para o catálogo oficial: `partner_slug` só faz sentido quando há
       // uma agência REAL com plano ativo. Sem ela o valor é `null` e o param sai do payload (D8),
       // em vez de virar um slug que não corresponde a ninguém recebendo lead.
       agencySlug: activeAgencySlug ?? null,
-      texts: transportOfferTexts,
     };
 
     const attractionCatalog = getAttractionCatalog();
@@ -316,45 +295,6 @@ export async function getAgencyGroupNotifyEnabled(): Promise<boolean> {
 }
 
 /**
- * SERVER-ONLY (admin): estado BRUTO do toggle de transporte da seção Agência (cenário COM agência).
- * ⚠️ O editor NÃO pode usar `getOfferConfig().transportOffer.enabled` para este campo: aquele valor é o
- * EFETIVO (com agência = esta chave; sem agência = `getTransportNoAgencyEnabled`). Sem agência vigente,
- * o editor mostraria o valor da OUTRA chave e o "Salvar" gravaria por cima dela — cruzando duas
- * configurações independentes. Cada toggle lê e grava a sua própria chave.
- */
-export async function getTransportEnabledRaw(): Promise<boolean> {
-  const sql = getSql();
-  if (!sql) return DEFAULT_TRANSPORT_OFFER.enabled;
-  try {
-    await ensureTable(sql);
-    const rows = (await sql`SELECT value FROM app_settings WHERE key = ${PARTNER_ACTION_KEYS.transportEnabled}`) as { value: string }[];
-    if (rows[0]?.value === undefined) return DEFAULT_TRANSPORT_OFFER.enabled;
-    return rows[0].value === "true";
-  } catch {
-    return DEFAULT_TRANSPORT_OFFER.enabled;
-  }
-}
-
-/**
- * SERVER-ONLY (admin): estado BRUTO do toggle "exibir o checkbox de transporte sem agência com plano
- * vigente". O público nunca lê isto direto — `getOfferConfig` já resolve o valor efetivo em
- * `transportOffer.enabled`. Existe só pra o editor mostrar a chave como ela está salva, sem depender do
- * cenário atual (com agência ativa, o valor efetivo vem da seção Agência e esconderia o que está
- * guardado aqui). Default `false` (opt-in).
- */
-export async function getTransportNoAgencyEnabled(): Promise<boolean> {
-  const sql = getSql();
-  if (!sql) return false;
-  try {
-    await ensureTable(sql);
-    const rows = (await sql`SELECT value FROM app_settings WHERE key = ${PARTNER_ACTION_KEYS.transportNoAgencyEnabled}`) as { value: string }[];
-    return rows[0]?.value === "true";
-  } catch {
-    return false;
-  }
-}
-
-/**
  * SERVER-ONLY (admin): toggle "Registrar leads no grupo (sem WhatsApp/botão)" — vale só no cenário SEM
  * agência com plano vigente. Ligado, o lead recebido sem agência ativa ainda gera um card informativo
  * no grupo (sem botão "Assumir", sem link de WhatsApp) em vez de simplesmente não notificar ninguém.
@@ -392,14 +332,21 @@ export async function getAgencyInfoOnlyWhenNoPlan(): Promise<boolean> {
  * medida. A chave global antiga (`agency_greeting`) dizia "ingressos ou roteiro" justamente por não
  * saber qual era, e ficava presa à seção Agência — mas a mensagem vale COM ou SEM agência definida.
  * Sem valor salvo → default do produto. NÃO entra no OfferConfig client.
+ *
+ * `field` escolhe a VOZ: `waGreeting` (portal, padrão) ou `waGreetingAgency` (agência ativa — ver
+ * `getAgencyVoiceName`). O caller decide qual voz usar lendo o estado atual da agência.
  */
-export async function getProductWaGreeting(kind: ProductCopyKind, locale: Locale): Promise<string> {
-  const fallback = DEFAULT_PRODUCT_COPIES[kind][locale].waGreeting;
+export async function getProductWaGreeting(
+  kind: ProductCopyKind,
+  locale: Locale,
+  field: "waGreeting" | "waGreetingAgency" = "waGreeting",
+): Promise<string> {
+  const fallback = DEFAULT_PRODUCT_COPIES[kind][locale][field];
   const sql = getSql();
   if (!sql) return fallback;
   try {
     await ensureTable(sql);
-    const rows = (await sql`SELECT value FROM app_settings WHERE key = ${productCopyKey(kind, "waGreeting", locale)}`) as { value: string }[];
+    const rows = (await sql`SELECT value FROM app_settings WHERE key = ${productCopyKey(kind, field, locale)}`) as { value: string }[];
     const v = (rows[0]?.value ?? "").trim();
     return v.length ? v : fallback;
   } catch {
@@ -408,17 +355,58 @@ export async function getProductWaGreeting(kind: ProductCopyKind, locale: Locale
 }
 
 /**
+ * SERVER-ONLY: NOME da agência que FALA no wa.me — ativo só quando existem as DUAS condições que
+ * definem "agência definida/ativa": "Definir agência" ligado E plano vigente (a mesma condição
+ * efetiva de `getOfferConfig().agencyDefined`; o slug já sai plan-gated de `getActiveAgencySlug`).
+ * `null` = quem atende é o PORTAL (sem agência, plano vencido ou desativada): o wa.me abre em nome do
+ * Compras Paraguay (`waGreeting`), nunca em nome de agência. O webhook usa isto pra escolher a voz da
+ * saudação — o lead precisa saber quem está falando, pois o atendente muda.
+ */
+export async function getAgencyVoiceName(): Promise<string | null> {
+  const sql = getSql();
+  if (!sql) return null;
+  try {
+    await ensureTable(sql);
+    const rows = (await sql`SELECT value FROM app_settings WHERE key = ${PARTNER_ACTION_KEYS.agencyDefined}`) as { value: string }[];
+    if (rows[0]?.value !== "true") return null;
+    const slug = await getActiveAgencySlug();
+    if (!slug) return null;
+    return getAgencyBySlug(slug)?.name ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * SERVER-ONLY: saudação pronta do wa.me com a VOZ resolvida (portal × agência) — fonte ÚNICA da
+ * decisão para TODOS os montadores (webhook `greetingFor` e o card passivo em `/api/leads`):
+ *   • agência definida + plano vigente → `waGreetingAgency`, com `{agencia}` já substituído pelo nome
+ *     da agência ativa;
+ *   • sem agência ativa → `waGreeting`, em nome do portal.
+ * O estado é lido NO MOMENTO da chamada — quem embute o resultado em botão/card guarda a voz daquele
+ * instante; os caminhos de clique re-resolvem no ato.
+ */
+export async function getWaGreetingFor(kind: ProductCopyKind, locale: Locale): Promise<string> {
+  const agencia = await getAgencyVoiceName(); // null = portal fala; string = agência ativa fala
+  if (agencia) {
+    // `{agencia}` é pré-preenchido AQUI (e não no buildWaUrl): o template viaja dentro das mensagens do
+    // Telegram (card/botão/DM) e não há motivo para os tipos intermediários carregarem o nome.
+    const tpl = await getProductWaGreeting(kind, locale, "waGreetingAgency");
+    return tpl.replace(/\{agencia\}/gi, agencia);
+  }
+  return getProductWaGreeting(kind, locale, "waGreeting");
+}
+
+/**
  * Desliga no app_settings a oferta de agência no modal (ao Desativar em /admin/dashboard/agencia).
- * Mantém textos/chat_id/saudação — só o plano (Definir agência + transporte).
+ * Mantém textos/chat_id/saudação — só o plano (Definir agência). Transporte não se neutraliza:
+ * é sempre incluído, independentemente de agência (§11).
  */
 export async function neutralizeAgencyOfferInSettings(): Promise<void> {
   const sql = getSql();
   if (!sql) return;
   await ensureTable(sql);
-  await Promise.all([
-    upsert(sql, PARTNER_ACTION_KEYS.agencyDefined, "false"),
-    upsert(sql, PARTNER_ACTION_KEYS.transportEnabled, "false"),
-  ]);
+  await upsert(sql, PARTNER_ACTION_KEYS.agencyDefined, "false");
 }
 
 /** Persiste os campos enviados (admin). Lança sem DB. Devolve a config resultante. */
@@ -432,9 +420,6 @@ export async function saveOfferConfig(p: SaveOfferInput): Promise<OfferConfig> {
   const agencyPlanActive = Boolean(activeAgency);
 
   if (p.agencyDefined === true && !agencyPlanActive) p.agencyDefined = false;
-  if (p.transportOffer?.enabled === true && (!agencyPlanActive || p.agencyDefined === false)) {
-    p.transportOffer = { ...p.transportOffer, enabled: false };
-  }
 
   const ops: Promise<unknown>[] = [];
   if (p.roteiroSuccessMode !== undefined)
@@ -449,20 +434,6 @@ export async function saveOfferConfig(p: SaveOfferInput): Promise<OfferConfig> {
     ops.push(upsert(sql, PARTNER_ACTION_KEYS.agencyAcceptLocals, p.agencyAcceptLocals ? "true" : "false"));
   if (p.agencyDefined !== undefined)
     ops.push(upsert(sql, PARTNER_ACTION_KEYS.agencyDefined, p.agencyDefined ? "true" : "false"));
-  if (p.transportOffer !== undefined) {
-    // Só o toggle. Título/descrição são código — ver o bloco ⛔ no fim desta função.
-    ops.push(upsert(sql, PARTNER_ACTION_KEYS.transportEnabled, p.transportOffer.enabled ? "true" : "false"));
-    // LOCALES.forEach((locale) => {
-    //   const t = p.transportOffer!.texts[locale];
-    //   if (!t) return;
-    //   if (t.title !== undefined) ops.push(upsert(sql, PARTNER_ACTION_KEYS.transportTitle(locale), (t.title ?? "").trim().slice(0, 160) || DEFAULT_TRANSPORT_OFFER.texts[locale].title));
-    //   if (t.desc !== undefined) ops.push(upsert(sql, PARTNER_ACTION_KEYS.transportDesc(locale), (t.desc ?? "").trim().slice(0, 400) || DEFAULT_TRANSPORT_OFFER.texts[locale].desc));
-    // });
-  }
-  // Chave INDEPENDENTE de transportOffer.enabled — vale só sem agência definida. Sem gate de plano
-  // (o próprio propósito do toggle é existir quando NÃO há agência).
-  if (p.transportNoAgencyEnabled !== undefined)
-    ops.push(upsert(sql, PARTNER_ACTION_KEYS.transportNoAgencyEnabled, p.transportNoAgencyEnabled ? "true" : "false"));
   // Idem: independente de agencyDefined — vale só sem agência com plano vigente.
   if (p.agencyInfoOnlyNoPlan !== undefined)
     ops.push(upsert(sql, PARTNER_ACTION_KEYS.agencyInfoOnlyNoPlan, p.agencyInfoOnlyNoPlan ? "true" : "false"));
@@ -486,7 +457,7 @@ export async function saveOfferConfig(p: SaveOfferInput): Promise<OfferConfig> {
   //
   // ↩️ Para reativar: descomente os dois blocos abaixo, descomente os blocos "3", "3b" e os campos de
   // texto do transporte em `components/admin/OfferModeControl.tsx`, e volte a mandar `texts`/
-  // `productCopies`/`transportOffer.texts` no payload de `buildPayload`. A LEITURA continua intacta em
+  // `productCopies` no payload de `buildPayload`. A LEITURA continua intacta em
   // `getOfferConfig` — chave que existir no banco ainda vence o default —, então nada mais precisa mudar.
   //
   // if (p.texts) {

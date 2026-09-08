@@ -4,9 +4,9 @@
 //
 // O modal é CLIENT (renderiza na abertura, pós-hidratação) → traduz sem flash. Estratégia:
 //   • UI fixa (placeholders, Sim/Não, LGPD, erros)  → MODAL_UI[locale]  (pt/en/es) — SEMPRE fixa, não editável.
-//   • Copy de negócio (title/subtitle/transporte/…) → TODA editável no admin nos 3 idiomas (Fase 3),
-//     assada no `OfferConfig.texts`/`transportOffer.texts` (Record<Locale, …>) —
-//     `modalTexts`/`transportText` abaixo viraram indexação direta (sem fallback pra dicionário).
+//   • Copy de negócio (title/subtitle/…) → TODA editável no admin nos 3 idiomas (Fase 3),
+//     assada no `OfferConfig.texts` (Record<Locale, …>) —
+//     `modalTexts` abaixo virou indexação direta (sem fallback pra dicionário).
 
 import type { Locale } from "./config";
 
@@ -238,14 +238,10 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
   },
 };
 
-import type { LocalizedTexts, TransportOfferTexts } from "@/lib/offer-defaults";
+import type { LocalizedTexts } from "@/lib/offer-defaults";
 
 /** Copy de negócio do idioma ativo — indexação direta (Fase 3: todos os 3 idiomas vêm do OfferConfig). */
 export function modalTexts(locale: Locale, texts: LocalizedTexts) {
-  return texts[locale];
-}
-/** Transporte (title/desc/includeLabel) do idioma ativo. */
-export function transportText(locale: Locale, texts: Record<Locale, TransportOfferTexts>): TransportOfferTexts {
   return texts[locale];
 }
 

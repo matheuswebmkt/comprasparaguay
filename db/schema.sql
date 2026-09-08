@@ -158,18 +158,14 @@ alter table leads add column if not exists is_local        boolean;             
 alter table leads add column if not exists already_in_foz  boolean;                     -- já está em Foz? (null quando morador)
 alter table leads add column if not exists selected_offers text;                        -- slugs de oferta marcados no modal (csv) — trilha do roteamento
 alter table leads add column if not exists modal_id        text;                        -- UUID da abertura do modal → cruza com modal_events (ex: clicou no CTA final do sucesso)
--- Transporte (cross-sell da agência oficial) — TRI-STATE, e o null é significativo:
---   true  = perguntamos e a pessoa QUER transporte
---   false = perguntamos e a pessoa RECUSOU (resposta explícita "Não" no modal)
---   null  = NÃO perguntamos (toggle de transporte desligado no admin quando o lead foi captado)
--- ⚠️ Nunca coagir null→false: isso faria a coluna afirmar "não quer" sobre quem ninguém perguntou, e
--- contaminaria o denominador de qualquer taxa de aceite. Quem decide "foi perguntado?" é o servidor
--- (`offer.transportOffer.enabled` em app/api/leads/route.ts), não o cliente.
--- ⓘ Linhas gravadas antes desta regra podem ter `false` onde hoje seria `null` — dado histórico, não retroativo.
--- ⓘ O wizard /montar-roteiro tem um passo de transfer PRÓPRIO (sim|nao|depois), independente deste
---    cross-sell: se o cross-sell estiver desligado, o lead do wizard fica com `wants_transport = null`
---    mesmo tendo respondido — a resposta crua (incl. "depois", que aqui não tem representação) vive em
---    `roteiro_transfer`. Duas perguntas diferentes, duas colunas; nada se perde.
+-- Transporte — SEMPRE incluído (fato do produto, conventions/tracking-metricas.md §11): todo atrativo
+-- é reserva com transporte incluso, o modal não pergunta e o lead entra com `wants_transport = true`
+-- (o servidor espelha o corpo do POST sem chave de config — os toggles de transporte foram removidos).
+-- ⚠️ A coluna continua TRI-STATE por contrato histórico (`false` = recusou, num tempo em que havia
+-- pergunta; `null` = sem sinal). Novas linhas só recebem `true` (modal) ou `null` (fonte que não
+-- declara o campo — ausência nunca é virada em "recusou"). Não coagir null→false: envenenaria o
+-- denominador de qualquer taxa de aceite. `false` hoje só existe em linhas gravadas antes da decisão.
+-- ⓘ Dado histórico não é retroativo: linhas antigas mantêm o que responderam na época.
 alter table leads add column if not exists wants_transport boolean;
 alter table leads add column if not exists wants_hotel boolean;                          -- lead pediu hotel (cross-sell no sucesso; turista ainda não em Foz)
 alter table leads add column if not exists locale          text;                        -- idioma escolhido no modal (pt|en|es) → a agência inicia a conversa no idioma certo
@@ -333,7 +329,14 @@ create table if not exists app_settings (
 --     `productCopies[kind].waGreeting`): a abertura de quem pediu ingresso de atrativo não serve pra
 --     quem pediu roteiro sob medida, e a chave global dizia "ingressos ou roteiro" por não saber qual era.
 --   • transport_offer_image / transport_offer_include_label* — o card de transporte perdeu a foto e o
---     rótulo de checkbox (virou pergunta Sim/Não, onde title é a pergunta e desc é o argumento).
+--     rótulo de checkbox.
+--   • transport_offer_enabled / transport_no_agency_enabled — os toggles "exibir transporte" (com e
+--     sem agência) foram extintos junto com a pergunta Sim/Não: transporte é sempre incluído, fato do
+--     produto (conventions/tracking-metricas.md §11). O modal não pergunta, o servidor não gata mais
+--     nada em chave de config, e `wants_transport` nasce `true` em todo lead novo.
+--   • transport_offer_title* / transport_offer_desc* — copy da pergunta de transporte, que não existe
+--     mais (o aviso pro turista virou o badge "Transporte já incluído" do mini-card, código fixo).
+--     Mesma sorte das chaves acima: nada as lê, e transporte não é configurável.
 --   • modal_whatsapp_text* — o texto pré-preenchido que o VISITANTE dispara no CTA da tela de sucesso
 --     também virou POR PRODUTO (`productCopies[kind].waLeadText`). O NÚMERO (`modal_whatsapp_number`)
 --     continua global, esse sim é o mesmo pros três.
@@ -343,6 +346,9 @@ delete from app_settings where key in (
   'agency_greeting', 'agency_greeting_en', 'agency_greeting_es',
   'transport_offer_image',
   'transport_offer_include_label', 'transport_offer_include_label_en', 'transport_offer_include_label_es',
+  'transport_offer_enabled', 'transport_no_agency_enabled',
+  'transport_offer_title', 'transport_offer_title_en', 'transport_offer_title_es',
+  'transport_offer_desc', 'transport_offer_desc_en', 'transport_offer_desc_es',
   'modal_whatsapp_text', 'modal_whatsapp_text_en', 'modal_whatsapp_text_es',
   -- ago/2026: viraram campo POR PRODUTO (product_copy_{atrativo|roteiro|personalizar}_{campo}[_en|_es]).
   -- As chaves globais abaixo não são mais lidas por ninguém — o rótulo do botão e o aviso de reenvio
@@ -358,7 +364,7 @@ delete from app_settings where key in (
 -- ─────────────────────────────────────────────────────────────────────────────────────────────────
 -- ago/2026 · EDITORES DE TEXTO DESATIVADOS → toda a copy do modal virou código
 -- (`lib/offer-defaults.ts`, nos 3 idiomas). Decisão do dono do produto: o admin edita COMPORTAMENTO,
--- não texto. Ver `conventions/funil-modal.md` §2-bis.
+-- não texto.
 --
 -- ⚠️ Este DELETE não é opcional nem cosmético. A LEITURA (`getOfferConfig`) continua preferindo o valor
 -- gravado ao default do código — é o que permite reativar a edição sem mudar mais nada. Enquanto essas
@@ -370,8 +376,6 @@ delete from app_settings where key in (
 -- ─────────────────────────────────────────────────────────────────────────────────────────────────
 delete from app_settings
  where key like 'product\_copy\_%'
-    or key like 'transport\_offer\_title%'
-    or key like 'transport\_offer\_desc%'
     or key in (
       'modal_title', 'modal_title_en', 'modal_title_es',
       'modal_subtitle', 'modal_subtitle_en', 'modal_subtitle_es',

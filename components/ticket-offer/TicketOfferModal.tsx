@@ -299,8 +299,8 @@ export default function TicketOfferModal({
     // o card do assunto, que lê o `detail` direto. E desde que o modo "Link direto" saiu, este memo
     // também não lê mais `offer.productCopies.atrativo` — a dependência saiu junto.
   }, [locale, offer.texts, leadCopy]);
-  // ⓘ `transportText` (copy da pergunta de transporte, editável no admin) saiu daqui junto com a
-  // pergunta — o transporte é sempre incluído e o aviso vive no rótulo do mini-card do assunto.
+  // ⓘ A copy da pergunta de transporte (antes via `transportText`, editável no admin) saiu daqui junto
+  // com a pergunta — o transporte é sempre incluído e o aviso vive no rótulo do mini-card do assunto.
   // Card do topo: roteiro ou atrativo (sempre um dos dois — todo CTA real do site define um contexto).
   // Card do assunto: as três versões chegam no `detail` (`subjectI18n`) para o card acompanhar o
   // seletor de idioma DO MODAL — os campos avulsos abaixo são o snapshot do clique e ficariam presos

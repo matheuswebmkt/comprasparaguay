@@ -1,7 +1,9 @@
 // Filepath: app/api/admin/offer-config/route.ts
 // POST protegido (admin): salva a config COMPONÍVEL do fluxo de lead (rascunho → Salvar).
-// i18n Fase 3: texts/transportOffer.texts/modalWhatsappText vêm por locale
+// i18n Fase 3: texts/modalWhatsappText vêm por locale
 // ({ pt: {...}, en: {...}, es: {...} }). Devolve a config atualizada.
+// ⓘ Config de transporte NÃO existe mais (transporte sempre incluído, §11) — o patch ignora
+//   `transportOffer`/`transportNoAgencyEnabled` no corpo.
 
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -13,7 +15,6 @@ import {
   PRODUCT_COPY_KINDS,
   PRODUCT_COPY_FIELDS,
   type ModalTexts,
-  type TransportOfferTexts,
   type ProductCopyKind,
   type ProductLeadCopy,
 } from "@/lib/offer-defaults";
@@ -61,23 +62,6 @@ export async function POST(req: Request) {
     LOCALES.forEach((locale) => { const v = strOrUndef(src[locale]); if (v !== undefined) out[locale] = v; });
     if (Object.keys(out).length) patch.agencyGreeting = out;
   }
-  if (body.transportOffer && typeof body.transportOffer === "object") {
-    const tObj = body.transportOffer as Record<string, unknown>;
-    const texts: Partial<Record<Locale, Partial<TransportOfferTexts>>> = {};
-    if (tObj.texts && typeof tObj.texts === "object") {
-      const src = tObj.texts as Record<string, unknown>;
-      LOCALES.forEach((locale) => {
-        if (!src[locale] || typeof src[locale] !== "object") return;
-        const t = src[locale] as Record<string, unknown>;
-        texts[locale] = { title: strOrUndef(t.title), desc: strOrUndef(t.desc) };
-      });
-    }
-    patch.transportOffer = {
-      enabled: tObj.enabled === true,
-      texts,
-    };
-  }
-  if (typeof body.transportNoAgencyEnabled === "boolean") patch.transportNoAgencyEnabled = body.transportNoAgencyEnabled;
   if (typeof body.agencyInfoOnlyNoPlan === "boolean") patch.agencyInfoOnlyNoPlan = body.agencyInfoOnlyNoPlan;
 
   // ⚠️ O parsing de `texts`/`productCopies` abaixo continua aqui, mas está INERTE desde ago/2026: o

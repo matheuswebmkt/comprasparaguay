@@ -174,8 +174,8 @@ Páginas hub (lista de cards) ficam com `PageView` + impressões. Nunca `ViewCon
 
 O `Lead` do Meta afirma que a pessoa pediu algo; o banco guarda os sinais brutos (`wants_transport`,
 `is_local`, `already_in_foz`, `item_slugs`, `visit_date`). Regra de produto que depende de sinal tem de
-ler o **mesmo** campo nos dois lados — sinal que só existe na UI (ex.: checkbox não renderizado porque
-o toggle do admin está desligado) não pode carimbar o evento como se a pessoa o tivesse dado.
+ler o **mesmo** campo nos dois lados — sinal que só existe na UI (ex.: resposta de qualificação de um
+bloco que não chegou a renderizar) não pode carimbar o evento como se a pessoa o tivesse dado.
 
 **Transporte é SEMPRE `transfer=true` no `Lead` (fato do produto, não sinal da pessoa).** Todo atrativo
 do catálogo é reserva com transporte incluso: o modal NÃO pergunta Sim/Não, o mini-card do assunto
@@ -183,8 +183,12 @@ anuncia "Transporte já incluído" e a submissão vai com `wantsTransport: true`
 CAPI, banco e known-lead — o bônus transfer `+4` vale para todo lead, factualmente). Consequências
 travadas: (a) o evento `cta_click "modal_transport_offer"` (vertical `transporte`) NÃO existe — sem
 oferta exibida não há clique para contar, e dispará-lo por submit inflaria o vertical; (b) o passo de
-funil `transport_check` não existe mais (nada é perguntado); (c) o toggle `transportOffer.enabled` do
-admin não é mais lido pelo modal.
+funil `transport_check` não existe mais (nada é perguntado); (c) transporte NÃO é configurável: não
+existe toggle no admin (as chaves `transport_offer_enabled`/`transport_no_agency_enabled` foram
+deletadas do `app_settings` pelo migrate) nem copy editável — `OfferConfig.transportOffer` só carrega
+o `agencySlug` (atribuição do pixel), e `/api/leads` grava `wants_transport` espelhando o corpo sem
+gateway nenhum: o modal manda `true`, logo todo lead novo nasce `true` (nunca `false`/`null` por
+configuração; `null`/`false` só existem em linhas anteriores à decisão).
 
 ## 12 · Chaves locais
 

@@ -10,7 +10,7 @@ import { sendLeadToCapi } from "@/lib/meta-capi";
 import { notifyNewLead, notifyLeadLog, notifyLeadInfoOnly, editLeadCard, editInfoOnlyCard } from "@/lib/telegram";
 import {
   getOfferConfig, getAgencyChatId, getAgencyChatIdRaw,
-  getAgencyInfoOnlyWhenNoPlan, getProductWaGreeting,
+  getAgencyInfoOnlyWhenNoPlan, getWaGreetingFor,
 } from "@/lib/offer-settings";
 import { itensKind } from "@/lib/offer-defaults";
 import { getActiveAgencySlug } from "@/lib/agencies";
@@ -158,24 +158,13 @@ export async function POST(req: NextRequest) {
   const roteiroResumoCol = clip(body.roteiroResumo, 2000);
   const itemSlugCol = clip(body.itemSlug, 128);
 
-  // Cross-sell de transporte — fonte única da visibilidade é `offer.transportOffer.enabled`
-  // (lib/offer-settings já resolve o cenário COM ou SEM agência). Não reintroduzir `agencyActive &&`
-  // aqui. Sem agência o lead não é roteado a grupo nenhum (`sendAgency` já é false acima) — o toggle
-  // sem agência só COLETA o sinal. Vai em COLUNA própria (`wants_transport`), fora da trilha de texto.
-  //
-  // ⚠️ TRI-STATE (`true` quer · `false` recusou · `null` NÃO foi perguntado). Quem decide se a
-  // pergunta existiu é o SERVIDOR, nunca o corpo da requisição. Coagir para `false` quando a pergunta
-  // nem apareceu faria o banco afirmar "não quer" sobre quem ninguém perguntou — e envenenaria
-  // qualquer taxa de aceite (denominador contaminado por quem nunca viu a pergunta).
-  //
-  // O TRANSPORTE AUTOMÁTICO saiu do servidor junto com o do modal: ele só existia para os atrativos
-  // "Tem link - NÃO", que entravam com `true` sem que a pergunta aparecesse. Como TODO atrativo passou
-  // a ser reserva de data, a regra viraria "todo lead chega marcando transporte" — a coluna deixaria de
-  // medir aceitação e o card afirmaria uma preferência que ninguém deu. Caminho único: `enabled` decide
-  // se a pergunta aparece, e o que entra na coluna é o que o lead respondeu.
-  const transportWanted: boolean | null = offer.transportOffer.enabled
-    ? body.wantsTransport === true
-    : null;
+  // Transporte — SEMPRE incluído (fato do produto, conventions/tracking-metricas.md §11): o modal não
+  // pergunta Sim/Não, manda `wantsTransport: true` incondicional, e o servidor espelha o corpo sem
+  // gateway nenhum — não existe mais toggle de transporte (nem com agência, nem sem), e a coluna
+  // registra o fato junto com pixel/CAPI/known-lead. Vai em COLUNA própria (`wants_transport`), fora
+  // da trilha de texto. `=== true` preserva o contrato tri-state da coluna: ausência de campo não é
+  // coagida a "recusou" (viraria null, não false), e `false` hoje só existe em linhas antigas.
+  const transportWanted: boolean | null = body.wantsTransport === true ? true : null;
 
   // Calendário + quantidade (D5/D6) — lidos aqui pelo mesmo motivo: reaproveitados no INSERT e na
   // notificação Telegram (buildWaUrl/visitDateLine/ticketQtyLine).
@@ -520,7 +509,16 @@ export async function POST(req: NextRequest) {
       if (priorLead && pendingMessageId) {
         // RECONCILIAÇÃO — reescreve o card que já está no grupo com os dados deste envio.
         const edited = await editLeadCard(
-          { ...noticeBase, whatsapp, passive, confirmFlow, sentAt: new Date(priorLead.created_at) },
+          {
+            ...noticeBase,
+            whatsapp,
+            passive,
+            confirmFlow,
+            // Saudação com a voz corrente (portal × agência) — remonta o botão de atendimento do card
+            // passivo a cada reconciliação.
+            greetingTemplate: await getWaGreetingFor(productKindOf(productCtx), isLocale(locale) ? locale : DEFAULT_LOCALE),
+            sentAt: new Date(priorLead.created_at),
+          },
           agencyChat,
           pendingMessageId,
         );
@@ -542,7 +540,14 @@ export async function POST(req: NextRequest) {
         }
       } else {
         messageId = passive
-          ? await notifyLeadLog({ ...noticeBase, whatsapp, confirmFlow }, agencyChat)
+          ? await notifyLeadLog({
+              ...noticeBase,
+              whatsapp,
+              confirmFlow,
+              // O card passivo (sem "Iniciar conversa" no site) carrega o botão de atendimento — e o
+              // wa.me dele sai da MESMA fonte de voz do webhook (portal × agência, `getWaGreetingFor`).
+              greetingTemplate: await getWaGreetingFor(productKindOf(productCtx), isLocale(locale) ? locale : DEFAULT_LOCALE),
+            }, agencyChat)
           : await notifyNewLead(noticeBase, agencyChat);
       }
     } else if (!agencyActive) {
@@ -557,7 +562,9 @@ export async function POST(req: NextRequest) {
           const infoNotice = {
             ...noticeBase,
             whatsapp,
-            greetingTemplate: await getProductWaGreeting(
+            // Mesma fonte de voz do webhook (portal × agência) — neste ramo não há agência ativa, então
+            // resolve na voz do portal; se o plano voltar no meio, o próximo envio já sai na voz dela.
+            greetingTemplate: await getWaGreetingFor(
               productKindOf(productCtx),
               isLocale(locale) ? locale : DEFAULT_LOCALE,
             ),
