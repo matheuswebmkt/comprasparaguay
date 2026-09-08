@@ -43,14 +43,16 @@
   "número central", nomeação do cenário antigo.
 - ⛔ Nunca envolver texto do card em `<pre>` (vira bloco de código no Telegram). `esc()` obrigatório
   em todo valor interpolado.
-- Linha de transporte é só `🚐 Transporte: solicitado` (sem nomear agência).
+- Linha de transporte é só `🚐 Transporte: incluído` (sem nomear agência) — transporte é fato do
+  produto (§11 de tracking-metricas), não escolha do lead.
 - Rótulo de hora sempre `🕐 Enviado em:` (uma etiqueta só para o mesmo fato). `formatBRT` para data
   que não é "agora"; `nowBRT()` só para disparos do momento.
 
 ## 3. Mensagem wa.me (as três superfícies)
 
 - Estrutura: introdução (por produto, código — `lib/offer-defaults.ts`) → resumo de uma linha → lista
-  `"Para: <nomes>"`. Blocos separados por linha em branco. Fonte única: `buildWaMessage`
+  `"Incluído: <nomes>"` (prefixo "Incluído", não "Para" — o resumo já abre com "Para o dia"). Blocos
+  separados por linha em branco. Fonte única: `buildWaMessage`
   (`lib/pedido-resumo.ts`); modal, webhook (pós-claim/confirm/DM) e página de obrigado usam a MESMA
   lista (`listaPedidos` + `atrativoNomes`).
 - **A introdução tem VOZ CONDICIONAL** (`greetingFor`, webhook): com AGÊNCIA definida e plano vigente,
@@ -59,7 +61,9 @@
   Paraguay. Vi…"). Os resumos/lista seguintes são iguais nas duas vozes. Textos vivem em
   `DEFAULT_PRODUCT_COPIES` (editores de texto do admin desativados).
 - **Resumo do atrativo NÃO tem contagem** ("5 atrativos" saiu — a lista de nomes conta por si) e a
-  data vem com "Para o dia" embutido (`resumoCurto`, voz "lead" × "agencia" muda só o transporte).
+  data vem com "Para o dia" embutido (`resumoCurto`; voz "lead" = "Transporte incluído", usado no
+  resumo da tela /obrigado; voz "agencia" = "com transporte", usada no wa.me — mesma template nas
+  duas pontas, mudando só o gancho/introdução).
 - **`{pedidos}` placeholder** nos textos por produto (`waGreeting`/`waGreetingAgency`/`waLeadText`,
   `lib/offer-defaults.ts`): vira "a reserva"/"as reservas" (pt), "the booking(s)" (en),
   "la(s) reserva(s)" (es) conforme o nº de itens — singular/plural obrigatório. Substituído por

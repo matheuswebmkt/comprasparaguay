@@ -217,8 +217,11 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectIncluded: "Incluído",
       waGreeting: "Olá {nome}! Aqui é do Compras Paraguay. Vi {pedidos} que você escolheu — vou te passar as condições:",
       waGreetingAgency: "Olá {nome}! Aqui é a agência {agencia}. Recebemos {pedidos} que você escolheu no Compras Paraguay — vou te passar as condições:",
-      waLeadText: "Olá! Vim pelo Compras Paraguay. Escolhi {pedidos} e quero as condições:",
-      waButtonLabel: "Falar sobre meu ingresso 💬",
+      // Mensagem que o LEAD manda ao clicar no wa.me (site): mesmo template da mensagem da agência
+      // (intro → resumo → lista "Incluído: …"), mudando só o gancho/introdução. `{pedidos}` vira
+      // "a reserva"/"as reservas" conforme o nº de itens.
+      waLeadText: "Olá! Fiz {pedidos} no Compras Paraguay e gostaria de receber as condições:",
+      waButtonLabel: "Falar sobre minha reserva 💬",
       duplicateNoticeTitle: "Já recebemos sua solicitação para este ingresso!",
     },
     en: {
@@ -235,8 +238,8 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectIncluded: "Included",
       waGreeting: "Hi {nome}! This is Compras Paraguay. I saw {pedidos} you picked — here are the conditions:",
       waGreetingAgency: "Hi {nome}! This is the {agencia} agency. We received {pedidos} you picked on Compras Paraguay — here are the conditions:",
-      waLeadText: "Hi! I came from Compras Paraguay. I picked {pedidos} and I'd like the conditions:",
-      waButtonLabel: "Talk about my ticket 💬",
+      waLeadText: "Hi! I made {pedidos} on Compras Paraguay and I'd like to receive the conditions:",
+      waButtonLabel: "Talk about my booking 💬",
       duplicateNoticeTitle: "We already got your request for this ticket!",
     },
     es: {
@@ -253,8 +256,8 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       subjectIncluded: "Incluido en el pedido de condiciones",
       waGreeting: "¡Hola {nome}! Aquí Compras Paraguay. Vi {pedidos} que elegiste — te paso las condiciones:",
       waGreetingAgency: "¡Hola {nome}! Aquí la agencia {agencia}. Recibimos {pedidos} que elegiste en Compras Paraguay — te paso las condiciones:",
-      waLeadText: "¡Hola! Vine por Compras Paraguay. Elegí {pedidos} y quiero las condiciones:",
-      waButtonLabel: "Hablar sobre mi entrada 💬",
+      waLeadText: "¡Hola! Hice {pedidos} en Compras Paraguay y quiero recibir las condiciones:",
+      waButtonLabel: "Hablar sobre mi reserva 💬",
       duplicateNoticeTitle: "¡Ya recibimos tu solicitud para esta entrada!",
     },
   },

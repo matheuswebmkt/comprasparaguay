@@ -385,7 +385,7 @@ export default function TicketOfferModal({
   // com transporte incluso — a pergunta Sim/Não saiu de cena (a oferta do admin não é mais consultada),
   // o mini-card do assunto anuncia "Transporte já incluído", e o lead entra sempre com
   // `wantsTransport: true`: é fato do produto, não preferência declarada — o card do Telegram afirma
-  // "🚐 Transporte: solicitado", o lead vale o bônus transfer e o known-lead consolida "Sim".
+  // "🚐 Transporte: incluído", o lead vale o bônus transfer e o known-lead consolida "Sim".
   const transportEfetivo = true;
   const readyForForm = dateChosen && qualificationDone;
 
@@ -919,8 +919,9 @@ export default function TicketOfferModal({
     );
     // Os nomes na mensagem = os mesmos do card do Telegram (mesma fonte: catálogo da oferta).
     const nomesPedido = pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s);
-    // Intro → resumo de UMA linha → lista "Para: …". O detalhe (respostas do wizard) não vai — mensagem
-    // que cresce com o tamanho do pedido ninguém lê.
+    // Intro → resumo de UMA linha → lista "Incluído: …". O detalhe (respostas do wizard) não vai — mensagem
+    // que cresce com o tamanho do pedido ninguém lê. Resumo na voz factual da agência ("com transporte") —
+    // o MESMO template da mensagem pós-claim; a voz "lead" (fato declarado) fica na tela /obrigado.
     // ⚠️ Sem token (reabertura de lead duplicado, que é anterior a este envio) a mensagem sai só com
     // intro + resumo — `buildWaMessage` omite a linha do link em vez de montar um endereço quebrado.
     const msg = buildWaMessage(
@@ -934,12 +935,12 @@ export default function TicketOfferModal({
           wantsTransport: transportEfetivo === true,
         },
         locale,
-        "lead",
+        "agencia",
       ),
       pedidoToken,
       leadProductKind,
       locale,
-      "lead",
+      "agencia",
       { nomes: nomesPedido },
     );
     return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
@@ -998,7 +999,10 @@ export default function TicketOfferModal({
   };
 
   // Funil: registra "chegou no sucesso" e, quando há botão de CTA na tela de sucesso, "cta exibido" (1× por abertura).
-  // Dedup (`wasDuplicate`) tem prioridade: mostra o CTA de WhatsApp central como fallback mesmo fora do modo "whatsapp".
+  // ⚠️ No submit REAL o modal redireciona pra /obrigado sem passar por este stage — os passos `success*`
+  // do funil e o botão vivem LÁ (handoff.waUrl). Aqui o stage "success" só roda em preview e no caminho
+  // de dedup. Dedup (`wasDuplicate`) tem prioridade: mostra o CTA de WhatsApp central como fallback
+  // mesmo fora do modo "whatsapp".
   const successHasCta = wasDuplicate
     ? !!centralWaUrl()
     : showWhatsappOnSuccess && !!centralWaUrl();
@@ -1158,7 +1162,8 @@ export default function TicketOfferModal({
         }),
       });
       // `duplicate: true` = mesmo WhatsApp reenviou o form recente (dedup) → a agência NÃO foi renotificada;
-      // a tela de sucesso (em /o-que-fazer) mostra um aviso + CTA de WhatsApp central como fallback.
+      // /obrigado mostra um aviso + CTA de WhatsApp central como fallback (handoff.waUrl é gravado
+      // mesmo fora do modo "whatsapp" quando há dedup — ver `successHasCta`).
       const data = await res.json().catch(() => null);
       wasDup = data?.duplicate === true;
       // Token do pedido → link curto na mensagem de WhatsApp e na página de obrigado.
@@ -1234,6 +1239,10 @@ export default function TicketOfferModal({
           locale,
           "lead",
         ),
+        // Botão "Iniciar conversa" na PRÓPRIA /obrigado (a tela de sucesso dentro do modal só roda em
+        // preview/dedup — o submit real redireciona). Link pronto: só a página ler e renderizar.
+        waUrl: successHasCta ? centralWaUrl() : null,
+        partnerSlug: offer.transportOffer.agencySlug,
       };
       window.sessionStorage.setItem(LEAD_HANDOFF_KEY, JSON.stringify(handoff));
     } catch {

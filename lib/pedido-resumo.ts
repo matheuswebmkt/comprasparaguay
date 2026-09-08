@@ -6,14 +6,14 @@
 // (card do Telegram, wa.me pós-claim). É o que impede as três superfícies de descreverem o mesmo
 // pedido de três jeitos diferentes.
 //
-// ⚠️ O resumo é curto DE PROPÓSITO: o DETALHE do pedido são os NOMES, que viajam na lista "Para: …"
+// ⚠️ O resumo é curto DE PROPÓSITO: o DETALHE do pedido são os NOMES, que viajam na lista "Incluído: …"
 // montada por `buildWaMessage`/`listaPedidos` — o resumo carrega só data/pessoas/transporte. Se
 // precisar de mais um campo aqui, a pergunta certa é se ele não pertence à página.
 
 import type { Locale } from "./i18n/config";
 import type { ProductCopyKind } from "./offer-defaults";
 
-/** Quem está falando: muda só a voz do transporte ("quero" × "com"). */
+/** Quem está falando: muda só a voz do transporte (fato declarado × fato do serviço). */
 export type VozResumo = "lead" | "agencia";
 
 export interface ResumoInput {
@@ -41,7 +41,7 @@ const T: Record<Locale, {
   reserva: (n: number) => string;
   /** A data no resumo do pedido de atrativo — vem com o "Para o dia" embutido. */
   paraODia: (d: string) => string;
-  /** Prefixo da lista de nomes ("Para: Cataratas JL Shopping, Duty Free"). */
+  /** Prefixo da lista de nomes ("Incluído: Cataratas JL Shopping, Duty Free"). */
   paraLista: string;
 }> = {
   pt: {
@@ -50,12 +50,13 @@ const T: Record<Locale, {
     dias: (v) => `${v} dias`,
     inicio: (d) => `início ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "pessoa" : "pessoas"}`,
-    transporte: { lead: "quero transporte", agencia: "com transporte" },
+    // Voz "lead" = fato declarado na tela (/obrigado); a voz "agencia" é a do wa.me.
+    transporte: { lead: "Transporte incluído", agencia: "com transporte" },
     faixaMais: (v) => `${v}+`,
     indeciso: "dias a definir",
     reserva: (n) => (n === 1 ? "a reserva" : "as reservas"),
     paraODia: (d) => `Para o dia ${d}`,
-    paraLista: "Para",
+    paraLista: "Incluído",
   },
   en: {
     atrativos: (n) => `${n} ${n === 1 ? "attraction" : "attractions"}`,
@@ -63,12 +64,12 @@ const T: Record<Locale, {
     dias: (v) => `${v} days`,
     inicio: (d) => `starting ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "person" : "people"}`,
-    transporte: { lead: "I want transport", agencia: "with transport" },
+    transporte: { lead: "Transport included", agencia: "with transport" },
     faixaMais: (v) => `${v}+`,
     indeciso: "days to be defined",
     reserva: (n) => (n === 1 ? "the booking" : "the bookings"),
     paraODia: (d) => `For ${d}`,
-    paraLista: "For",
+    paraLista: "Included",
   },
   es: {
     atrativos: (n) => `${n} ${n === 1 ? "atractivo" : "atractivos"}`,
@@ -76,12 +77,12 @@ const T: Record<Locale, {
     dias: (v) => `${v} días`,
     inicio: (d) => `inicio ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "persona" : "personas"}`,
-    transporte: { lead: "quiero transporte", agencia: "con transporte" },
+    transporte: { lead: "Transporte incluido", agencia: "con transporte" },
     faixaMais: (v) => `${v}+`,
     indeciso: "días a definir",
     reserva: (n) => (n === 1 ? "la reserva" : "las reservas"),
     paraODia: (d) => `Para el día ${d}`,
-    paraLista: "Para",
+    paraLista: "Incluido",
   },
 };
 
@@ -103,7 +104,7 @@ function formatDate(v?: string | Date | null): string | null {
 
 /**
  * Uma linha com o essencial do pedido. No produto único (atrativo) a CONTAGEM saiu do resumo de
- * propósito: os NOMES viajam na lista "Para: …" logo abaixo (`buildWaMessage`), então "5 atrativos"
+ * propósito: os NOMES viajam na lista "Incluído: …" logo abaixo (`buildWaMessage`), então "5 atrativos"
  * era informação duplicada — e a data ganha o "Para o dia" que abre o resumo naturalmente.
  * Campo ausente simplesmente não entra — nada de placeholder (mesma regra do card, G2).
  */
@@ -137,7 +138,7 @@ export function fillPedidos(intro: string, itemCount: number, locale: Locale): s
   return intro.replace(/\{pedidos\}/gi, pedidosLabel(itemCount, locale));
 }
 
-/** Lista de nomes do pedido: "Para: Cataratas JL Shopping, Duty Free" — vazia se não houver nomes. */
+/** Lista de nomes do pedido: "Incluído: Cataratas JL Shopping, Duty Free" — vazia se não houver nomes. */
 export function listaPedidos(nomes: string[], locale: Locale): string {
   const limpos = nomes.map((n) => n.trim()).filter(Boolean);
   return limpos.length ? `${T[locale].paraLista}: ${limpos.join(", ")}` : "";
@@ -145,7 +146,7 @@ export function listaPedidos(nomes: string[], locale: Locale): string {
 
 
 /**
- * Monta a mensagem final do wa.me: introdução → resumo → lista "Para: <nomes>". Blocos separados por
+ * Monta a mensagem final do wa.me: introdução → resumo → lista "Incluído: <nomes>". Blocos separados por
  * linha em branco, que é como o WhatsApp respira.
  * ⚠️ Parâmetros de produto/voz mantidos na assinatura por compatibilidade de chamadores; a mensagem é
  * genérica (o link /r/[token] foi removido).

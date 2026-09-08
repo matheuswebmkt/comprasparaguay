@@ -84,7 +84,7 @@ export interface NewLeadNotice {
   /** Classificação dos itens (`itensKind`) — o rótulo do link acompanha: ingressos, reservas ou os dois. */
   itens?: ItensKind;
   /** NOMES legíveis dos itens do pedido (`atrativoNomes`, lib/lead-card.ts) — viram a linha logo abaixo
-   * do assunto no card e a lista "Para: …" do wa.me. Resolvidos pelo CHAMADOR (este módulo é puro). */
+   * do assunto no card e a lista "Incluído: …" do wa.me. Resolvidos pelo CHAMADOR (este módulo é puro). */
   itemNames?: string[];
   /** Bucket de produto (`productKindOf`, lib/lead-card.ts) — decide o RÓTULO da linha do assunto:
    * `🎟️ Atrativo:` para ingresso, `🗺️ Roteiro:` para roteiro/personalizar. Quem resolve é o CHAMADOR:
@@ -110,7 +110,7 @@ export interface NewLeadNotice {
  * que o transporte foi pedido.
  */
 function transportLine(wantsTransport?: boolean | null): string | null {
-  return wantsTransport ? "🚐 <b>Transporte:</b> solicitado" : null;
+  return wantsTransport ? "🚐 <b>Transporte:</b> incluído" : null;
 }
 
 /**
@@ -646,7 +646,7 @@ export function buildWaUrl(
     locale?: Locale;
     /** Classificação dos itens — muda o rótulo do link (§17-ter). */
     itens?: ItensKind;
-    /** Nº de itens (pro `{pedidos}` da saudação) e os NOMES (lista "Para: …"). */
+    /** Nº de itens (pro `{pedidos}` da saudação) e os NOMES (lista "Incluído: …"). */
     itemCount?: number;
     nomes?: string[];
   },
@@ -658,7 +658,7 @@ export function buildWaUrl(
     pedido?.itemCount ?? 0,
     pedido?.locale ?? "pt",
   );
-  // Mesma montagem das duas pontas (`lib/pedido-resumo.ts`): intro → resumo → lista "Para: …". Texto
+  // Mesma montagem das duas pontas (`lib/pedido-resumo.ts`): intro → resumo → lista "Incluído: …". Texto
   // PURO aqui — o wa.me não interpreta o HTML do Telegram, então nada de <b> nesta string.
   const msg = buildWaMessage(
     intro,

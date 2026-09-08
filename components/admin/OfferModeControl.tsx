@@ -370,36 +370,27 @@ export default function OfferModeControl({
         <div className="space-y-4 min-w-0">
           {/* 1 · Modal */}
           <Section title="1 · Modal — tela de sucesso" hint="O que o lead vê depois de enviar o formulário. Captura é sempre ativa — isso só decide o que aparece no final.">
+            {/* UM controle para TODOS os produtos: atrativo e roteiro são o mesmo produto de reserva
+                (o modal inteiro cai na mesma tela de sucesso, /obrigado). Os dois campos de config
+                continuam existindo (roteiro + atrativo) e recebem o MESMO valor — a distinção era
+                herança do template de ingressos. */}
             <div className="rounded-xl border p-3" style={{ borderColor: "hsl(214,25%,90%)", background: "white" }}>
-              <p className="text-xs font-bold mb-2" style={LABEL}>Roteiro / personalizar</p>
+              <p className="text-xs font-bold mb-2" style={LABEL}>Todos os produtos de reserva</p>
               <Segmented
                 options={[
                   { v: "close" as RoteiroSuccessMode, label: "Só mensagem" },
                   { v: "whatsapp" as RoteiroSuccessMode, label: "Iniciar conversa" },
                 ]}
                 value={d.roteiroSuccessMode}
-                onChange={(v) => set("roteiroSuccessMode", v)}
+                onChange={(v) => {
+                  set("roteiroSuccessMode", v);
+                  set("atrativoSuccessMode", v);
+                }}
               />
               <p className="mt-2 text-xs" style={HINT}>
-                Sem “Link direto”: roteiro e personalizar são produto próprio Compras Paraguay — não têm site
-                oficial externo pra apontar.
-              </p>
-            </div>
-
-            <div className="rounded-xl border p-3 mt-3" style={{ borderColor: "hsl(214,25%,90%)", background: "white" }}>
-              <p className="text-xs font-bold mb-2" style={LABEL}>Atrativos individuais</p>
-              <Segmented
-                options={[
-                  { v: "close" as RoteiroSuccessMode, label: "Só mensagem" },
-                  { v: "whatsapp" as RoteiroSuccessMode, label: "Iniciar conversa" },
-                ]}
-                value={d.atrativoSuccessMode}
-                onChange={(v) => set("atrativoSuccessMode", v)}
-              />
-              <p className="mt-2 text-xs" style={HINT}>
-                O que a tela de sucesso mostra num lead de atrativo: só a mensagem, ou o botão de iniciar
-                a conversa. Vale para TODO atrativo — a escolha por item (seção <b>5</b>) saiu junto com a
-                venda de ingresso.
+                Vale para o pedido inteiro — reserva de atrativo e roteiro personalizado seguem a MESMA
+                escolha (sem “Link direto”: são produto próprio Compras Paraguay, não têm site oficial
+                externo pra apontar).
               </p>
             </div>
 

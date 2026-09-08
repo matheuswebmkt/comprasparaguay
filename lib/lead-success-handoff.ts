@@ -41,9 +41,16 @@ export interface LeadSuccessHandoff {
   /** Ingressos, reservas de data ou os dois (`itensKind`, §17-ter): decide o rótulo do link na tela
    * de sucesso e na mensagem de WhatsApp. Ausente = tratar como "ingressos". */
   itens?: ItensKind;
-  /** Nomes legíveis dos itens do pedido — a lista "Para: …" do WhatsApp, exibida igual em
+  /** Nomes legíveis dos itens do pedido — a lista "Incluído: …" do WhatsApp, exibida igual em
    * "O que você pediu" na página de obrigado. Ausente/vazia = sem lista (fluxo sem itens). */
   nomes?: string[];
+  /** Link wa.me pronto (voz do LEAD, `centralWaUrl`) — gravado só quando a tela de sucesso mostra o
+   * botão "Iniciar conversa" (modo whatsapp, ou fallback de dedup) e há número central. É o que faz
+   * o botão existir na página de obrigado (a tela de sucesso dentro do modal só roda em preview). */
+  waUrl?: string | null;
+  /** Slug da agência ativa na oferta — alimenta `partner_slug` da taxonomia nos eventos de CTA
+   * disparados pela página de obrigado (que não conhece a config da oferta). */
+  partnerSlug?: string | null;
   /** CTA de sucesso já contabilizado nesta aba? Persistido de volta no storage — o F5 não re-dispara a
    * marcação (o handoff sobrevive ao F5 de propósito: a página de obrigado reexibe o pedido). */
   shownFired?: boolean;
@@ -51,4 +58,4 @@ export interface LeadSuccessHandoff {
 // ⛔ Não voltar a carregar aqui a resposta de transporte (`transportChecked`/`transportFollowUpDone`).
 // Isto é storage de SESSÃO e POR ABA — errado por construção pra um atributo da PESSOA. A resposta de
 // transporte consolida em `lib/known-lead.ts` (`wantsTransport`, localStorage, cross-aba e cross-produto),
-// e a pergunta vive no modal e no wizard. Ver conventions/funil-modal.md §17-bis.
+// e a pergunta vive no modal e no wizard. Ver conventions/tracking-metricas.md (known-lead).
