@@ -88,14 +88,15 @@ export default function Home() {
       <JsonLd data={faqSchema(HOME_UI.pt.faq.items)} />
       <Navbar />
       <main style={{ background: "hsl(40,33%,97%)" }}>
-        {/* Alternância de fundo §7.5: Hero areia → DoresSection branco → TransferPitchCard areia →
+        {/* Alternância de fundo §7.5: Hero areia → TransferPitchCard branco → DoresSection areia →
             AutoridadeSection branco → FAQ areia → PilaresFoz branco → CtaFinal areia.
-            ⓘ Inserir a seção de transfer deslocou a paridade de TODAS as demais: as quatro de baixo
-            trocaram de cor na mesma leva. Mexer numa delas sozinho quebra o ritmo (§7.5). */}
+            ⓘ A troca de posição das duas primeiras seções trocou TAMBÉM os fundos delas: o card
+            herdou o branco que era das Dores, e estas assumiram o areia — o ritmo areia/branco
+            da página continua intacto (§7.5). */}
         <RoteirosHero />
-        <DoresSection />
         {/* O card é o mesmo do `/transfer`; `placement="home"` só troca o fundo e a telemetria. */}
         <TransferPitchCard placement="home" />
+        <DoresSection />
         <AutoridadeSection />
         <FaqSection />
         <PilaresFoz />

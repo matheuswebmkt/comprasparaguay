@@ -1,6 +1,6 @@
 // Filepath: components/niche/TransferPitchCard.tsx
-// Version: 2.0
-// Nome da Versão: "CTA vira o modal de reserva (era wa.me direto) + seção reusada na home via `placement`"
+// Version: 2.1
+// Nome da Versão: "placement home vira fundo branco — a seção subiu pra 2ª da home (antes das Dores)"
 //
 // Card "nosso" do transfer — imagem de van neutra com a identidade do site, SEM nome nem marca de
 // agência. Foi criado como o card de recomendação do nicho `transfer` (substituindo o card da
@@ -13,9 +13,9 @@
 //    caminho de conversão do resto do site. O número e a mensagem saíram do dicionário junto.
 //
 // ⚠️ `placement` existe por causa da ALTERNÂNCIA DE FUNDO (§7.5). A home é areia→branco→areia… e a
-//    seção entrou entre duas cores fixas: em `/transfer` ela é branca (como sempre foi), na home é
-//    areia (a cor que não colide com a seção de dores, branca, acima). Fundo só tem DOIS valores
-//    válidos — branco `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
+//    seção SUBIU pra 2ª posição (antes das Dores), herdando o branco que era delas: em `/transfer`
+//    ela é branca (como sempre foi) e na home também. Fundo só tem DOIS valores válidos — branco
+//    `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
 //
 // ⚠️ Sem nome de agência aqui, e sem copy de parceiro: a copy/SEO da página de nicho vive em
 //    `app/data/niches.ts` e nunca menciona o recomendado (`NicheRecommendation`, §13).
