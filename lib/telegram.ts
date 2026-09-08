@@ -281,13 +281,9 @@ function detailLines(
     NewLeadNotice,
     "nome" | "isLocal" | "alreadyInFoz" | "locale" | "visitDate" | "ticketQty" | "wantsTransport"
   >,
-  /** WhatsApp do lead — passar SÓ onde ele pode aparecer (§12: no card com fila, o número fica oculto
-   * até o claim/confirm). Quem não deve exibir simplesmente não passa. */
-  opts?: { whatsapp?: string | null },
 ): string[] {
   return [
     `👤 <b>Nome:</b> ${esc(n.nome) || "—"}`,
-    opts?.whatsapp ? `📱 <b>WhatsApp:</b> ${esc(opts.whatsapp)}` : null,
     profileLine(n.isLocal, n.alreadyInFoz),
     localeLine(n.locale),
     visitDateLine(n.visitDate),
@@ -353,8 +349,8 @@ export async function notifyNewLead(n: NewLeadNotice, chatId: string | null): Pr
  *
  * Sem `confirmFlow` (sucesso "Só mensagem"): o card carrega [📲 Iniciar conversa] DIRETO — é o ÚNICO
  * canal de atendimento (o lead não ganha botão no site), então deixar o card sem ação era um funil
- * beco-sem-saída. O número continua visível no texto (mesma exceção anti-colisão de antes: não há
- * disputa — quem clicar primeiro atende).
+ * beco-sem-saída. O número segue FORA do texto (regra do card, sem exceção): o acesso ao WhatsApp é
+ * SEMPRE o botão — nunca a linha "📱 WhatsApp" no texto.
  *
  * `greetingTemplate` = saudação com a voz já resolvida (`getWaGreetingFor`, portal × agência) — só
  * alimenta o botão de conversa; o texto do card não a usa.
@@ -373,7 +369,7 @@ export async function notifyLeadLog(
     itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
   });
-  linhas.push("", ...detailLines(n, { whatsapp: n.confirmFlow ? null : n.whatsapp }));
+  linhas.push("", ...detailLines(n));
   const hora = nowBRT();
   if (hora) linhas.push(`🕐 Enviado em: ${hora}`);
   linhas.push(
@@ -400,11 +396,11 @@ export async function notifyLeadLog(
 /**
  * Teclado do card SEM AGÊNCIA: um botão URL `[📲 Iniciar conversa]` com o wa.me do lead já montado.
  *
- * ⚠️⚠️ **Exceção DELIBERADA à anti-colisão do §12** (que manda esconder o WhatsApp do turista até
- * alguém assumir). Aquela regra existe pra impedir que dois vendedores atropelem o mesmo lead — e sem
- * agência definida não há dois vendedores: o dono do site atende sozinho. Sem o botão, o lead capturado
- * nesse período viraria um registro que ninguém consegue responder. Com agência ativa nada muda: lá
- * continua valendo "Assumir"/"Confirmar" e o número segue escondido até o claim.
+ * ⚠️⚠️ **Exceção DELIBERADA à regra do card** (número nunca no texto, só no botão): o botão URL já
+ * vem liberado mesmo sem Assumir/Confirmar. A regra existe pra impedir que dois vendedores atropelem
+ * o mesmo lead — e sem agência definida não há dois vendedores: o dono do site atende sozinho. Sem o
+ * botão, o lead capturado nesse período viraria um registro que ninguém consegue responder. Com
+ * agência ativa nada muda: lá continua valendo "Assumir"/"Confirmar" e o botão só sai depois.
  * Sem `whatsapp` (ex.: rascunho) → card sem botão, como era antes.
  */
 function infoOnlyKeyboard(n: NewLeadNotice & { whatsapp?: string | null; greetingTemplate?: string | null }) {
@@ -496,10 +492,6 @@ export async function editLeadCard(
 ): Promise<boolean> {
   if (!BOT_TOKEN || !chatId) return false;
 
-  // Contato só aparece no log PURO (passivo sem confirmFlow) — em assume/confirmFlow o número segue
-  // escondido até alguém assumir/confirmar (mesma regra de notifyLeadLog).
-  const contactPublic = n.passive === true && !n.confirmFlow;
-
   const linhas = baseLines({
     roteiroTitulo: n.roteiroTitulo,
     roteiroSlug: n.roteiroSlug,
@@ -508,7 +500,7 @@ export async function editLeadCard(
     itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
   });
-  linhas.push("", ...detailLines(n, { whatsapp: contactPublic ? n.whatsapp : null }));
+  linhas.push("", ...detailLines(n));
   // Rótulo ÚNICO em toda notificação (`🕐 Enviado em:`): é sempre o mesmo fato — a hora em que o lead
   // preencheu o formulário. Duas etiquetas para o mesmo dado ("Enviado"/"Recebido") só faziam quem lê o
   // grupo comparar cards e supor uma diferença que não existe.
@@ -698,8 +690,9 @@ export interface ClaimedEdit extends NewLeadNotice {
  * mesmo defeito que `editConfirmedMessage` já tinha corrigido do seu lado: a mensagem serve de LOG, e
  * nada que estava visível pode desaparecer na edição. Ao mexer aqui, preserve todas as linhas.
  *
- * ⚠️ O WhatsApp segue FORA do texto (§12, anti-colisão): mesmo depois do claim, o número só chega ao
- * dono pelo botão. Isto não é esquecimento — não acrescentar.
+ * ⚠️ O WhatsApp segue FORA do texto (anti-colisão): em nenhum cenário o número aparece no card —
+ * ele só circula como BOTÃO ([📲 Receber WhatsApp do cliente] manda o número no PRIVADO do dono).
+ * Isto não é esquecimento — não acrescentar.
  */
 export async function editClaimedMessage(e: ClaimedEdit): Promise<void> {
   const linhas = baseLines({
@@ -743,9 +736,11 @@ export interface ConfirmedEdit extends NewLeadNotice {
  * ao contrário do `wa:<id>` do modo "Assumir" (TG-4).
  * ⚠️ **A edição não pode ocultar nada que já estava visível.** Esta mensagem SERVE DE LOG (o histórico
  * do lead no grupo), então reconstrói TODAS as linhas do `notifyLeadLog` original — tag, assunto,
- * montagem, WhatsApp, perfil, idioma, dia, ingressos, transporte, horário — e só troca o rodapé
+ * montagem, perfil, idioma, dia, ingressos, transporte, horário — e só troca o rodapé
  * (prompt "Confirmar" → "✅ Confirmado por X"). Substituir o texto por nome+status deixa o vendedor sem
  * o briefing no exato momento em que ele vai abrir a conversa.
+ * ⚠️ O número segue FORA do texto mesmo após confirmar (regra do card): o WhatsApp só existe como o
+ * botão [📲 Iniciar conversa], nunca como linha "📱 WhatsApp" no corpo.
  */
 export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
   const linhas = baseLines({
@@ -757,7 +752,7 @@ export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
     itemNames: e.itemNames,
     pedidoToken: e.pedidoToken,
   });
-  linhas.push("", ...detailLines(e, { whatsapp: e.whatsapp }));
+  linhas.push("", ...detailLines(e));
   if (e.sentAt) linhas.push(`🕐 Enviado em: ${e.sentAt}`);
   linhas.push("", `✅ <b>Confirmado por ${esc(e.confirmedBy)}</b>`);
 

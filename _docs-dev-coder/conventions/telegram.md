@@ -27,9 +27,14 @@
 
 ## 2. Anatomia do card do grupo
 
-- Ordem travada: título fixo (`🟢 NOVA QUALIFICAÇÃO` com agência / `ℹ️ REGISTRO DE NOVA QUALIFICAÇÃO`
+- Ordem travada: título fixo (`🔴 NOVA QUALIFICAÇÃO` com agência / `ℹ️ REGISTRO DE NOVA QUALIFICAÇÃO`
   sem) → linha em branco → assunto (`📅 <b>Reservas</b>`) → **NOMES dos itens escolhidos** → linha em
-  branco → nome, contato (onde puder), perfil, idioma, dia, pessoas, transporte → `🕐 Enviado em: HH/MM`.
+  branco → nome, perfil, idioma, dia, pessoas, transporte → `🕐 Enviado em: HH/MM`.
+- **⛔ O número de WhatsApp NUNCA aparece no texto do card** — em nenhum cenário (novo, log, edição
+  pós-claim/confirm). Ele só circula como BOTÃO: [📲 Iniciar conversa] (liberado ao Confirmar, ou já
+  presente no modo passivo "Só mensagem" e no card sem agência) e [📲 Receber WhatsApp do cliente],
+  que manda o número no PRIVADO de quem assumiu. Nenhum caminho de renderização aceita mais número
+  no texto (`detailLines` nem tem o campo).
 - **O card lista os NOMES dos atrativos** (`atrativoNomes`, `lib/lead-card.ts` — fonte única,
   `getAttractionBySlug`; slug órfão cai cru). Neste projeto a página de pedido `/r/[token]` NÃO existe
   (foi removida), então a lista no card é a única fonte do "o que foi pedido" — o vendedor precisa
