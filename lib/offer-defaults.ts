@@ -212,7 +212,7 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       successClose:
         "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste ingresso e a melhor forma de encaixá-lo no restante dos seus dias na cidade.",
       successWhatsapp:
-        "Quer adiantar? Toque abaixo e comece a conversa agora — a gente já sabe qual ingresso é o seu.",
+        "Quer adiantar? Toque abaixo e comece a conversa agora — já recebemos seu pedido.",
       subjectBadge: "Ingresso / atrativo",
       subjectIncluded: "Incluído",
       waGreeting: "Olá {nome}! Aqui é do Compras Paraguay. Vi {pedidos} que você escolheu — vou te passar as condições:",
@@ -222,7 +222,7 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       // "a reserva"/"as reservas" conforme o nº de itens.
       waLeadText: "Olá! Fiz {pedidos} no Compras Paraguay e gostaria de receber as condições:",
       waButtonLabel: "Falar sobre minha reserva 💬",
-      duplicateNoticeTitle: "Já recebemos sua solicitação para este ingresso!",
+      duplicateNoticeTitle: "Já recebemos sua solicitação.",
     },
     en: {
       title: "Receive the conditions for this ticket",
@@ -233,14 +233,14 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       successClose:
         "A Foz do Iguaçu specialist will message you on WhatsApp with this ticket's conditions and the best way to fit it into the rest of your days in the city.",
       successWhatsapp:
-        "Want to get ahead? Tap below and start the conversation now — we already know which ticket is yours.",
+        "Want to get ahead? Tap below and start the conversation now — we've already received your request.",
       subjectBadge: "Ticket / attraction",
       subjectIncluded: "Included",
       waGreeting: "Hi {nome}! This is Compras Paraguay. I saw {pedidos} you picked — here are the conditions:",
       waGreetingAgency: "Hi {nome}! This is the {agencia} agency. We received {pedidos} you picked on Compras Paraguay — here are the conditions:",
       waLeadText: "Hi! I made {pedidos} on Compras Paraguay and I'd like to receive the conditions:",
       waButtonLabel: "Talk about my booking 💬",
-      duplicateNoticeTitle: "We already got your request for this ticket!",
+      duplicateNoticeTitle: "We already got your request.",
     },
     es: {
       title: "Recibe las condiciones de esta entrada",
@@ -251,14 +251,14 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
       successClose:
         "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de esta entrada y la mejor forma de encajarla en el resto de tus días en la ciudad.",
       successWhatsapp:
-        "¿Quieres adelantar? Toca abajo y empieza la conversación ahora — ya sabemos cuál entrada es la tuya.",
+        "¿Quieres adelantar? Toca abajo y empieza la conversación ahora — ya recibimos tu pedido.",
       subjectBadge: "Entrada / atractivo",
       subjectIncluded: "Incluido en el pedido de condiciones",
       waGreeting: "¡Hola {nome}! Aquí Compras Paraguay. Vi {pedidos} que elegiste — te paso las condiciones:",
       waGreetingAgency: "¡Hola {nome}! Aquí la agencia {agencia}. Recibimos {pedidos} que elegiste en Compras Paraguay — te paso las condiciones:",
       waLeadText: "¡Hola! Hice {pedidos} en Compras Paraguay y quiero recibir las condiciones:",
       waButtonLabel: "Hablar sobre mi reserva 💬",
-      duplicateNoticeTitle: "¡Ya recibimos tu solicitud para esta entrada!",
+      duplicateNoticeTitle: "¡Ya recibimos tu solicitud!",
     },
   },
 };

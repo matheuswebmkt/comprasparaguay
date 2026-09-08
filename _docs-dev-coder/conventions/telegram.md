@@ -61,9 +61,9 @@
   Paraguay. Vi…"). Os resumos/lista seguintes são iguais nas duas vozes. Textos vivem em
   `DEFAULT_PRODUCT_COPIES` (editores de texto do admin desativados).
 - **Resumo do atrativo NÃO tem contagem** ("5 atrativos" saiu — a lista de nomes conta por si) e a
-  data vem com "Para o dia" embutido (`resumoCurto`; voz "lead" = "Transporte incluído", usado no
-  resumo da tela /obrigado; voz "agencia" = "com transporte", usada no wa.me — mesma template nas
-  duas pontas, mudando só o gancho/introdução).
+  data vem com "Para o dia" embutido (`resumoCurto`). A frase de transporte é o FATO do produto —
+  "Transporte incluído" — igual nas duas vozes ("lead" × "agencia", parâmetro mantido só como
+  assinatura: /obrigado e wa.me mostram a mesma linha).
 - **`{pedidos}` placeholder** nos textos por produto (`waGreeting`/`waGreetingAgency`/`waLeadText`,
   `lib/offer-defaults.ts`): vira "a reserva"/"as reservas" (pt), "the booking(s)" (en),
   "la(s) reserva(s)" (es) conforme o nº de itens — singular/plural obrigatório. Substituído por

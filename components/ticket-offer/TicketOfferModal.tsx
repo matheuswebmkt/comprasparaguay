@@ -920,8 +920,8 @@ export default function TicketOfferModal({
     // Os nomes na mensagem = os mesmos do card do Telegram (mesma fonte: catálogo da oferta).
     const nomesPedido = pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s);
     // Intro → resumo de UMA linha → lista "Incluído: …". O detalhe (respostas do wizard) não vai — mensagem
-    // que cresce com o tamanho do pedido ninguém lê. Resumo na voz factual da agência ("com transporte") —
-    // o MESMO template da mensagem pós-claim; a voz "lead" (fato declarado) fica na tela /obrigado.
+    // que cresce com o tamanho do pedido ninguém lê. As duas vozes de resumo renderizam a MESMA frase
+    // de transporte ("Transporte incluído") — o MESMO template na mensagem pós-claim e no wa.me do lead.
     // ⚠️ Sem token (reabertura de lead duplicado, que é anterior a este envio) a mensagem sai só com
     // intro + resumo — `buildWaMessage` omite a linha do link em vez de montar um endereço quebrado.
     const msg = buildWaMessage(

@@ -50,8 +50,9 @@ const T: Record<Locale, {
     dias: (v) => `${v} dias`,
     inicio: (d) => `início ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "pessoa" : "pessoas"}`,
-    // Voz "lead" = fato declarado na tela (/obrigado); a voz "agencia" é a do wa.me.
-    transporte: { lead: "Transporte incluído", agencia: "com transporte" },
+    // As duas vozes renderizam a MESMA frase de transporte (fato do produto) — o parâmetro segue só
+    // como assinatura das chamadas (webhook × tela /obrigado).
+    transporte: { lead: "Transporte incluído", agencia: "Transporte incluído" },
     faixaMais: (v) => `${v}+`,
     indeciso: "dias a definir",
     reserva: (n) => (n === 1 ? "a reserva" : "as reservas"),
@@ -64,7 +65,7 @@ const T: Record<Locale, {
     dias: (v) => `${v} days`,
     inicio: (d) => `starting ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "person" : "people"}`,
-    transporte: { lead: "Transport included", agencia: "with transport" },
+    transporte: { lead: "Transport included", agencia: "Transport included" },
     faixaMais: (v) => `${v}+`,
     indeciso: "days to be defined",
     reserva: (n) => (n === 1 ? "the booking" : "the bookings"),
@@ -77,7 +78,7 @@ const T: Record<Locale, {
     dias: (v) => `${v} días`,
     inicio: (d) => `inicio ${d}`,
     pessoas: (v) => `${v} ${v === "1" ? "persona" : "personas"}`,
-    transporte: { lead: "Transporte incluido", agencia: "con transporte" },
+    transporte: { lead: "Transporte incluido", agencia: "Transporte incluido" },
     faixaMais: (v) => `${v}+`,
     indeciso: "días a definir",
     reserva: (n) => (n === 1 ? "la reserva" : "las reservas"),

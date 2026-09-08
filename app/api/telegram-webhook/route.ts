@@ -383,8 +383,8 @@ async function handleMessage(msg: TgMessage): Promise<NextResponse> {
   try {
     // ⚠️ Este SELECT precisa trazer TODAS as colunas que `pedidoDoLead` lê — ele alimenta o wa.me do
     // PRIMEIRO acesso do vendedor (quando o DM direto ainda falha por falta de /start). Sem
-    // `item_slugs`/`wants_transport`/`public_token`/`roteiro_*`, o pedido sai sem lista "Para: …" e sem
-    // o "· com transporte" do resumo — exatamente o card incompleto que o teste em produção acusou.
+    // `item_slugs`/`wants_transport`/`public_token`/`roteiro_*`, o pedido sai sem lista "Incluído: …" e sem
+    // o "· Transporte incluído" do resumo — exatamente o card incompleto que o teste em produção acusou.
     const rows = (await sql`select nome, whatsapp, claimed_by, claimed_by_id, locale, visit_date, ticket_qty, lead_context, roteiro_slug, roteiro_titulo, cta_type,
                public_token, item_slugs, roteiro_dias, roteiro_pessoas, wants_transport
           from leads where id = ${leadId}`) as LeadRow[];
