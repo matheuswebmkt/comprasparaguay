@@ -6,7 +6,7 @@
 // Regra dura (conventions §4 e §12): AMBIENTE SERVERLESS. NADA de long-polling nem de
 // bibliotecas com `.on('message')` — toda comunicação com o Telegram é via requisição HTTP
 // (Bot API) e webhook. Este módulo é puro (sem dependência de banco): só fala com o Telegram.
-// No-op silencioso se faltar TELEGRAM_BOT_TOKEN; nunca lança (falha logada só em dev).
+// No-op silencioso se faltar TELEGRAM_BOT_TOKEN; nunca lança (falhas logam via console.error, sempre).
 
 import { DEFAULT_WA_GREETING } from "./offer-defaults";
 import type { ItensKind, ProductCopyKind } from "./offer-defaults";
@@ -47,14 +47,14 @@ async function call<T = Record<string, unknown>>(
       | { ok?: boolean; result?: T; description?: string }
       | null;
     if (!json?.ok) {
-      if (process.env.NODE_ENV === "development") {
-        console.error(`telegram ${method} error:`, res.status, json?.description ?? "(sem corpo)");
-      }
+      // Loga SEMPRE (não só em dev): em produção é a única pista de falhas silenciosas do cron
+      // (pinged:false) — ex.: bot removido do grupo, chat_id errado. Nunca contém PII nem token.
+      console.error(`telegram ${method} error:`, res.status, json?.description ?? "(sem corpo)");
       return null;
     }
     return (json.result ?? null) as T | null;
   } catch (err) {
-    if (process.env.NODE_ENV === "development") console.error(`telegram ${method} exception:`, err);
+    console.error(`telegram ${method} exception:`, err);
     return null;
   }
 }
