@@ -74,7 +74,9 @@ export const metadata: Metadata = {
       "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
     images: [
       {
-        url: "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp",
+        // OG padrão do site: /og.webp na raiz de `public/`, feita no formato canônico 1200×630
+        // (a capa do atrativo é 1400×1000 — proporção errada pra card de compartilhamento).
+        url: "/og.webp",
         width: 1200,
         height: 630,
         alt: "Dia de compras em Ciudad del Este com guia especialista — Compras Paraguay",
@@ -100,9 +102,8 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/site.webmanifest",
-  // ⚠️ Não declarar `/favicon.ico`: NÃO existe arquivo .ico em `public/` — a entrada anterior
-  // apontava para um nome com erro de digitação e dava 404 em toda navegação. Os PNGs 16/32 e o
-  // apple-touch cobrem o caso. Se um .ico for desejado, adicionar o arquivo ANTES de declarar.
+  // ⓘ `app/favicon.ico` existe e é servido automaticamente pelo App Router (Next injeta o link
+  // sozinho) — NÃO declarar de novo aqui. Os PNGs 16/32 + apple-touch-icon (180) cobrem o resto.
   icons: [
     { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
     { rel: "icon", type: "image/png", url: "/favicon-32x32.png", sizes: "32x32" },

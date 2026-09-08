@@ -1,6 +1,6 @@
 // Filepath: lib/email.ts
-// Version: 1.2
-// Nome da Versão: "+ e-mail do formulário de contato (/contato → contato@comprasparaguay.online, mesma caixa do ADMIN_EMAIL)"
+// Version: 1.3
+// Nome da Versão: "+ e-mail do formulário de contato (/contato → www.comprasparaguay.online@gmail.com, mesma caixa do ADMIN_EMAIL)"
 // Baseado na Versão: 1.1
 
 interface SendArgs {
@@ -106,7 +106,7 @@ export async function sendVisitorMagicLinkEmail(
 }
 
 /** Caixa que recebe o formulário de /contato (fixo — mesma caixa do ADMIN_EMAIL do magic link). */
-const CONTACT_EMAIL = "contato@comprasparaguay.online";
+const CONTACT_EMAIL = "www.comprasparaguay.online@gmail.com";
 
 function escHtml(v: string): string {
   return v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

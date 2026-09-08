@@ -1,8 +1,8 @@
 // Filepath: components/ticket-offer/TicketOfferModal.tsx
-// Version: 11.2
+// Version: 11.3
+// Nome da Versão: "Transporte SEMPRE incluído — pergunta Sim/Não extinta; o lead entra com wantsTransport=true (fato do produto, anunciado no mini-card)"
 // Nome da Versão: "content_ids religado: o bundle do pedido (destino de entrada + extras) volta ao InitiateCheckout, ao Lead e ao espelho CAPI; chave local rgf_ticket_offer_draft → cp_"
 // Baseado na Versão: 11.1 ("Modo Link direto EXTINTO — todo atrativo é reserva de data")
-// Baseado na Versão: 10.1 ("Grava transportChecked no handoff pra tela de sucesso — Sprint 7")
 // Baseado na Versão: 10.0 ("Calendário do dia da visita/início (atrativo + roteiro pronto/personalizar) +
 // quantidade de ingressos (só atrativo) — DayCalendar/QuantityStepper, gate sequencial antes da
 // qualificação (D5/D6).")
@@ -26,7 +26,7 @@ import {
   type CountryEntry,
 } from "@/lib/phone-countries";
 import { trackConversion, CONVERSIONS } from "@/lib/analytics";
-import { taxonomyParams, VERTICALS, NICHE_KEYS } from "@/lib/tracking-taxonomy";
+import { taxonomyParams, VERTICALS } from "@/lib/tracking-taxonomy";
 import { buildLeadEventParams } from "@/lib/lead-value";
 import { useOfferConfig } from "@/components/cta-mode/CtaModeProvider";
 import { useLocale } from "@/components/i18n/LocaleProvider";
@@ -34,9 +34,8 @@ import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import {
   MODAL_UI,
   modalTexts,
-  transportText,
 } from "@/lib/i18n/modal";
-import { buildWaMessage, resumoCurto } from "@/lib/pedido-resumo";
+import { buildWaMessage, fillPedidos, resumoCurto } from "@/lib/pedido-resumo";
 import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_PRODUCT_COPIES,
@@ -212,14 +211,11 @@ export default function TicketOfferModal({
   // Ação para parceiros (PA §15): qualificação (sempre) + seleção de ofertas.
   const [isLocal, setIsLocal] = useState<boolean | null>(null);
   const [alreadyInFoz, setAlreadyInFoz] = useState<boolean | null>(null);
-  // Transporte (cross-sell da agência oficial) — TRI-STATE, mesma forma de `isLocal`/`alreadyInFoz`:
-  // `true` quer · `false` recusou · `null` ainda não respondeu. Um único estado de propósito: com dois
-  // booleanos separados ("marcado" + "já respondeu") existe um par inválido possível, e é justamente ele
-  // que confundiria "disse não" com "nunca perguntaram" — na consolidação entre produtos isso faria quem
-  // respondeu "Não" ser perguntado de novo a cada reabertura.
+  // Transporte (cross-sell da agência oficial) — SEMPRE INCLUÍDO (decisão do usuário): todos os
+  // atrativos do Compras Paraguay são reserva com transporte incluso, não é cross-sell a perguntar.
+  // O estado tri-state sobrevive só como ATRIBUTO DA PESSOA no rascunho/known-lead (legado da pergunta
+  // que existia — a submissão ignora o valor e manda sempre `true`, ver `transportEfetivo`).
   const [transportWanted, setTransportWanted] = useState<boolean | null>(null);
-  const transportChecked = transportWanted === true;
-  const transportAnswered = transportWanted !== null;
   // Atrativo: "Incluir ingresso de outros atrativos?" — pacote com mais de um atrativo no mesmo lead.
   const [includeOtherAttractions, setIncludeOtherAttractions] = useState(false);
   const [extraAttractions, setExtraAttractions] = useState<string[]>([]);
@@ -252,7 +248,6 @@ export default function TicketOfferModal({
   const calendarSectionRef = useRef<HTMLDivElement>(null); // calendário do dia — 1º item do bloco liberado
   const qInFozSectionRef = useRef<HTMLDivElement>(null);
   const qLocalSectionRef = useRef<HTMLDivElement>(null);
-  const transportSectionRef = useRef<HTMLDivElement>(null);
   const formSectionRef = useRef<HTMLDivElement>(null);
   const justAnsweredRef = useRef(false);
   const lastScrollTargetRef = useRef<HTMLElement | null>(null); // evita re-rolar pro mesmo alvo (ex: marcar 2ª/3ª experiência no roteiro não deve puxar de volta pro form)
@@ -304,7 +299,8 @@ export default function TicketOfferModal({
     // o card do assunto, que lê o `detail` direto. E desde que o modo "Link direto" saiu, este memo
     // também não lê mais `offer.productCopies.atrativo` — a dependência saiu junto.
   }, [locale, offer.texts, leadCopy]);
-  const transport = transportText(locale, offer.transportOffer.texts);
+  // ⓘ `transportText` (copy da pergunta de transporte, editável no admin) saiu daqui junto com a
+  // pergunta — o transporte é sempre incluído e o aviso vive no rótulo do mini-card do assunto.
   // Card do topo: roteiro ou atrativo (sempre um dos dois — todo CTA real do site define um contexto).
   // Card do assunto: as três versões chegam no `detail` (`subjectI18n`) para o card acompanhar o
   // seletor de idioma DO MODAL — os campos avulsos abaixo são o snapshot do clique e ficariam presos
@@ -385,27 +381,13 @@ export default function TicketOfferModal({
     isLocal === true ||
     alreadyInFoz === false ||
     (alreadyInFoz === true && isLocal !== null);
-  // Transporte: fonte única da visibilidade é `offer.transportOffer.enabled` (lib/offer-settings —
-  // resolve sozinho o cenário COM ou SEM agência definida). NÃO gatear por produto nem por agência:
-  //  • `agencyActive &&` era a cópia que impedia o checkbox de existir sem agência;
-  //  • `isAtrativoCtx &&` era a que fazia o roteiro pronto NUNCA perguntar sobre transporte, mesmo com
-  //    o admin marcando "Exibir = Sim" — quem chega pelo roteiro precisa se locomover igual (a
-  //    logística do roteiro é a ordem do dia, não o transporte em si).
-  // O toggle do admin é a ÚNICA autoridade sobre exibir ou não, em qualquer produto.
-  const transportVisible = offer.transportOffer.enabled;
-  // O `transporteAutomatico` (atrativo "Tem link - NÃO" entrava com transporte = true sem perguntar) foi
-  // REMOVIDO: com TODO atrativo em reserva, ele significaria "todo lead chega marcado como querendo
-  // transporte" sem que ninguém tivesse perguntado — o tri-state de `wants_transport` viria lixo e o
-  // card afirmaria uma preferência que o lead nunca deu. Voltou a ser o que era fora desse atalho: o
-  // toggle do admin é a única autoridade sobre exibir a pergunta, e a resposta é do lead.
-  const transportEfetivo = transportVisible ? transportWanted : null;
-  // Transporte BLOQUEIA o form até ser respondido — legítimo porque a pergunta é Sim/Não explícita.
-  // (Com o checkbox antigo isto era hostil: dizer "não" custava marcar e desmarcar, já que só havia um
-  // toggle. Com dois botões, "Não" é um clique como qualquer outro.) O produto quer a resposta dos dois
-  // lados: num roteiro com vários atrativos, saber que a pessoa NÃO precisa de transporte vale tanto
-  // quanto saber que precisa.
-  const transportDone = !transportVisible || transportAnswered;
-  const readyForForm = dateChosen && qualificationDone && transportDone;
+  // ⚠️ Transporte SEMPRE INCLUÍDO (decisão do usuário): TODO atrativo do Compras Paraguay é reserva
+  // com transporte incluso — a pergunta Sim/Não saiu de cena (a oferta do admin não é mais consultada),
+  // o mini-card do assunto anuncia "Transporte já incluído", e o lead entra sempre com
+  // `wantsTransport: true`: é fato do produto, não preferência declarada — o card do Telegram afirma
+  // "🚐 Transporte: solicitado", o lead vale o bônus transfer e o known-lead consolida "Sim".
+  const transportEfetivo = true;
+  const readyForForm = dateChosen && qualificationDone;
 
   // Funil do modal: dispara um PASSO no máximo 1× por abertura (dedupe por `key`). Silencioso/no-op sem DB.
   const fire = (step: ModalStep, o?: { itemSlug?: string; key?: string }) => {
@@ -440,8 +422,7 @@ export default function TicketOfferModal({
       hasName ||
       hasPhoneDigits ||
       isLocal !== null ||
-      Boolean(visitDate) ||
-      (transportVisible && transportChecked);
+      Boolean(visitDate);
     if (!hasSignal) return; // nada pra recuperar — "abriu e não fez nada" fica de fora de propósito
     abandonBeaconFiredRef.current = true;
     const fullPhone = hasPhoneDigits
@@ -777,8 +758,6 @@ export default function TicketOfferModal({
       target = qInFozSectionRef.current;
     else if (alreadyInFoz === true && isLocal === null)
       target = qLocalSectionRef.current;
-    else if (transportVisible && !transportAnswered)
-      target = transportSectionRef.current;
     else if (readyForForm) target = formSectionRef.current;
     if (target && target !== lastScrollTargetRef.current) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -789,8 +768,6 @@ export default function TicketOfferModal({
     visitDate,
     isLocal,
     alreadyInFoz,
-    transportVisible,
-    transportAnswered,
     readyForForm,
   ]);
 
@@ -876,15 +853,6 @@ export default function TicketOfferModal({
     fire(v ? "q_local_yes" : "q_local_no");
     justAnsweredRef.current = true;
   };
-  /** Resposta explícita de transporte (Sim/Não), no mesmo padrão das perguntas de qualificação.
-   * ⚠️ O passo de funil `transport_check` dispara SÓ no "Sim": ele significa "marcou incluir
-   * transporte" desde sempre, e contar o "Não" nele mudaria o sentido da métrica em silêncio. */
-  const chooseTransport = (v: boolean) => {
-    if (v && !transportChecked) fire("transport_check");
-    setTransportWanted(v);
-    justAnsweredRef.current = true;
-  };
-
   // "Incluir outros atrativos?" — lista todos os atrativos (menos o que o lead já está reservando),
   // ordenada por nome. Os nomes vêm de `offer.attractionCatalog` (assado no servidor — o modal não
   // importa `app/data/attractions.ts`). Desligar o toggle limpa a seleção.
@@ -943,11 +911,16 @@ export default function TicketOfferModal({
     if (!digits) return null;
     // Texto POR PRODUTO ("3b · Textos por produto" → `waLeadText`): o que o VISITANTE manda. Sem copy de
     // produto resolvida (contexto legado "ingresso"), cai no bucket do ingresso avulso.
-    const base =
-      leadCopy?.waLeadText ||
-      DEFAULT_PRODUCT_COPIES.atrativo[locale].waLeadText;
-    // Intro → resumo de UMA linha → link do pedido. O detalhe (lista de itens, respostas do wizard)
-    // vive em /r/[token]; mandar tudo na mensagem faz o texto crescer com o tamanho do roteiro.
+    // `{pedidos}` vira "a reserva"/"as reservas" conforme o nº de itens escolhidos.
+    const base = fillPedidos(
+      leadCopy?.waLeadText || DEFAULT_PRODUCT_COPIES.atrativo[locale].waLeadText,
+      pedidoItems.length,
+      locale,
+    );
+    // Os nomes na mensagem = os mesmos do card do Telegram (mesma fonte: catálogo da oferta).
+    const nomesPedido = pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s);
+    // Intro → resumo de UMA linha → lista "Para: …". O detalhe (respostas do wizard) não vai — mensagem
+    // que cresce com o tamanho do pedido ninguém lê.
     // ⚠️ Sem token (reabertura de lead duplicado, que é anterior a este envio) a mensagem sai só com
     // intro + resumo — `buildWaMessage` omite a linha do link em vez de montar um endereço quebrado.
     const msg = buildWaMessage(
@@ -967,7 +940,7 @@ export default function TicketOfferModal({
       leadProductKind,
       locale,
       "lead",
-      { itens: itensPedido },
+      { nomes: nomesPedido },
     );
     return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   };
@@ -1080,10 +1053,9 @@ export default function TicketOfferModal({
           isLocal,
           alreadyInFoz,
           // ⚠️ EXATAMENTE o mesmo valor que o corpo do POST manda (`wantsTransport: transportEfetivo`,
-          // logo abaixo) — não uma expressão equivalente "na leitura". `transportEfetivo` cobre o caso
-          // do transporte AUTOMÁTICO (atrativo sem link de ingresso), em que ninguém marcou nada e o
-          // transporte é assumido; usar `transportVisible && transportChecked` aqui daria `false` e o
-          // bônus de transfer (+4 pontos, o maior da tabela) sumiria só do lado do Pixel.
+          // logo abaixo). `transportEfetivo` é SEMPRE `true` hoje: transporte incluído é fato do
+          // produto (reserva com transfer incluso), não preferência declarada — o leadvale o bônus
+          // transfer (+4 pontos, o maior da tabela) factualmente.
           wantsTransport: transportEfetivo === true,
           locale,
           ticketQty: wantsQty ? ticketQty : null,
@@ -1099,27 +1071,10 @@ export default function TicketOfferModal({
       { eventID: eventId },
     );
 
-    // ⚠️ `transportEfetivo`, NUNCA `transportChecked`. `transportChecked` é o estado CRU, e ele volta
-    // `true` do known-lead (um "sim" dado em outro modal, outro dia) mesmo quando o cross-sell está
-    // DESLIGADO no admin e a pergunta não apareceu aqui. Gatilho por ele fazia este evento afirmar
-    // que a pessoa pediu transporte numa tela que nunca ofereceu — inflando o vertical `transporte`
-    // do pixel de portfólio com clique que não existiu, e contradizendo o `transfer` do `Lead` do
-    // MESMO submit (que já lia `transportEfetivo`). É a mesma regra do G1: o mesmo sinal, uma
-    // definição só.
-    if (transportEfetivo === true)
-      // 🚫 Aqui havia `content_name: "Foz_Falls_transporte"` — o nome da agência dentro do param
-      // errado. Quem entrega é `partner_slug` (matriz §1.4); `content_name` não é canal de
-      // atribuição e ainda amarrava UMA agência (que rotaciona) numa string fixa.
-      trackConversion(CONVERSIONS.ctaClick, {
-        cta_type: "modal_transport_offer",
-        transfer: true,
-        ...taxonomyParams({
-          vertical: VERTICALS.transporte,
-          niche: NICHE_KEYS.transfer,
-          item_slug: detail?.itemSlug,
-          partner_slug: offer.transportOffer.agencySlug,
-        }),
-      });
+    // ⓘ O evento `ctaClick "modal_transport_offer"` (vertical transporte) foi REMOVIDO junto com a
+    // pergunta Sim/Não: sem card de oferta exibido não existe clique pra contar, e dispará-lo a cada
+    // submit inflaria o vertical `transporte` do pixel de portfólio com clique que não aconteceu. A
+    // intenção de transfer segue declarada no `Lead` acima (`transfer=true` via `wantsTransport`).
 
     let wasDup = false;
     let token: string | null = null;
@@ -1267,6 +1222,7 @@ export default function TicketOfferModal({
         pedidoToken: token,
         fluxo: isRoteiroCtx ? (isPersonalizar ? "roteiro-personalizado" : "roteiro-pronto") : "atrativo",
         itens: itensPedido,
+        nomes: pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s),
         resumo: resumoCurto(
           {
             kind: leadProductKind,
@@ -1346,14 +1302,8 @@ export default function TicketOfferModal({
         ? ui.summaryAlreadyInFoz
         : ui.summaryNotInFozYet
       : null,
-    // Transporte consolidado: o card acima some depois de respondido (ver o gate lá), então a resposta
-    // precisa continuar visível AQUI — senão parece que a informação se perdeu. Mostra OS DOIS lados,
-    // igual "Moro em Foz"/"Não moro em Foz": a recusa também é uma resposta que a pessoa deu.
-    transportVisible && transportAnswered
-      ? transportChecked
-        ? ui.summaryTransport
-        : ui.summaryNoTransport
-      : null,
+    // Transporte: não existe mais resposta a exibir — o transporte é sempre incluído (fato do
+    // produto, anunciado no mini-card do assunto) e não é uma escolha da pessoa.
   ]
     .filter(Boolean)
     .join(" · ");
@@ -1701,16 +1651,12 @@ export default function TicketOfferModal({
                   }
                   image={subjectImage}
                   badge={isReservaCtx ? ui.reservaBadge : leadCopy.subjectBadge}
-                  /* Atrativo de RESERVA: o rótulo "Incluído" do mini-card vira o aviso de que o
-                     transporte está contemplado — ali a pergunta Sim/Não não existe e este é o
-                     único lugar da tela onde a informação cabe sem virar um bloco a mais.
-                     ⚠️ Também gateado por `transportVisible`: com a oferta de transporte
-                     desligada no admin, volta ao rótulo normal. Anunciar "transporte incluído"
-                     com a oferta fora do ar seria prometer o que não está no ar. */
+                  /* Atrativo de RESERVA: o rótulo "Incluído" do mini-card é o aviso de que o transporte
+                     está contemplado — é fato do produto (ver `transportEfetivo`), independente de
+                     toggle de admin. Este é o único lugar da tela onde a informação cabe sem virar um
+                     bloco a mais, e é o que substitui a antiga pergunta Sim/Não. */
                   includedLabel={
-                    isReservaCtx && transportVisible
-                      ? ui.transportIncluded
-                      : leadCopy.subjectIncluded
+                    isReservaCtx ? ui.transportIncluded : leadCopy.subjectIncluded
                   }
                   locale={locale}
                 />
@@ -1941,28 +1887,11 @@ export default function TicketOfferModal({
                   visíveis aqui, só o <form> espera elas serem resolvidas. */}
               {qualificationDone && (
                 <>
-                  {/* Transporte (agência oficial) — pergunta Sim/Não acima do form, em QUALQUER produto
-                      (só o toggle do admin manda, ver `transportVisible`).
-                      ⚠️ `editingContact || !transportAnswered`: chaveia por RESPONDIDO, não por marcado —
-                      quem respondeu "Não" também consolida e não é perguntado de novo a cada reabertura
-                      (com `!transportChecked` aqui, a recusa reabriria o card pra sempre). A resposta
-                      segue visível na linha do card de resumo (`ui.summaryTransport`/`ui.summaryNoTransport`).
-                      Clicar em "Editar" (`editingContact = true`) REEXIBE o bloco mesmo já respondido,
-                      senão não haveria como trocar a resposta. */}
-                  {(editingContact || !transportAnswered) &&
-                    transportVisible && (
-                      <div ref={transportSectionRef}>
-                        <ModalDivider />
-                        <TransportCard
-                          title={transport.title}
-                          desc={transport.desc}
-                          value={transportWanted}
-                          onChoose={chooseTransport}
-                          locale={locale}
-                          disabled={stage === "submitting"}
-                        />
-                      </div>
-                    )}
+                  {/* ⓘ A pergunta Sim/Não de transporte FOI REMOVIDA (decisão do usuário): todo atrativo
+                      do Compras Paraguay é reserva com transporte incluído — o lead entra sempre com
+                      `wantsTransport: true` (ver `transportEfetivo`), e a informação "Transporte já
+                      incluído" vive no rótulo do mini-card do assunto (`includedLabel`), colado no
+                      item a que se refere. */}
 
                   {/* ⓘ NÃO existe bloco próprio de "transporte incluído" aqui. Houve um, e saiu:
                       a informação cabe no rótulo do mini-card do assunto (ver `includedLabel`),
@@ -2406,6 +2335,12 @@ function SubjectItemCard({
             alt=""
             width={56}
             height={56}
+            /* `sizes="56px"` é OBRIGATÓRIO aqui: sem ele o Next assume 100vw e o navegador baixa a
+               variante de ~1920px (que ainda UPS-CALA fontes de 833–1400px) pra depois reduzir a 56px
+               — dupla reamostragem = miniatura borrada + ~150KB baixados por abertura do modal.
+               Com `sizes="56px"` o navegador pede a variante de 64–128px, nítida em qualquer DPR. */
+            sizes="56px"
+            quality={85}
             className="float-left mr-3 mb-1 h-[56px] w-[56px] rounded-xl object-cover"
           />
         ) : (
@@ -2453,64 +2388,6 @@ function SubjectItemCard({
       >
         <Check className="h-3.5 w-3.5" aria-hidden />
         {includedLabel || ui.includedBadge}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Card de transporte (cross-sell da agência oficial) — o `title` É a pergunta e o `desc` é o argumento,
- * os dois editáveis no admin. Resposta em Sim/Não (mesmo `SimNao` da qualificação), não checkbox: num
- * roteiro com vários atrativos a resposta importa dos DOIS lados (saber que a pessoa não precisa vale
- * tanto quanto saber que precisa), e um checkbox só sabe dizer "sim" — "não" ficava indistinguível de
- * "não respondeu".
- */
-function TransportCard({
-  title,
-  desc,
-  value,
-  onChoose,
-  locale,
-  disabled,
-}: {
-  title: string;
-  desc: string;
-  value: boolean | null;
-  onChoose: (v: boolean) => void;
-  locale: Locale;
-  disabled?: boolean;
-}) {
-  const chosen = value === true;
-  return (
-    <div
-      className="rounded-2xl border p-2.5 mb-4"
-      style={{
-        borderColor: chosen ? "hsl(152,47%,40%)" : "hsl(210,20%,86%)",
-        background: chosen ? "hsl(152,40%,96%)" : "white",
-      }}
-    >
-      <p
-        className="text-base font-bold leading-tight text-center"
-        style={{ color: "hsl(210,60%,15%)" }}
-      >
-        {title}
-      </p>
-      {desc && (
-        <p
-          className="text-sm mt-0.5 leading-snug text-center"
-          style={{ color: "hsl(209,25%,26%)" }}
-        >
-          {desc}
-        </p>
-      )}
-      <div className="mt-2.5">
-        <SimNao
-          value={value}
-          onSim={() => onChoose(true)}
-          onNao={() => onChoose(false)}
-          disabled={disabled}
-          locale={locale}
-        />
       </div>
     </div>
   );

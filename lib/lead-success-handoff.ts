@@ -41,6 +41,9 @@ export interface LeadSuccessHandoff {
   /** Ingressos, reservas de data ou os dois (`itensKind`, §17-ter): decide o rótulo do link na tela
    * de sucesso e na mensagem de WhatsApp. Ausente = tratar como "ingressos". */
   itens?: ItensKind;
+  /** Nomes legíveis dos itens do pedido — a lista "Para: …" do WhatsApp, exibida igual em
+   * "O que você pediu" na página de obrigado. Ausente/vazia = sem lista (fluxo sem itens). */
+  nomes?: string[];
   /** CTA de sucesso já contabilizado nesta aba? Persistido de volta no storage — o F5 não re-dispara a
    * marcação (o handoff sobrevive ao F5 de propósito: a página de obrigado reexibe o pedido). */
   shownFired?: boolean;

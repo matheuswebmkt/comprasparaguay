@@ -7,11 +7,11 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, ArrowRight, Home } from "lucide-react";
+import { CheckCircle2, Home } from "lucide-react";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { OBRIGADO_UI } from "@/lib/i18n/obrigado";
 import { LEAD_HANDOFF_KEY } from "@/lib/lead-success-handoff";
-import { internalUrl } from "@/lib/utm";
+import { listaPedidos } from "@/lib/pedido-resumo";
 
 export default function ObrigadoContent() {
   const { locale } = useLocale();
@@ -20,19 +20,24 @@ export default function ObrigadoContent() {
 
   // Handoff em sessionStorage, se existir (o resumo é só metadados do pedido — sem PII).
   let resumo: string | null = null;
+  let nomes: string[] = [];
   if (typeof window !== "undefined") {
     try {
       const raw = window.sessionStorage.getItem(LEAD_HANDOFF_KEY);
       if (raw) {
-        const h = JSON.parse(raw) as { resumo?: string | null };
+        const h = JSON.parse(raw) as { resumo?: string | null; nomes?: string[] };
         if (h?.resumo) resumo = h.resumo;
+        if (Array.isArray(h?.nomes)) nomes = h.nomes;
       }
     } catch {
       resumo = null;
+      nomes = [];
     }
   }
 
   void params; // usada para manter a rota dinâmica com useSearchParams (Suspense na página)
+
+  const lista = listaPedidos(nomes, locale);
 
   return (
     <section
@@ -80,25 +85,17 @@ export default function ObrigadoContent() {
             <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
               {resumo}
             </p>
+            {/* A MESMA lista "Para: …" que a mensagem de WhatsApp leva — uma fonte, três superfícies
+                (card do Telegram, wa.me e aqui). */}
+            {lista && (
+              <p className="mt-2 text-sm leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
+                {lista}
+              </p>
+            )}
           </div>
         )}
 
-        <p className="mt-6 text-sm" style={{ color: "hsl(210,25%,45%)" }}>
-          {t.footer}
-        </p>
-
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-          <Link
-            href={internalUrl("/roteiros-de-compras/compras-paraguai-ciudad-del-este", "obrigado")}
-            className="group inline-flex items-center gap-2 rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98]"
-            style={{
-              background:
-                "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
-            }}
-          >
-            {t.ctaCompras}
-            <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-          </Link>
           <Link
             href="/"
             className="group inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4"

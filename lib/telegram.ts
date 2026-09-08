@@ -11,7 +11,7 @@
 import { DEFAULT_WA_GREETING } from "./offer-defaults";
 import type { ItensKind, ProductCopyKind } from "./offer-defaults";
 import type { Locale } from "./i18n/config";
-import { buildWaMessage } from "./pedido-resumo";
+import { buildWaMessage, fillPedidos } from "./pedido-resumo";
 import { isLocale, DEFAULT_LOCALE } from "./i18n/config";
 import type { OverdueLead } from "./lead-alerts";
 
@@ -76,13 +76,16 @@ export interface NewLeadNotice {
   roteiroTitulo?: string | null;
   /** Slug do roteiro (linha extra opcional). */
   roteiroSlug?: string | null;
-  /** Token do pedido — o card leva o LINK (`/r/[token]`), não a lista de itens. */
+  /** Token do pedido (legado de /r/[token], página removida — não gera linha no card). */
   pedidoToken?: string | null;
   /** Resumo de UMA linha do pedido (`lib/pedido-resumo.resumoCurto`), na VOZ da agência — só o wa.me
    * usa; o card já mostra dia/pessoas/transporte em linhas próprias. */
   resumo?: string | null;
   /** Classificação dos itens (`itensKind`) — o rótulo do link acompanha: ingressos, reservas ou os dois. */
   itens?: ItensKind;
+  /** NOMES legíveis dos itens do pedido (`atrativoNomes`, lib/lead-card.ts) — viram a linha logo abaixo
+   * do assunto no card e a lista "Para: …" do wa.me. Resolvidos pelo CHAMADOR (este módulo é puro). */
+  itemNames?: string[];
   /** Bucket de produto (`productKindOf`, lib/lead-card.ts) — decide o RÓTULO da linha do assunto:
    * `🎟️ Atrativo:` para ingresso, `🗺️ Roteiro:` para roteiro/personalizar. Quem resolve é o CHAMADOR:
    * este módulo é puro e não deriva contexto de lead (a derivação tem fonte única em lib/lead-card.ts,
@@ -224,6 +227,9 @@ function baseLines(
     productKind?: ProductCopyKind;
     /** Classificação dos itens (`itensKind`) — a linha do assunto acompanha o que o pedido contém. */
     itens?: ItensKind;
+    /** Nomes legíveis dos itens — a lista logo abaixo do assunto (sem ela, o vendedor não sabe O QUE
+     * foi reservado: o link /r/[token] que a justificava foi removido neste projeto). */
+    itemNames?: string[];
     infoOnly?: boolean;
     /** Token do pedido — vira a linha de link, onde a lista completa vive. */
     pedidoToken?: string | null;
@@ -232,10 +238,8 @@ function baseLines(
   const lines = [leadHeadline(opts?.infoOnly)];
   const assunto = opts?.roteiroTitulo || opts?.roteiroSlug;
 
-  // ⛔ O card NÃO lista mais os itens. A lista completa vive na página do pedido, e o card carrega
-  // só o assunto + o link — o vendedor vai assumir o lead de qualquer forma (é o trabalho dele), então
-  // a lista aqui não decidia nada e crescia com o tamanho do roteiro. Num pedido de ingresso o assunto
-  // é o próprio tipo: o nome do atrativo já não cabia quando havia extras.
+  // O card É o briefing do vendedor: a página de pedido foi removida deste projeto, então os NOMES
+  // (opts.itemNames) são a única fonte do "o que foi pedido" — eles entram logo abaixo do assunto.
   if (opts?.productKind === "atrativo") {
     // O rótulo diz o que o pedido CONTÉM: um pedido misto chamado só de "Ingressos" esconde metade
     // dele, e um de reserva de data não tem ingresso nenhum (§17-ter).
@@ -247,6 +251,10 @@ function baseLines(
           ? "🎫 <b>Ingressos e reservas</b>"
           : "🎫 <b>Ingressos</b>",
     );
+    // O card É o briefing: com a página do pedido removida, a lista de nomes é a ÚNICA fonte do "o que
+    // foi pedido" — logo abaixo do assunto, os nomes exatamente como o lead os escolheu.
+    const nomes = (opts.itemNames ?? []).map((s) => s.trim()).filter(Boolean);
+    if (nomes.length) lines.push(nomes.map(esc).join(", "));
   } else if (assunto) {
     lines.push("", `🗺️ <b>Roteiro:</b> ${esc(assunto)}`);
   }
@@ -295,6 +303,7 @@ export async function notifyNewLead(n: NewLeadNotice, chatId: string | null): Pr
     roteiroSlug: n.roteiroSlug,
     productKind: n.productKind,
     itens: n.itens,
+    itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
   });
   linhas.push("", ...detailLines(n));
@@ -336,6 +345,7 @@ export async function notifyLeadLog(
     roteiroSlug: n.roteiroSlug,
     productKind: n.productKind,
     itens: n.itens,
+    itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
   });
   linhas.push("", ...detailLines(n, { whatsapp: n.confirmFlow ? null : n.whatsapp }));
@@ -382,6 +392,8 @@ function infoOnlyKeyboard(n: NewLeadNotice & { whatsapp?: string | null; greetin
           kind: n.productKind,
           locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE,
           itens: n.itens,
+          itemCount: n.itemNames?.length ?? 0,
+          nomes: n.itemNames,
         }),
       }]],
     },
@@ -405,6 +417,7 @@ export async function notifyLeadInfoOnly(
     roteiroSlug: n.roteiroSlug,
     productKind: n.productKind,
     itens: n.itens,
+    itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
     infoOnly: true,
   });
@@ -462,6 +475,7 @@ export async function editLeadCard(
     roteiroSlug: n.roteiroSlug,
     productKind: n.productKind,
     itens: n.itens,
+    itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
   });
   linhas.push("", ...detailLines(n, { whatsapp: contactPublic ? n.whatsapp : null }));
@@ -523,6 +537,7 @@ export async function editInfoOnlyCard(
     roteiroSlug: n.roteiroSlug,
     productKind: n.productKind,
     itens: n.itens,
+    itemNames: n.itemNames,
     pedidoToken: n.pedidoToken,
     infoOnly: true,
   });
@@ -602,13 +617,20 @@ export function buildWaUrl(
     locale?: Locale;
     /** Classificação dos itens — muda o rótulo do link (§17-ter). */
     itens?: ItensKind;
+    /** Nº de itens (pro `{pedidos}` da saudação) e os NOMES (lista "Para: …"). */
+    itemCount?: number;
+    nomes?: string[];
   },
 ): string {
   const digits = whatsapp.replace(/\D/g, "");
   const tpl = (template ?? "").trim() || DEFAULT_WA_GREETING.pt;
-  const intro = fillTemplate(tpl, { nome: firstNameOf(nome), cupom: "" });
-  // Mesma montagem das duas pontas (`lib/pedido-resumo.ts`): intro → resumo → link. Texto PURO aqui —
-  // o wa.me não interpreta o HTML do Telegram, então nada de <b> nesta string.
+  const intro = fillPedidos(
+    fillTemplate(tpl, { nome: firstNameOf(nome), cupom: "" }),
+    pedido?.itemCount ?? 0,
+    pedido?.locale ?? "pt",
+  );
+  // Mesma montagem das duas pontas (`lib/pedido-resumo.ts`): intro → resumo → lista "Para: …". Texto
+  // PURO aqui — o wa.me não interpreta o HTML do Telegram, então nada de <b> nesta string.
   const msg = buildWaMessage(
     intro,
     pedido?.resumo ?? "",
@@ -616,7 +638,7 @@ export function buildWaUrl(
     pedido?.kind ?? "atrativo",
     pedido?.locale ?? "pt",
     "agencia",
-    { itens: pedido?.itens },
+    { nomes: pedido?.nomes },
   );
   return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
 }
@@ -650,6 +672,7 @@ export async function editClaimedMessage(e: ClaimedEdit): Promise<void> {
     roteiroSlug: e.roteiroSlug,
     productKind: e.productKind,
     itens: e.itens,
+    itemNames: e.itemNames,
     pedidoToken: e.pedidoToken,
   });
   linhas.push("", ...detailLines(e));
@@ -694,6 +717,7 @@ export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
     roteiroSlug: e.roteiroSlug,
     productKind: e.productKind,
     itens: e.itens,
+    itemNames: e.itemNames,
     pedidoToken: e.pedidoToken,
   });
   linhas.push("", ...detailLines(e, { whatsapp: e.whatsapp }));
@@ -714,6 +738,8 @@ export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
           kind: e.productKind,
           locale: isLocale(e.locale) ? e.locale : DEFAULT_LOCALE,
           itens: e.itens,
+          itemCount: e.itemNames?.length ?? 0,
+          nomes: e.itemNames,
         }),
       }]],
     },
@@ -764,6 +790,8 @@ export async function sendPrivateWa(
     kind?: ProductCopyKind;
     locale?: Locale;
     itens?: ItensKind;
+    itemCount?: number;
+    nomes?: string[];
   },
 ): Promise<boolean> {
   const res = await call("sendMessage", {

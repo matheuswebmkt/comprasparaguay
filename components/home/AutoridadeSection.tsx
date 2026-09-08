@@ -139,7 +139,7 @@ export default function AutoridadeSection() {
         {/* Imagem da especialista — direita */}
         <div className="overflow-hidden rounded-3xl shadow-tef-lg">
           <Image
-            src="/images/especialista-roteiro-foz.webp"
+            src="/images/especialista-compras-paraguay.webp"
             alt={t.imgAlt}
             width={1121}
             height={1401}

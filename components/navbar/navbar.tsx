@@ -1,6 +1,6 @@
 // Filepath: components/navbar/navbar.tsx
-// Version: 8.5
-// Nome da Versão: "Transfer sobe para a terceira posição do menu"
+// Version: 8.6
+// Nome da Versão: "CTA da navbar vira 'Reservar data' — abre o modal do Compras Paraguay (mesmo funil do hero)"
 // Baseado na Versão: 8.4
 
 "use client";
@@ -13,6 +13,7 @@ import { internalUrl } from "@/lib/utm";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { HOME_UI } from "@/lib/i18n/home";
 import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
+import ReservarDataCta from "@/components/ReservarDataCta";
 
 const Navbar = () => {
   const { locale } = useLocale();
@@ -111,17 +112,20 @@ const Navbar = () => {
 
           {/* ⚠️ `hidden lg:inline-flex`: abaixo de lg este CTA vive DENTRO do menu hambúrguer
               (ver o painel no fim do arquivo), não na barra. A barra no mobile ficaria com
-              idioma + CTA + hambúrguer em 64px de altura. */}
-          <Link
-            href={internalUrl("/roteiros-de-compras", `navbar-cta-${fromSource}`)}
+              idioma + CTA + hambúrguer em 64px de altura.
+              ⓘ `ReservarDataCta`, NÃO `<Link>`: o CTA primário do site é a RESERVA — abre o modal
+              do dia de compras direto no calendário, mesmo caminho do hero e do CTA final. O
+              dourado navegar era promessa e tela desalinhadas (§21.2): um rótulo de conversão
+              que navegava pra uma página de conteúdo. */}
+          <ReservarDataCta
+            ctaType="navbar_reserva"
+            source={`navbar-cta-${fromSource}`}
             className="hidden items-center rounded-full px-3 py-1.5 text-xs font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98] sm:px-4 sm:py-2 sm:text-sm lg:inline-flex"
             style={{
               background:
                 "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
             }}
-          >
-            {t.cta}
-          </Link>
+          />
 
           <button
             type="button"
@@ -169,20 +173,17 @@ const Navbar = () => {
                 altura do chrome, esticado em largura total, o botão lê fino.
                 ⚠️ `utm_source` PRÓPRIO (`navbar-menu-cta-*`): este clique custa um toque a mais
                 que o da barra: somar os dois numa série só esconderia exatamente a diferença que
-                justifica ou condena esta mudança. */}
-              <Link
-                href={internalUrl(
-                  "/roteiros-de-compras",
-                  `navbar-menu-cta-${fromSource}`,
-                )}
+                justifica ou condena esta mudança. Mesmo CTA do topo: `ReservarDataCta` abre o
+                modal do dia de compras, rótulo "Reservar data". */}
+              <ReservarDataCta
+                ctaType="navbar_menu_reserva"
+                source={`navbar-menu-cta-${fromSource}`}
                 className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white transition-all hover:scale-[1.03] active:scale-[0.98]"
                 style={{
                   background:
                     "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
                 }}
-              >
-                {t.cta}
-              </Link>
+              />
           </div>
         </div>
       )}

@@ -15,7 +15,7 @@ import {
 import { itensKind } from "@/lib/offer-defaults";
 import { getActiveAgencySlug } from "@/lib/agencies";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { isRoteiroLead, productKindOf } from "@/lib/lead-card";
+import { atrativoNomes, isRoteiroLead, productKindOf } from "@/lib/lead-card";
 import { resolveLeadKind, ticketQtyFromPessoas } from "@/lib/roteiro-lead";
 import { LEAD_DEDUP_WINDOW_MIN } from "@/lib/lead-dedup";
 import { resumoCurto } from "@/lib/pedido-resumo";
@@ -477,11 +477,14 @@ export async function POST(req: NextRequest) {
       // que escolhe a saudação do wa.me (`productKindOf`) — lib/telegram.ts é puro e não deriva
       // contexto de lead, senão haveria uma segunda regra para o mesmo dado.
       productKind: productKindOf(productCtx),
-      // O card leva o LINK do pedido; o wa.me da agência leva o resumo de uma linha. A lista de itens
-      // não vai em nenhum dos dois — ela vive na página (/r/[token]).
+      // O card leva os NOMES (itemNames) e o wa.me leva o resumo + a lista "Para: …". O token segue
+      // gravado (legado de /r/[token], página removida).
       pedidoToken: leadId ? publicToken : null,
       // Ingressos, reservas de data ou os dois (§17-ter): o rótulo do link no wa.me acompanha.
       itens: itensKind((itemSlugsCol ?? "").split(",").filter(Boolean)),
+      // Nomes legíveis do pedido: a linha do card logo abaixo do assunto E a lista "Para: …" do wa.me
+      // saem da MESMA fonte (`atrativoNomes`, lib/lead-card.ts) — nunca divergem entre si.
+      itemNames: atrativoNomes((itemSlugsCol ?? "").split(",").filter(Boolean)),
       resumo: resumoCurto(
         {
           kind: productKindOf(productCtx),
@@ -610,7 +613,7 @@ export async function POST(req: NextRequest) {
   // configurada seja "só mensagem") — o lead pode estar tentando corrigir/completar algo, e silenciar
   // completamente pareceria que o envio falhou. `sendAgency` garante que só avisamos quando o lead REALMENTE
   // seria roteado pra agência (senão a mensagem "estamos com sua solicitação" não faria sentido).
-  // `pedidoToken` alimenta o link curto (/r/[token]) na tela de sucesso e na mensagem que o LEAD manda.
+  // `pedidoToken` segue gravado como identificador do pedido (a página /r/[token] e o link no wa.me foram removidos).
   // Só existe quando o lead foi realmente gravado — sem banco não há pedido a mostrar, e o client
   // simplesmente omite o link em vez de oferecer uma página que responderia 404.
   return NextResponse.json(

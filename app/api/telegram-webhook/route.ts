@@ -25,7 +25,7 @@ import {
 } from "@/lib/telegram";
 import { getProductWaGreeting } from "@/lib/offer-settings";
 import { itensKind } from "@/lib/offer-defaults";
-import { productKindOf } from "@/lib/lead-card";
+import { atrativoNomes, productKindOf } from "@/lib/lead-card";
 import { resumoCurto } from "@/lib/pedido-resumo";
 import { getPendingAlertMessageId, setPendingAlertMessageId, countOverdueLeads, resolveAlertChatId, LEAD_ALERT_MIN } from "@/lib/lead-alerts";
 import { isLocale, DEFAULT_LOCALE } from "@/lib/i18n/config";
@@ -134,6 +134,8 @@ const pedidoDoLead = async (lead: LeadRow) => {
     // Desde que o ingresso deixou de existir, o vocabulário do pedido é sempre "reservas" — não há mais
     // config por atrativo a consultar (a antiga leitura de `hasLink` vivia aqui).
     itens: kind === "atrativo" ? itensKind(slugs) : undefined,
+    itemCount: slugs.length,
+    nomes: atrativoNomes(slugs),
     resumo: resumoCurto(
       {
         kind,
@@ -232,6 +234,7 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
       nome: lead.nome,
       ...cardProductFields(lead),
       pedidoToken: lead.public_token,
+      itemNames: atrativoNomes((lead.item_slugs ?? "").split(",").filter(Boolean)),
       isLocal: lead.is_local,
       alreadyInFoz: lead.already_in_foz,
       wantsTransport: lead.wants_transport,
@@ -325,6 +328,7 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
       pedidoToken: lead.public_token,
       resumo: pedido.resumo,
       itens: pedido.itens,
+      itemNames: pedido.nomes,
       isLocal: lead.is_local,
       alreadyInFoz: lead.already_in_foz,
       wantsTransport: lead.wants_transport,

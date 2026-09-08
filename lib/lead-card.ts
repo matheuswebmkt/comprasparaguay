@@ -1,6 +1,6 @@
 // Filepath: lib/lead-card.ts
-// Version: 1.0
-// Nome da Versão: "Resolver da tag de produto do card — fonte única (Sprint 6)"
+// Version: 1.1
+// Nome da Versão: "Resolver da tag de produto + nomes dos atrativos do pedido — fonte única"
 //
 // Deriva a tag `[NOVO LEAD: ...]`/`[ATRATIVO ...]` do card do Telegram a partir do contexto do lead
 // (roteiro_titulo/roteiro_slug/lead_context/cta_type). Extraído de app/api/leads/route.ts: a
@@ -9,6 +9,7 @@
 // única a 2ª cópia divergiria da 1ª, exatamente o padrão de bug que este arquivo existe pra evitar
 // (ver lib/telegram.ts, que por ser puro nunca resolve isto sozinho).
 
+import { getAttractionBySlug } from "@/app/data/attractions";
 import type { ProductCopyKind } from "@/lib/offer-defaults";
 
 export interface LeadProductContext {
@@ -49,4 +50,18 @@ export function isRoteiroLead(ctx: LeadProductContext): boolean {
  */
 export function productKindOf(_ctx: LeadProductContext): ProductCopyKind {
   return "atrativo";
+}
+
+/**
+ * Slugs do pedido → NOMES legíveis, na ORDEM em que o lead os escolheu. Fonte única para o card do
+ * Telegram (linha logo abaixo do assunto) e para a lista "Para: …" da mensagem wa.me — o card e o
+ * wa.me mostram SEMPRE a mesma lista. `lib/telegram.ts` é puro de propósito (sem `app/data/*`), então
+ * quem chama resolve aqui antes de notificar. Slug que não resolver no catálogo cai cru (nunca
+ * quebra o card por um slug órfão de lead antigo).
+ */
+export function atrativoNomes(slugs: string[]): string[] {
+  return slugs
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => getAttractionBySlug(s)?.name ?? s);
 }

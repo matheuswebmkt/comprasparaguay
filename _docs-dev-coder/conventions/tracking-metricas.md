@@ -177,6 +177,15 @@ O `Lead` do Meta afirma que a pessoa pediu algo; o banco guarda os sinais brutos
 ler o **mesmo** campo nos dois lados — sinal que só existe na UI (ex.: checkbox não renderizado porque
 o toggle do admin está desligado) não pode carimbar o evento como se a pessoa o tivesse dado.
 
+**Transporte é SEMPRE `transfer=true` no `Lead` (fato do produto, não sinal da pessoa).** Todo atrativo
+do catálogo é reserva com transporte incluso: o modal NÃO pergunta Sim/Não, o mini-card do assunto
+anuncia "Transporte já incluído" e a submissão vai com `wantsTransport: true` incondicional (pixel,
+CAPI, banco e known-lead — o bônus transfer `+4` vale para todo lead, factualmente). Consequências
+travadas: (a) o evento `cta_click "modal_transport_offer"` (vertical `transporte`) NÃO existe — sem
+oferta exibida não há clique para contar, e dispará-lo por submit inflaria o vertical; (b) o passo de
+funil `transport_check` não existe mais (nada é perguntado); (c) o toggle `transportOffer.enabled` do
+admin não é mais lido pelo modal.
+
 ## 12 · Chaves locais
 
 `localStorage` e cookies de sessão usam o prefixo `cp_` (`cp_cookie_consent`, `cp_vid`, `cp_sid`,

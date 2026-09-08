@@ -30,6 +30,12 @@ import TicketOfferButton from "@/components/ticket-offer/TicketOfferButton";
 /** Slug do produto: o dia de compras em Ciudad del Este. */
 export const RESERVA_ATTRACTION_SLUG = "compras-paraguai-ciudad-del-este";
 
+/** Capa do atrativo no modal — MESMA imagem do card de `/roteiros-de-compras` (AttractionCard) e da
+ * página do destino (`app/data/attractions.ts` `cover`). Path fixo em vez de importar o catálogo: este
+ * arquivo é client e o catálogo não entra no bundle (razão de o assunto viver aqui). Se trocar a capa
+ * do atrativo, troca aqui também. */
+const RESERVA_SUBJECT_IMAGE = "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp";
+
 export default function ReservarDataCta({
   ctaType,
   source,
@@ -64,6 +70,9 @@ export default function ReservarDataCta({
       context="atrativo"
       subjectTitle={t.reservaSubject}
       subjectSubtitle={t.reservaSubjectSub}
+      // Capa do atrativo no mini-card do modal: sem ela o card nascia com o placeholder 🗺️ — a copy
+      // própria deste CTA é de propósito, mas SEM a foto ficava desalinhado do card padrão da página.
+      subjectImage={RESERVA_SUBJECT_IMAGE}
       subjectI18n={subjectI18n}
       className={className}
       style={style}

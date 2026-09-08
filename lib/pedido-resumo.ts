@@ -6,12 +6,12 @@
 // (card do Telegram, wa.me pós-claim). É o que impede as três superfícies de descreverem o mesmo
 // pedido de três jeitos diferentes.
 //
-// ⚠️ O resumo é curto DE PROPÓSITO: o detalhe vive na página do pedido (/r/[token]), e mensagem de
-// WhatsApp que cresce com o tamanho do roteiro é mensagem que ninguém lê. Se precisar de mais um
-// campo aqui, a pergunta certa é se ele não pertence à página.
+// ⚠️ O resumo é curto DE PROPÓSITO: o DETALHE do pedido são os NOMES, que viajam na lista "Para: …"
+// montada por `buildWaMessage`/`listaPedidos` — o resumo carrega só data/pessoas/transporte. Se
+// precisar de mais um campo aqui, a pergunta certa é se ele não pertence à página.
 
 import type { Locale } from "./i18n/config";
-import type { ItensKind, ProductCopyKind } from "./offer-defaults";
+import type { ProductCopyKind } from "./offer-defaults";
 
 /** Quem está falando: muda só a voz do transporte ("quero" × "com"). */
 export type VozResumo = "lead" | "agencia";
@@ -37,6 +37,12 @@ const T: Record<Locale, {
   transporte: Record<VozResumo, string>;
   faixaMais: (v: string) => string;
   indeciso: string;
+  /** "{pedidos}" dos textos: artigo + substantivo, singular/plural conforme o nº de itens. */
+  reserva: (n: number) => string;
+  /** A data no resumo do pedido de atrativo — vem com o "Para o dia" embutido. */
+  paraODia: (d: string) => string;
+  /** Prefixo da lista de nomes ("Para: Cataratas JL Shopping, Duty Free"). */
+  paraLista: string;
 }> = {
   pt: {
     atrativos: (n) => `${n} ${n === 1 ? "atrativo" : "atrativos"}`,
@@ -47,6 +53,9 @@ const T: Record<Locale, {
     transporte: { lead: "quero transporte", agencia: "com transporte" },
     faixaMais: (v) => `${v}+`,
     indeciso: "dias a definir",
+    reserva: (n) => (n === 1 ? "a reserva" : "as reservas"),
+    paraODia: (d) => `Para o dia ${d}`,
+    paraLista: "Para",
   },
   en: {
     atrativos: (n) => `${n} ${n === 1 ? "attraction" : "attractions"}`,
@@ -57,6 +66,9 @@ const T: Record<Locale, {
     transporte: { lead: "I want transport", agencia: "with transport" },
     faixaMais: (v) => `${v}+`,
     indeciso: "days to be defined",
+    reserva: (n) => (n === 1 ? "the booking" : "the bookings"),
+    paraODia: (d) => `For ${d}`,
+    paraLista: "For",
   },
   es: {
     atrativos: (n) => `${n} ${n === 1 ? "atractivo" : "atractivos"}`,
@@ -67,6 +79,9 @@ const T: Record<Locale, {
     transporte: { lead: "quiero transporte", agencia: "con transporte" },
     faixaMais: (v) => `${v}+`,
     indeciso: "días a definir",
+    reserva: (n) => (n === 1 ? "la reserva" : "las reservas"),
+    paraODia: (d) => `Para el día ${d}`,
+    paraLista: "Para",
   },
 };
 
@@ -87,19 +102,22 @@ function formatDate(v?: string | Date | null): string | null {
 // ⚠️ Removida na simplificação Compras PY (produto único de atrativo não usa dias de roteiro).
 
 /**
- * Uma linha com o essencial do pedido: `3 atrativos · 29/08/2026 · 3 pessoas · quero transporte`.
+ * Uma linha com o essencial do pedido. No produto único (atrativo) a CONTAGEM saiu do resumo de
+ * propósito: os NOMES viajam na lista "Para: …" logo abaixo (`buildWaMessage`), então "5 atrativos"
+ * era informação duplicada — e a data ganha o "Para o dia" que abre o resumo naturalmente.
  * Campo ausente simplesmente não entra — nada de placeholder (mesma regra do card, G2).
  */
 export function resumoCurto(input: ResumoInput, locale: Locale, voz: VozResumo): string {
   const t = T[locale];
+  const atrativo = input.kind === "atrativo";
   const partes: string[] = [];
 
-  if (input.itemCount > 0) {
-    // ⚠️ Produto único (atrativo): todo pedido usa o vocabulário de atrativos/ingressos.
+  // Legado (linha de roteiro): mantém a contagem. Produto atrativo: a lista de nomes conta por si.
+  if (!atrativo && input.itemCount > 0) {
     partes.push(t.atrativos(input.itemCount));
   }
   const data = formatDate(input.visitDate);
-  if (data) partes.push(data);
+  if (data) partes.push(atrativo ? t.paraODia(data) : data);
   if (input.pessoas != null && input.pessoas !== "" && input.pessoas !== "undecided") {
     const v = String(input.pessoas);
     partes.push(t.pessoas(v.endsWith("+") ? t.faixaMais(v.slice(0, -1)) : v));
@@ -109,21 +127,39 @@ export function resumoCurto(input: ResumoInput, locale: Locale, voz: VozResumo):
   return partes.join(" · ");
 }
 
+/** "{pedidos}" → artigo + substantivo no singular/plural do nº de itens ("a reserva" / "as reservas"). */
+export function pedidosLabel(itemCount: number, locale: Locale): string {
+  return T[locale].reserva(itemCount > 0 ? itemCount : 2);
+}
+
+/** Substitui o placeholder `{pedidos}` nos textos por produto (admin-editáveis). Sem placeholder, devolve o texto intacto. */
+export function fillPedidos(intro: string, itemCount: number, locale: Locale): string {
+  return intro.replace(/\{pedidos\}/gi, pedidosLabel(itemCount, locale));
+}
+
+/** Lista de nomes do pedido: "Para: Cataratas JL Shopping, Duty Free" — vazia se não houver nomes. */
+export function listaPedidos(nomes: string[], locale: Locale): string {
+  const limpos = nomes.map((n) => n.trim()).filter(Boolean);
+  return limpos.length ? `${T[locale].paraLista}: ${limpos.join(", ")}` : "";
+}
+
 
 /**
- * Monta a mensagem final do wa.me: introdução → resumo. Blocos separados por linha em branco,
- * que é como o WhatsApp respira.
- * ⚠️ Parâmetros de produto/locale/voz mantidos na assinatura por compatibilidade de chamadores;
- * a mensagem agora é genérica (o link /r/[token] foi removido).
+ * Monta a mensagem final do wa.me: introdução → resumo → lista "Para: <nomes>". Blocos separados por
+ * linha em branco, que é como o WhatsApp respira.
+ * ⚠️ Parâmetros de produto/voz mantidos na assinatura por compatibilidade de chamadores; a mensagem é
+ * genérica (o link /r/[token] foi removido).
  */
 export function buildWaMessage(
   intro: string,
   resumo: string,
   _token: string | null | undefined,
   _kind: ProductCopyKind,
-  _locale: Locale,
+  locale: Locale,
   _voz: VozResumo,
-  _opts?: { itens?: ItensKind },
+  opts?: { nomes?: string[] },
 ): string {
-  return [intro, resumo || null].filter(Boolean).join("\n\n");
+  return [intro, resumo || null, listaPedidos(opts?.nomes ?? [], locale) || null]
+    .filter(Boolean)
+    .join("\n\n");
 }
