@@ -29,7 +29,7 @@ export default function PilaresFoz() {
   const t = HOME_UI[locale].pilares;
   const PILARES = t.items;
   return (
-    <div className="rf-section" style={{ background: "hsl(0,0%,100%)" }}>
+    <div className="rf-section" style={{ background: "hsl(40,33%,97%)" }}>
       <div className="section-container">
         {/* Eyebrow no padrão único, mas alinhado à ESQUERDA: esta é faixa utilitária de linking
             interno (§8-bis), não seção de conteúdo — por isso não usa `rf-head` (que centraliza).

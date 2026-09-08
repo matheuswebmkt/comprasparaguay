@@ -1,6 +1,6 @@
 // Filepath: components/niche/TransferPitchCard.tsx
-// Version: 2.1
-// Nome da Versão: "placement home vira fundo branco — a seção subiu pra 2ª da home (antes das Dores)"
+// Version: 2.3
+// Nome da Versão: "na home o card fecha o bloco (4º) — fundo AREIA (ritmo branco→areia que fecha com o footer)"
 //
 // Card "nosso" do transfer — imagem de van neutra com a identidade do site, SEM nome nem marca de
 // agência. Foi criado como o card de recomendação do nicho `transfer` (substituindo o card da
@@ -12,10 +12,10 @@
 //    data. Hoje é o `ReservarDataCta`: abre o modal, mesmo rótulo do hero ("Reservar data"), mesmo
 //    caminho de conversão do resto do site. O número e a mensagem saíram do dicionário junto.
 //
-// ⚠️ `placement` existe por causa da ALTERNÂNCIA DE FUNDO (§7.5). A home é areia→branco→areia… e a
-//    seção SUBIU pra 2ª posição (antes das Dores), herdando o branco que era delas: em `/transfer`
-//    ela é branca (como sempre foi) e na home também. Fundo só tem DOIS valores válidos — branco
-//    `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
+// ⚠️ `placement` existe por causa da ALTERNÂNCIA DE FUNDO (§7.5). O ritmo da home é
+//    BRANCO→AREIA→BRANCO→AREIA→BRANCO→AREIA→BRANCO (hero a CtaFinal, fecha com o footer) e o card
+//    é o 4º da sequência (4ª seção = areia): em `/transfer` ele é branco (como sempre foi). Fundo
+//    só tem DOIS valores válidos — branco `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
 //
 // ⚠️ Sem nome de agência aqui, e sem copy de parceiro: a copy/SEO da página de nicho vive em
 //    `app/data/niches.ts` e nunca menciona o recomendado (`NicheRecommendation`, §13).

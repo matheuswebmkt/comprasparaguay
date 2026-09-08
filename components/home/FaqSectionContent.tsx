@@ -35,7 +35,7 @@ export default function FaqSectionContent() {
     <section
       className="rf-section"
       style={{
-        background: "hsl(40,33%,97%)",
+        background: "hsl(0,0%,100%)",
       }}
     >
       <div className="section-container">

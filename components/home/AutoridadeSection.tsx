@@ -1,6 +1,6 @@
 // Filepath: components/home/AutoridadeSection.tsx
-// Version: 3.1
-// Nome da Versão: "Copy na chave da hero: te levamos, veículo privativo, guia especialista"
+// Version: 3.3
+// Nome da Versão: "fundo branco — 3ª da home no ritmo branco→areia→branco→areia (§7.5)"
 // Baseado na Versão: 2.3 ("fundo vira branco — a entrada do transfer na home deslocou a alternância").
 //
 // A PROVA (§21.1 camada 4) + o MECANISMO. A estrutura é a mesma de sempre (3 passos em loop §7.3 →

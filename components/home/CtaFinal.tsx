@@ -35,7 +35,7 @@ export default function CtaFinal() {
   return (
     <section
       className="rf-section relative overflow-hidden"
-      style={{ background: "hsl(40,33%,97%)" }}
+      style={{ background: "hsl(0,0%,100%)" }}
     >
       {/* Mesmo grão do hero — textura sem introduzir cor. */}
       <div

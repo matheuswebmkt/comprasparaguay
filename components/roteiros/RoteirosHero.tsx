@@ -91,9 +91,9 @@ export default function RoteirosHero() {
     // conferir `components/navbar/navbar.tsx` antes de mudar.
     <section
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pt-16"
-      style={{ background: "hsl(40,33%,97%)" }}
+      style={{ background: "hsl(0,0%,100%)" }}
     >
-      {/* Grão: dá textura ao Areia sem introduzir cor. É o que impede o claro de
+      {/* Grão: dá textura ao fundo sem introduzir cor. É o que impede o claro de
           ler como chapado, agora que não há mais lavagens nem foto. */}
       <div
         className="rf-grain pointer-events-none absolute inset-0 opacity-[0.055]"

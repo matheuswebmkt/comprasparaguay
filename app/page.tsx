@@ -1,13 +1,13 @@
 // Filepath: app/page.tsx
-// Version: 10.3
-// Nome da Versão: "TransferPitchCard entra na home depois das Dores, com CTA de reserva (8 seções)"
+// Version: 10.4
+// Nome da Versão: "Ordem definitiva: hero → Dores → Autoridade → Transfer (card fecha o bloco, fundo branco)"
 //
-// Seções: hero (ganho) → DoresSection (dor/empatia) → TransferPitchCard (o produto como objeto: van,
-// motorista, trajeto) → AutoridadeSection (prova + mecanismo) →
+// Seções: hero (ganho) → DoresSection (dor/empatia) → AutoridadeSection (prova + mecanismo) →
+// TransferPitchCard (o produto como objeto: van, motorista, trajeto) →
 // roteiros prontos (prova de produto) → AtrativosDestaque (curadoria) → FAQ (objeções) →
 // CtaFinal (a perda: o custo de não planejar).
 // `PilaresFoz` é faixa utilitária de linking interno e não conta.
-// A sequência é deliberada: ganho → dor → produto → prova → como → prova → curadoria → objeção → perda.
+// A sequência é deliberada: ganho → dor → prova → produto → prova → curadoria → objeção → perda.
 // ⚠️ O teto de 5 seções do §8-bis foi EXCEDIDO por decisão do usuário (aqui são 8).
 // DoresSection/AutoridadeSection foram adicionadas pós-hero por decisão do usuário; os 3 passos
 // do ComoFunciona (removido) foram migrados para a AutoridadeSection. A TransferPitchCard entrou
@@ -88,16 +88,15 @@ export default function Home() {
       <JsonLd data={faqSchema(HOME_UI.pt.faq.items)} />
       <Navbar />
       <main style={{ background: "hsl(40,33%,97%)" }}>
-        {/* Alternância de fundo §7.5: Hero areia → TransferPitchCard branco → DoresSection areia →
-            AutoridadeSection branco → FAQ areia → PilaresFoz branco → CtaFinal areia.
-            ⓘ A troca de posição das duas primeiras seções trocou TAMBÉM os fundos delas: o card
-            herdou o branco que era das Dores, e estas assumiram o areia — o ritmo areia/branco
-            da página continua intacto (§7.5). */}
+        {/* Alternância de fundo §7.5: Hero areia → DoresSection branco → AutoridadeSection areia →
+            TransferPitchCard branco → FAQ areia → PilaresFoz branco → CtaFinal areia.
+            ⓘ O card de transfer FECHA o bloco (4º), herdando o branco — a alternância areia/branco
+            segue intacta em toda a página. */}
         <RoteirosHero />
-        {/* O card é o mesmo do `/transfer`; `placement="home"` só troca o fundo e a telemetria. */}
-        <TransferPitchCard placement="home" />
         <DoresSection />
         <AutoridadeSection />
+        {/* O card é o mesmo do `/transfer`; `placement="home"` só troca o fundo e a telemetria. */}
+        <TransferPitchCard placement="home" />
         <FaqSection />
         <PilaresFoz />
         <CtaFinal />

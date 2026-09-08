@@ -1,12 +1,12 @@
 // Filepath: components/home/DoresSection.tsx
-// Version: 1.1
-// Nome da Versão: "Fundo areia — a seção trocou de lugar com o card de transfer (3ª da home)"
+// Version: 1.3
+// Nome da Versão: "Fundo AREIA — 2ª da home no ritmo branco→areia→branco→areia (§7.5)"
 //
-// Segunda dobra da home (logo depois do card de transfer): EMPATIA, não prova. O visitante se vê nos 8
+// Segunda dobra da home (logo após o hero): EMPATIA, não prova. O visitante se vê nos 8
 // momentos (tempo, paralisia de escolha, horário, orçamento, fronteira, antecipação,
 // logística, perda). Sem CTA (§8-bis — um CTA por seção; quem fecha a ideia é a próxima,
-// AutoridadeSection). Fundo areia (alternância §7.5: hero areia → transfer branco → esta areia →
-// autoridade branco).
+// AutoridadeSection). Fundo areia (alternância §7.5: hero branco → esta areia → autoridade
+// branco → Transfer areia).
 
 "use client";
 
