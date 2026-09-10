@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     title: "Compras no Paraguai — Compras Paraguay",
     description:
       "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
-    images: ["/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp"],
+    images: ["/og.webp"],
   },
   robots: {
     index: true,

@@ -16,8 +16,8 @@ export const SITE_URL = (
 
 export const SITE_NAME = "Compras Paraguay";
 
-/** Imagem OG padrão da marca — o destino-carro-chefe (Compras no Paraguai / Ciudad del Este). */
-export const BRAND_OG_IMAGE = "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp";
+/** Imagem OG padrão da marca — a arte canônica 1200×630 na raiz de `public/` (mesma do layout). */
+export const BRAND_OG_IMAGE = "/og.webp";
 
 /**
  * Palavras-chave canônicas de intenção de COMPRAS no Paraguai (Compras PY).
