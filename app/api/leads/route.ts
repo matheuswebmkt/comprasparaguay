@@ -15,10 +15,9 @@ import {
 import { itensKind } from "@/lib/offer-defaults";
 import { getActiveAgencySlug } from "@/lib/agencies";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { atrativoNomes, isRoteiroLead, productKindOf } from "@/lib/lead-card";
+import { atrativoNomes, productKindOf } from "@/lib/lead-card";
 import { resolveLeadKind, ticketQtyFromPessoas } from "@/lib/roteiro-lead";
 import { LEAD_DEDUP_WINDOW_MIN } from "@/lib/lead-dedup";
-import { resumoCurto } from "@/lib/pedido-resumo";
 import { isLocale, DEFAULT_LOCALE } from "@/lib/i18n/config";
 import { isSameOriginRequest } from "@/lib/same-origin";
 
@@ -451,7 +450,6 @@ export async function POST(req: NextRequest) {
     const leadContext = leadContextCol;
     const ctaType = clip(body.ctaType, 64);
     const productCtx = { leadContext, roteiroSlug, roteiroTitulo, ctaType };
-    const isRoteiroLeadFlag = isRoteiroLead(productCtx);
 
     const noticeBase = {
       leadId,
@@ -466,26 +464,14 @@ export async function POST(req: NextRequest) {
       // que escolhe a saudação do wa.me (`productKindOf`) — lib/telegram.ts é puro e não deriva
       // contexto de lead, senão haveria uma segunda regra para o mesmo dado.
       productKind: productKindOf(productCtx),
-      // O card leva os NOMES (itemNames) e o wa.me leva o resumo + a lista "Para: …". O token segue
-      // gravado (legado de /r/[token], página removida).
+      // O card leva os NOMES (itemNames). O token segue gravado e circula como link do resumo (/r/<token>)
+      // dentro das mensagens prontas de WhatsApp.
       pedidoToken: leadId ? publicToken : null,
       // Ingressos, reservas de data ou os dois (§17-ter): o rótulo do link no wa.me acompanha.
       itens: itensKind((itemSlugsCol ?? "").split(",").filter(Boolean)),
-      // Nomes legíveis do pedido: a linha do card logo abaixo do assunto E a lista "Para: …" do wa.me
-      // saem da MESMA fonte (`atrativoNomes`, lib/lead-card.ts) — nunca divergem entre si.
+      // Nomes legíveis do pedido: a linha do card logo abaixo do assunto sai da fonte única
+      // (`atrativoNomes`, lib/lead-card.ts).
       itemNames: atrativoNomes((itemSlugsCol ?? "").split(",").filter(Boolean)),
-      resumo: resumoCurto(
-        {
-          kind: productKindOf(productCtx),
-          itemCount: (itemSlugsCol ?? "").split(",").filter(Boolean).length,
-          wizardDias: roteiroDiasCol,
-          visitDate: visitDateCol,
-          pessoas: ticketQtyCol ?? roteiroPessoasCol,
-          wantsTransport: transportWanted,
-        },
-        isLocale(locale) ? locale : DEFAULT_LOCALE,
-        "agencia",
-      ),
       visitDate: visitDateCol,
       ticketQty: ticketQtyCol,
     };
@@ -501,9 +487,9 @@ export async function POST(req: NextRequest) {
     // aceitar morador local). Inativa/ingresso não-querido → não roteia (self-serve).
     if (sendAgency) {
       const agencyChat = await getAgencyChatId();
-      // Item A: sucesso = botão central "Iniciar conversa" → exige Confirmar antes de liberar o WhatsApp.
-      // Roteiro/personalizar e atrativo têm modos de sucesso independentes (ver lib/offer-defaults.ts).
-      const confirmFlow = (isRoteiroLeadFlag ? offer.roteiroSuccessMode : offer.atrativoSuccessMode) === "whatsapp";
+      // Modo do bot: passivo (log/central) → card com gate [✅ Confirmar]; assume → card com
+      // [🙋‍♂️ Assumir Lead]. Em AMBOS o WhatsApp do cliente só circula pós-clique — o modo de
+      // sucesso do produto NÃO interfere aqui (mesma regra do RoteiroFoz).
       const passive = offer.botMessageMode === "passive";
 
       if (priorLead && pendingMessageId) {
@@ -513,9 +499,7 @@ export async function POST(req: NextRequest) {
             ...noticeBase,
             whatsapp,
             passive,
-            confirmFlow,
-            // Saudação com a voz corrente (portal × agência) — remonta o botão de atendimento do card
-            // passivo a cada reconciliação.
+            // Saudação com a voz corrente (portal × agência) — o botão pós-confirm sairá na voz corrente.
             greetingTemplate: await getWaGreetingFor(productKindOf(productCtx), isLocale(locale) ? locale : DEFAULT_LOCALE),
             sentAt: new Date(priorLead.created_at),
           },
@@ -543,9 +527,8 @@ export async function POST(req: NextRequest) {
           ? await notifyLeadLog({
               ...noticeBase,
               whatsapp,
-              confirmFlow,
-              // O card passivo (sem "Iniciar conversa" no site) carrega o botão de atendimento — e o
-              // wa.me dele sai da MESMA fonte de voz do webhook (portal × agência, `getWaGreetingFor`).
+              // Card passivo: gate [✅ Confirmar] SEMPRE — o botão de conversa só existe pós-confirm,
+              // e sai da MESMA fonte de voz do webhook (portal × agência, `getWaGreetingFor`).
               greetingTemplate: await getWaGreetingFor(productKindOf(productCtx), isLocale(locale) ? locale : DEFAULT_LOCALE),
             }, agencyChat)
           : await notifyNewLead(noticeBase, agencyChat);
@@ -620,7 +603,9 @@ export async function POST(req: NextRequest) {
   // configurada seja "só mensagem") — o lead pode estar tentando corrigir/completar algo, e silenciar
   // completamente pareceria que o envio falhou. `sendAgency` garante que só avisamos quando o lead REALMENTE
   // seria roteado pra agência (senão a mensagem "estamos com sua solicitação" não faria sentido).
-  // `pedidoToken` segue gravado como identificador do pedido (a página /r/[token] e o link no wa.me foram removidos).
+  // `pedidoToken` segue gravado e agora circula como link do resumo (/r/<token>) dentro das mensagens
+  // prontas de WhatsApp. Só existe quando o lead foi realmente gravado — sem banco não há pedido a
+  // mostrar, e o client simplesmente omite o link em vez de oferecer uma página que responderia 404.
   // Só existe quando o lead foi realmente gravado — sem banco não há pedido a mostrar, e o client
   // simplesmente omite o link em vez de oferecer uma página que responderia 404.
   return NextResponse.json(

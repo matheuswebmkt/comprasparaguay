@@ -5,40 +5,38 @@
 import type { Locale } from "./config";
 
 export interface ObrigadoUI {
-  eyebrow: string;
   title: string;
   subtitle: string;
-  resumoLabel: string;
-  /** Botão "Iniciar conversa" (wa.me) — mesmo CTA do modal, renderizado pela página de obrigado. */
+  /** Link de texto para a página pública do pedido (/r/<token>) — só aparece com token no handoff. */
+  verResumo: string;
+  /** Botão "Iniciar conversa" (wa.me) — mesmo CTA do modal, renderizado pela página de obrigado
+   *  quando o modo de sucesso é "Iniciar conversa" (ou no fallback de dedup). */
   ctaWhats: string;
   ctaHome: string;
 }
 
 export const OBRIGADO_UI: Record<Locale, ObrigadoUI> = {
   pt: {
-    eyebrow: "Pedido recebido",
     title: "Recebemos o seu pedido",
     subtitle:
-      "Um especialista de Compras no Paraguai em Ciudad del Este revisa as suas escolhas e entra em contato com as condições para o seu dia de compras.",
-    resumoLabel: "O que você pediu",
+      "É só aguardar um momento. Um especialista de Compras no Paraguai em Ciudad del Este vai te chamar no WhatsApp com as condições deste pedido.",
+    verResumo: "Ver resumo",
     ctaWhats: "Falar sobre minha reserva 💬",
     ctaHome: "Voltar para o início",
   },
   en: {
-    eyebrow: "Request received",
     title: "We received your request",
     subtitle:
-      "A Compras Paraguay specialist in Ciudad del Este reviews your choices and gets in touch with the conditions for your shopping day.",
-    resumoLabel: "What you asked for",
+      "Just wait a moment. A Compras Paraguay specialist in Ciudad del Este will message you on WhatsApp with the conditions for this request.",
+    verResumo: "See summary",
     ctaWhats: "Talk about my booking 💬",
     ctaHome: "Back to home",
   },
   es: {
-    eyebrow: "Solicitud recibida",
     title: "Recibimos tu solicitud",
     subtitle:
-      "Un especialista de Compras Paraguay en Ciudad del Este revisa tus elecciones y se comunica contigo con las condiciones para tu día de compras.",
-    resumoLabel: "Lo que pediste",
+      "Solo espera un momento. Un especialista de Compras Paraguay en Ciudad del Este te escribirá por WhatsApp con las condiciones de este pedido.",
+    verResumo: "Ver resumen",
     ctaWhats: "Hablar sobre mi reserva 💬",
     ctaHome: "Volver al inicio",
   },

@@ -35,7 +35,7 @@ import {
   MODAL_UI,
   modalTexts,
 } from "@/lib/i18n/modal";
-import { buildWaMessage, fillPedidos, resumoCurto } from "@/lib/pedido-resumo";
+import { waMessageWithLink } from "@/lib/pedido-resumo";
 import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_PRODUCT_COPIES,
@@ -262,10 +262,6 @@ export default function TicketOfferModal({
   const isRoteiroCtx = isRoteiroLeadContext(detail);
   const isAtrativoCtx = isAtrativoLeadContext(detail);
   const isPersonalizar = isPersonalizarIntent(detail);
-  /** Bucket de produto deste lead — produto único (atrativo). `isRoteiroCtx`/`isPersonalizar`
-   * permanecem computados apenas para as pontas legadas que o server ainda tolera (nunca true
-   * nos gatilhos vivos). */
-  const leadProductKind: ProductCopyKind = "atrativo";
   const leadCopy = useMemo(
     () =>
       resolveLeadModalCopy(locale, detail, offer.productCopies ?? undefined),
@@ -904,45 +900,17 @@ export default function TicketOfferModal({
   };
 
   // Modal com "botão iniciar conversa": link do WhatsApp da agência (só dígitos, mantém DDI).
-  // Item C: anexa um resumo das preferências do lead (já em Foz/transporte/roteiro) — o vendedor já chega
-  // sabendo, sem precisar perguntar de novo.
+  // Mensagem LIMPA: intro por produto + link do resumo (/r/<token>) — o detalhe do pedido vive na página.
   const centralWaUrl = (): string | null => {
     const digits = (offer.modalWhatsapp ?? "").replace(/\D/g, "");
     if (!digits) return null;
     // Texto POR PRODUTO ("3b · Textos por produto" → `waLeadText`): o que o VISITANTE manda. Sem copy de
     // produto resolvida (contexto legado "ingresso"), cai no bucket do ingresso avulso.
-    // `{pedidos}` vira "a reserva"/"as reservas" conforme o nº de itens escolhidos.
-    const base = fillPedidos(
-      leadCopy?.waLeadText || DEFAULT_PRODUCT_COPIES.atrativo[locale].waLeadText,
-      pedidoItems.length,
-      locale,
-    );
-    // Os nomes na mensagem = os mesmos do card do Telegram (mesma fonte: catálogo da oferta).
-    const nomesPedido = pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s);
-    // Intro → resumo de UMA linha → lista "Incluído: …". O detalhe (respostas do wizard) não vai — mensagem
-    // que cresce com o tamanho do pedido ninguém lê. As duas vozes de resumo renderizam a MESMA frase
-    // de transporte ("Transporte incluído") — o MESMO template na mensagem pós-claim e no wa.me do lead.
-    // ⚠️ Sem token (reabertura de lead duplicado, que é anterior a este envio) a mensagem sai só com
-    // intro + resumo — `buildWaMessage` omite a linha do link em vez de montar um endereço quebrado.
-    const msg = buildWaMessage(
-      base,
-      resumoCurto(
-        {
-          kind: leadProductKind,
-          itemCount: pedidoItems.length,
-          visitDate: wantsDate ? visitDate : null,
-          pessoas: wantsQty ? ticketQty : null,
-          wantsTransport: transportEfetivo === true,
-        },
-        locale,
-        "agencia",
-      ),
-      pedidoToken,
-      leadProductKind,
-      locale,
-      "agencia",
-      { nomes: nomesPedido },
-    );
+    const base =
+      leadCopy?.waLeadText || DEFAULT_PRODUCT_COPIES.atrativo[locale].waLeadText;
+    // ⚠️ Sem token (reabertura de lead duplicado, que é anterior a este envio) a mensagem sai só com a
+    // introdução — `waMessageWithLink` omite a linha do link em vez de montar um endereço quebrado.
+    const msg = waMessageWithLink(base, pedidoToken, locale);
     return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   };
 
@@ -1227,18 +1195,6 @@ export default function TicketOfferModal({
         pedidoToken: token,
         fluxo: isRoteiroCtx ? (isPersonalizar ? "roteiro-personalizado" : "roteiro-pronto") : "atrativo",
         itens: itensPedido,
-        nomes: pedidoItems.map((s) => offer.attractionCatalog?.[s] ?? s),
-        resumo: resumoCurto(
-          {
-            kind: leadProductKind,
-            itemCount: pedidoItems.length,
-            visitDate: wantsDate ? visitDate : null,
-            pessoas: wantsQty ? ticketQty : null,
-            wantsTransport: transportEfetivo === true,
-          },
-          locale,
-          "lead",
-        ),
         // Botão "Iniciar conversa" na PRÓPRIA /obrigado (a tela de sucesso dentro do modal só roda em
         // preview/dedup — o submit real redireciona). Link pronto: só a página ler e renderizar.
         waUrl: successHasCta ? centralWaUrl() : null,

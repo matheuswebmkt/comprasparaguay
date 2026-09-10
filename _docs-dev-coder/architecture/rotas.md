@@ -17,7 +17,8 @@ concluir qualquer mudança de estrutura.
 | `/transfer` | estática (revalidate 60) | vertical de transporte; renderiza `NichePageTemplate` com `getNiche("transfer")` | sim (0.88) | `buildNicheMetadata` |
 | `/triplice-fronteira` | estática | BR / AR / PY | sim (0.93) | — |
 | `/sobre` · `/contato` · `/aviso-legal` | estáticas | institucionais | sim (0.3–0.4) | — |
-| `/obrigado` | estática | confirmação pós-envio | **não** | `noindex` |
+| `/obrigado` | estática | confirmação pós-envio — só título + confirmação + link "Ver resumo" para `/r/<token>` (do handoff); sem card de resumo | **não** | `noindex` |
+| `/r/[token]` | dinâmica (force-dynamic) | página pública do pedido — o link curto que as mensagens prontas de WhatsApp carregam ("Ver resumo:"); renderiza no idioma do lead (`leads.locale`), sem PII | **não** | `noindex`; conteúdo em `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts` |
 
 ⚠️ `/transfer` é página de **nicho**, não de destino: ela vem de `app/data/niches.ts` (o único nicho
 vivo), enquanto os destinos vêm de `app/data/attractions.ts`. São dois catálogos e duas rotas — a
@@ -64,7 +65,7 @@ referência a elas em código é morta — inclusive nas allowlists de telemetri
 
 `/atrativos`, `/atrativos/[slug]`, `/roteiros`, `/roteiros/[slug]`, `/roteiros/personalizar`,
 `/roteiros/salvos`, `/montar-roteiro`, `/o-que-fazer`, `/o-que-fazer-em-foz`, `/onde-comer`,
-`/onde-comer-em-foz`, `/hospedagem`, `/r/[token]`, `/comercial/login`, `/comercial/painel`.
+`/onde-comer-em-foz`, `/hospedagem`, `/comercial/login`, `/comercial/painel`.
 
 Consequências que ainda vivem no código: `lib/metrics.ts` mantém rótulos dessas rotas apenas para
 rotular eventos históricos já gravados; `app/data/niches.ts` não gera mais páginas de nicho por slug

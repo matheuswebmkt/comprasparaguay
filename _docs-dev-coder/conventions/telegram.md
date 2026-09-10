@@ -35,18 +35,21 @@
   presente no modo passivo "Só mensagem" e no card sem agência) e [📲 Receber WhatsApp do cliente],
   que manda o número no PRIVADO de quem assumiu. Nenhum caminho de renderização aceita mais número
   no texto (`detailLines` nem tem o campo).
-- **O card lista os NOMES dos atrativos** (`atrativoNomes`, `lib/lead-card.ts` — fonte única,
-  `getAttractionBySlug`; slug órfão cai cru). Neste projeto a página de pedido `/r/[token]` NÃO existe
-  (foi removida), então a lista no card é a única fonte do "o que foi pedido" — o vendedor precisa
-  enxergar as escolhas sem perguntar. Vale para TODOS os montadores (`baseLines` é a fonte única):
-  novo card, log, info-only e as edições pós-claim/confirm reconstroem a lista.
+- **Abaixo do assunto do card vai o LINK do resumo**: `🔗 {SITE_URL}/r/<token>` (`pedidoLink`), em vez
+  dos nomes dos atrativos — o detalhe do pedido abre na página `/r` (mesmo link das mensagens de
+  WhatsApp). Sem token (lead legado anterior ao token), cai na lista de nomes (`atrativoNomes`,
+  `lib/lead-card.ts`) pra não deixar o card sem fonte do "o que foi pedido". Vale para TODOS os
+  montadores (`baseLines` é a fonte única): novo card, log, info-only e as edições pós-claim/confirm
+  reconstroem a linha.
 - Nenhuma edição pode encolher o card: as edições reescrevem a mensagem inteira com todas as linhas
   originais, trocando só o rodapé.
-- **Modo passivo nunca deixa o lead sem canal** (`notifyLeadLog`/`editLeadCard`): com sucesso "Só
-  mensagem", o card do grupo carrega o botão [📲 Iniciar conversa] — wa.me com voz corrente
-  (`getWaGreetingFor`, portal × agência) — porque é o ÚNICO canal (o lead não ganha botão no site);
-  com sucesso "Iniciar conversa", permanece o gate [✅ Confirmar] antes de liberar o botão. A copy
-  dos cards passivos fala em nome de quem atende (agência ativa × portal) — nada de "Modo Central"/
+- **Modo passivo é SEMPRE gate [✅ Confirmar]** (`notifyLeadLog`/`editLeadCard`), independente do modo
+  de sucesso do produto (mesma regra do RoteiroFoz): o WhatsApp do lead fica OCULTO até um vendedor
+  tocar Confirmar — a edição então libera o botão [📲 Iniciar conversa] na voz corrente
+  (`getWaGreetingFor`, portal × agência). No modo "Assumir" o botão é liberado SÓ pra quem assumiu
+  (claim atômico; [📲 Receber WhatsApp do cliente] manda o número no privado do dono). O modo do bot
+  governa SÓ a distribuição do card — não interfere no que o lead vê no site. A copy dos cards
+  passivos fala em nome de quem atende (agência ativa × portal) — nada de "Modo Central"/
   "número central", nomeação do cenário antigo.
 - ⛔ Nunca envolver texto do card em `<pre>` (vira bloco de código no Telegram). `esc()` obrigatório
   em todo valor interpolado.
@@ -57,24 +60,22 @@
 
 ## 3. Mensagem wa.me (as três superfícies)
 
-- Estrutura: introdução (por produto, código — `lib/offer-defaults.ts`) → resumo de uma linha → lista
-  `"Incluído: <nomes>"` (prefixo "Incluído", não "Para" — o resumo já abre com "Para o dia"). Blocos
-  separados por linha em branco. Fonte única: `buildWaMessage`
-  (`lib/pedido-resumo.ts`); modal, webhook (pós-claim/confirm/DM) e página de obrigado usam a MESMA
-  lista (`listaPedidos` + `atrativoNomes`).
+- **Formato padronizado, LIMPO: introdução + `Ver resumo: <link>`** — nada mais. Sem resumo de uma
+  linha, sem lista "Incluído: …", sem placeholder `{pedidos}`. Todo o detalhe do pedido (itens, data,
+  pessoas, transporte) concentra na página pública `/r/<public_token>` (montada por `waMessageWithLink`,
+  `lib/pedido-resumo.ts` — `{SITE_URL}/r/<token>`; a página renderiza no idioma do lead, sem PII,
+  fonte `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts`). A introdução é uma frase única e os TEXTOS
+  vivem em `DEFAULT_PRODUCT_COPIES` (editores de texto do admin desativados):
+  - `waGreeting` (voz do portal): "Olá {nome}! Aqui é do Compras Paraguay. Vou te passar as condições do seu pedido."
+  - `waGreetingAgency` (agência ativa, `{agencia}` pré-preenchido no webhook): "Olá {nome}! Aqui é a agência {agencia}. Recebemos seu pedido feito no Compras Paraguay. Vou te passar as condições."
+  - `waLeadText` (o que o LEAD manda ao clicar no CTA do site): "Olá! Vim pelo Compras Paraguay. Gostaria de receber as condições do meu pedido."
 - **A introdução tem VOZ CONDICIONAL** (`greetingFor`, webhook): com AGÊNCIA definida e plano vigente,
-  `waGreetingAgency` — "Aqui é a agência {agencia}. Recebemos…" (`{agencia}` = nome da agência ativa,
-  pré-preenchido no webhook); sem agência ativa, `waGreeting`, em nome do portal ("Aqui é do Compras
-  Paraguay. Vi…"). Os resumos/lista seguintes são iguais nas duas vozes. Textos vivem em
-  `DEFAULT_PRODUCT_COPIES` (editores de texto do admin desativados).
-- **Resumo do atrativo NÃO tem contagem** ("5 atrativos" saiu — a lista de nomes conta por si) e a
-  data vem com "Para o dia" embutido (`resumoCurto`). A frase de transporte é o FATO do produto —
-  "Transporte incluído" — igual nas duas vozes ("lead" × "agencia", parâmetro mantido só como
-  assinatura: /obrigado e wa.me mostram a mesma linha).
-- **`{pedidos}` placeholder** nos textos por produto (`waGreeting`/`waGreetingAgency`/`waLeadText`,
-  `lib/offer-defaults.ts`): vira "a reserva"/"as reservas" (pt), "the booking(s)" (en),
-  "la(s) reserva(s)" (es) conforme o nº de itens — singular/plural obrigatório. Substituído por
-  `fillPedidos` no momento da composição; texto sem placeholder sai intacto. Na voz agência existe
-  também `{agencia}` (nome da agência ativa).
+  `waGreetingAgency`; sem agência ativa, `waGreeting` (voz do portal). Sem token (lead legado anterior
+  ao token) a mensagem sai só com a introdução — `waMessageWithLink` omite a linha do link em vez de
+  montar endereço quebrado.
+- **O card do grupo NÃO mudou**: continua completo (nomes, dia, pessoas, transporte, horário) — é o
+  briefing do vendedor. O handoff de /obrigado NÃO carrega resumo/lista: a página exibe só confirmação
+  + link "Ver resumo" para `/r/<token>` (e o CTA de WhatsApp quando o modo de sucesso é "Iniciar
+  conversa").
 - **Vocabulário do produto é RESERVA, nunca "ingresso"**: os atrativos do catálogo são todos reserva
   de data. `itensKind` só existe como legado de rótulo no card.

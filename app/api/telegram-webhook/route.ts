@@ -26,7 +26,6 @@ import {
 import { getWaGreetingFor } from "@/lib/offer-settings";
 import { itensKind } from "@/lib/offer-defaults";
 import { atrativoNomes, productKindOf } from "@/lib/lead-card";
-import { resumoCurto } from "@/lib/pedido-resumo";
 import { getPendingAlertMessageId, setPendingAlertMessageId, countOverdueLeads, resolveAlertChatId, LEAD_ALERT_MIN } from "@/lib/lead-alerts";
 import { isLocale, DEFAULT_LOCALE } from "@/lib/i18n/config";
 export const runtime = "nodejs";
@@ -72,8 +71,8 @@ type LeadRow = {
   roteiro_slug: string | null;
   roteiro_titulo: string | null;
   cta_type: string | null;
-  // Pedido público: TODO caminho que monta um wa.me precisa do link e do resumo — inclusive o DM do
-  // dono (`wa:<id>`) e o deep-link (`/start lead_<id>`), não só as edições de card.
+  // Pedido público: TODO caminho que monta um wa.me precisa do link do resumo — inclusive o DM do
+  // dono (`wa:<id>`) e o deep-link (`/start lead_<id>`) — e o card de dia/pessoas/transporte das edições.
   public_token: string | null;
   item_slugs: string | null;
   roteiro_dias: string | null;
@@ -137,37 +136,13 @@ const cardProductFields = (lead: LeadProductCols) => ({
 });
 
 /**
- * Pedido (link + resumo) a partir da linha já gravada — o que o card e o wa.me pós-clique precisam.
- * ⚠️ Reconstruído das COLUNAS, nunca do texto de outra mensagem: é o mesmo cálculo que `/api/leads`
- * faz no envio, com os mesmos campos, então as duas superfícies descrevem o pedido igual.
+ * Pedido (link do resumo) a partir da linha já gravada — o que os wa.me pós-clique precisam.
+ * A mensagem pronta é só intro + "Ver resumo: link"; nada de resumo/nomes no texto.
  */
-const pedidoDoLead = async (lead: LeadRow) => {
-  const kind = productKindOf(productCtxOf(lead));
-  const locale = isLocale(lead.locale) ? lead.locale : DEFAULT_LOCALE;
-  const slugs = (lead.item_slugs ?? "").split(",").filter(Boolean);
-  return {
-    token: lead.public_token,
-    kind,
-    locale,
-    // Desde que o ingresso deixou de existir, o vocabulário do pedido é sempre "reservas" — não há mais
-    // config por atrativo a consultar (a antiga leitura de `hasLink` vivia aqui).
-    itens: kind === "atrativo" ? itensKind(slugs) : undefined,
-    itemCount: slugs.length,
-    nomes: atrativoNomes(slugs),
-    resumo: resumoCurto(
-      {
-        kind,
-        itemCount: slugs.length,
-        wizardDias: lead.roteiro_dias,
-        visitDate: lead.visit_date,
-        pessoas: lead.ticket_qty ?? lead.roteiro_pessoas,
-        wantsTransport: lead.wants_transport,
-      },
-      locale,
-      "agencia",
-    ),
-  };
-};
+const pedidoDoLead = (lead: LeadRow) => ({
+  token: lead.public_token,
+  locale: isLocale(lead.locale) ? lead.locale : DEFAULT_LOCALE,
+});
 const ownerIdOf = (l: { claimed_by_id: string | number | null }) =>
   l.claimed_by_id != null ? Number(l.claimed_by_id) : null;
 
@@ -295,7 +270,7 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
     // Dono (ou legado sem id): tenta DM DIRETO (após o 1º Start, sem "/start" repetido a cada clique).
     // Só cai no deep-link na PRIMEIRA vez (quando o vendedor ainda não iniciou o bot → o DM falha).
     const sentDirect = cq.from.id != null
-      ? await sendPrivateWa(cq.from.id, lead.nome, lead.whatsapp, await greetingFor(lead), await pedidoDoLead(lead))
+      ? await sendPrivateWa(cq.from.id, lead.nome, lead.whatsapp, await greetingFor(lead), pedidoDoLead(lead))
       : false;
     if (sentDirect) {
       await answerCallback(cq.id, "✅ WhatsApp do cliente enviado no seu privado com o bot.");
@@ -351,7 +326,6 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
     }
 
     await answerCallback(cq.id, "✅ Confirmado! Toque em “Iniciar conversa”.");
-    const pedido = await pedidoDoLead(lead);
     await editConfirmedMessage({
       chatId,
       messageId,
@@ -362,9 +336,10 @@ async function handleCallback(cq: TgCallbackQuery): Promise<NextResponse> {
       greetingTemplate: await greetingFor(lead),
       ...cardProductFields(lead),
       pedidoToken: lead.public_token,
-      resumo: pedido.resumo,
-      itens: pedido.itens,
-      itemNames: pedido.nomes,
+      // ⓘ `itens` acompanha `itemNames` SEMPRE: sem ele o rótulo do assunto regride para "🎫 Ingressos"
+      // na edição pós-confirm (o struct original do card vinha do body com a classificação certa).
+      itens: itensKind((lead.item_slugs ?? "").split(",").filter(Boolean)),
+      itemNames: atrativoNomes((lead.item_slugs ?? "").split(",").filter(Boolean)),
       isLocal: lead.is_local,
       alreadyInFoz: lead.already_in_foz,
       wantsTransport: lead.wants_transport,
@@ -396,10 +371,8 @@ async function handleMessage(msg: TgMessage): Promise<NextResponse> {
 
   let lead: LeadRow | undefined;
   try {
-    // ⚠️ Este SELECT precisa trazer TODAS as colunas que `pedidoDoLead` lê — ele alimenta o wa.me do
-    // PRIMEIRO acesso do vendedor (quando o DM direto ainda falha por falta de /start). Sem
-    // `item_slugs`/`wants_transport`/`public_token`/`roteiro_*`, o pedido sai sem lista "Incluído: …" e sem
-    // o "· Transporte incluído" do resumo — exatamente o card incompleto que o teste em produção acusou.
+    // ⚠️ Este SELECT precisa trazer TODAS as colunas que os cards e o wa.me leem — ele alimenta o
+    // PRIMEIRO acesso do vendedor (quando o DM direto ainda falha por falta de /start).
     const rows = (await sql`select nome, whatsapp, claimed_by, claimed_by_id, locale, visit_date, ticket_qty, lead_context, roteiro_slug, roteiro_titulo, cta_type,
                public_token, item_slugs, roteiro_dias, roteiro_pessoas, wants_transport
           from leads where id = ${leadId}`) as LeadRow[];
@@ -414,6 +387,6 @@ async function handleMessage(msg: TgMessage): Promise<NextResponse> {
     await sendPrivateText(fromId, `⚠️ Este lead é de <b>${lead.claimed_by ?? "outro vendedor"}</b>. Você não pode acessá-lo.`);
     return OK();
   }
-  await sendPrivateWa(fromId, lead.nome, lead.whatsapp, await greetingFor(lead), await pedidoDoLead(lead));
+  await sendPrivateWa(fromId, lead.nome, lead.whatsapp, await greetingFor(lead), pedidoDoLead(lead));
   return OK();
 }

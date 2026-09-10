@@ -15,11 +15,10 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, Home } from "lucide-react";
+import { CircleCheck, Home } from "lucide-react";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { OBRIGADO_UI } from "@/lib/i18n/obrigado";
 import { LEAD_HANDOFF_KEY, type LeadSuccessHandoff } from "@/lib/lead-success-handoff";
-import { listaPedidos } from "@/lib/pedido-resumo";
 import { modalTrack } from "@/lib/modal-track";
 import { trackConversion, CONVERSIONS } from "@/lib/analytics";
 import { taxonomyParams, VERTICALS } from "@/lib/tracking-taxonomy";
@@ -90,7 +89,10 @@ export default function ObrigadoContent() {
 
   void params; // usada para manter a rota dinâmica com useSearchParams (Suspense na página)
 
-  const lista = listaPedidos(handoff?.nomes ?? [], locale);
+  // Link do resumo público do pedido — o MESMO endereço que as mensagens de WhatsApp carregam.
+  // Todo o detalhe do pedido vive na página /r/<token>; aqui só o link de texto. Some quando o lead
+  // não foi gravado (sem token) em vez de oferecer uma página que responderia 404.
+  const pedidoHref = handoff?.pedidoToken ? `/r/${encodeURIComponent(handoff.pedidoToken)}` : null;
 
   return (
     <section
@@ -103,11 +105,15 @@ export default function ObrigadoContent() {
         aria-hidden="true"
       />
       <div className="relative z-10 w-full max-w-xl text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: "hsl(152,40%,93%)" }}>
-          <CheckCircle2 className="h-9 w-9" style={{ color: "hsl(152,47%,28%)" }} aria-hidden="true" />
-        </div>
+        {/* Check + H1 idênticos ao LeadSuccessScreen do RoteiroFoz (padrão do portfólio): ícone
+            CircleCheck Verde Selva h-10, H1 Verde Selva em escala de hero reduzida. */}
+        <CircleCheck
+          className="mx-auto mb-6 h-10 w-10"
+          style={{ color: "hsl(152,47%,32%)" }}
+          strokeWidth={2}
+          aria-hidden="true"
+        />
 
-        <p className="rf-eyebrow mb-3">{t.eyebrow}</p>
         <h1
           className="rf-title"
           style={{
@@ -115,10 +121,10 @@ export default function ObrigadoContent() {
             fontFamily: "var(--font-display)",
             fontWeight: 600,
             fontSize: "clamp(1.875rem, 3.6vw, 2.75rem)",
-            lineHeight: 1.08,
-            letterSpacing: "-0.025em",
-            color: "hsl(210,60%,15%)",
-            textWrap: "pretty",
+            lineHeight: 0.98,
+            letterSpacing: "-0.034em",
+            color: "hsl(152,47%,32%)",
+            textWrap: "balance",
           }}
         >
           {t.title}
@@ -127,25 +133,18 @@ export default function ObrigadoContent() {
           {t.subtitle}
         </p>
 
-        {handoff?.resumo && (
-          <div
-            className="mt-6 rounded-2xl border bg-white p-5 text-left"
-            style={{ borderColor: "hsl(214,25%,90%)" }}
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "hsl(210,25%,55%)" }}>
-              {t.resumoLabel}
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
-              {handoff.resumo}
-            </p>
-            {/* A MESMA lista "Incluído: …" que a mensagem de WhatsApp leva — uma fonte, três superfícies
-                (card do Telegram, wa.me e aqui). */}
-            {lista && (
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: "hsl(210,25%,35%)" }}>
-                {lista}
-              </p>
-            )}
-          </div>
+        {/* Ação secundária em TEXTO LINKADO (padrão de design): o link do resumo é o MESMO endereço
+            que a agência recebe. Some quando não houve token (lead não gravado). */}
+        {pedidoHref && (
+          <p className="mt-6">
+            <Link
+              href={pedidoHref}
+              className="inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold underline decoration-1 underline-offset-4 transition-opacity hover:opacity-80"
+              style={{ color: "hsl(152,47%,30%)", textDecorationColor: "hsla(152,40%,60%,0.5)" }}
+            >
+              {t.verResumo}
+            </Link>
+          </p>
         )}
 
         {handoff?.waUrl && (

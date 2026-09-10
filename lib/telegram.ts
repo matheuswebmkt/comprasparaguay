@@ -11,7 +11,7 @@
 import { DEFAULT_WA_GREETING } from "./offer-defaults";
 import type { ItensKind, ProductCopyKind } from "./offer-defaults";
 import type { Locale } from "./i18n/config";
-import { buildWaMessage, fillPedidos } from "./pedido-resumo";
+import { waMessageWithLink, pedidoLink } from "./pedido-resumo";
 import { isLocale, DEFAULT_LOCALE } from "./i18n/config";
 import type { OverdueLead } from "./lead-alerts";
 
@@ -76,11 +76,8 @@ export interface NewLeadNotice {
   roteiroTitulo?: string | null;
   /** Slug do roteiro (linha extra opcional). */
   roteiroSlug?: string | null;
-  /** Token do pedido (legado de /r/[token], página removida — não gera linha no card). */
+  /** Token do pedido (`/r/<token>`) — alimenta a linha "Ver resumo: link" do wa.me (o card não o exibe). */
   pedidoToken?: string | null;
-  /** Resumo de UMA linha do pedido (`lib/pedido-resumo.resumoCurto`), na VOZ da agência — só o wa.me
-   * usa; o card já mostra dia/pessoas/transporte em linhas próprias. */
-  resumo?: string | null;
   /** Classificação dos itens (`itensKind`) — o rótulo do link acompanha: ingressos, reservas ou os dois. */
   itens?: ItensKind;
   /** NOMES legíveis dos itens do pedido (`atrativoNomes`, lib/lead-card.ts) — viram a linha logo abaixo
@@ -231,21 +228,18 @@ function baseLines(
     productKind?: ProductCopyKind;
     /** Classificação dos itens (`itensKind`) — a linha do assunto acompanha o que o pedido contém. */
     itens?: ItensKind;
-    /** Nomes legíveis dos itens — a lista logo abaixo do assunto (sem ela, o vendedor não sabe O QUE
-     * foi reservado: o link /r/[token] que a justificava foi removido neste projeto). */
+    /** Nomes legíveis dos itens — fallback da linha abaixo do assunto quando não há token (lead legado). */
     itemNames?: string[];
     infoOnly?: boolean;
     /** Sobrepõe o título do card (só as edições pós-Assumir/Confirmar usam: `CONFIRMED_TITLE`). */
     headline?: string;
-    /** Token do pedido — vira a linha de link, onde a lista completa vive. */
+    /** Token do pedido — vira a linha de link (🔗 /r/<token>), onde a lista completa vive. */
     pedidoToken?: string | null;
   },
 ): string[] {
   const lines = [opts?.headline ?? leadHeadline(opts?.infoOnly)];
   const assunto = opts?.roteiroTitulo || opts?.roteiroSlug;
 
-  // O card É o briefing do vendedor: a página de pedido foi removida deste projeto, então os NOMES
-  // (opts.itemNames) são a única fonte do "o que foi pedido" — eles entram logo abaixo do assunto.
   if (opts?.productKind === "atrativo") {
     // O rótulo diz o que o pedido CONTÉM: um pedido misto chamado só de "Ingressos" esconde metade
     // dele, e um de reserva de data não tem ingresso nenhum (§17-ter).
@@ -257,14 +251,19 @@ function baseLines(
           ? "🎫 <b>Ingressos e reservas</b>"
           : "🎫 <b>Ingressos</b>",
     );
-    // O card É o briefing: com a página do pedido removida, a lista de nomes é a ÚNICA fonte do "o que
-    // foi pedido" — logo abaixo do assunto, os nomes exatamente como o lead os escolheu.
-    const nomes = (opts.itemNames ?? []).map((s) => s.trim()).filter(Boolean);
-    if (nomes.length) lines.push(nomes.map(esc).join(", "));
+    // Abaixo do assunto vai o LINK do resumo (/r/<token>) — onde o pedido inteiro vive — em vez dos
+    // nomes dos atrativos (o vendedor abre o link e vê tudo). Sem token (lead legado anterior ao
+    // token), cai na lista de nomes pra não deixar o card sem fonte nenhuma do "o que foi pedido".
+    const link = pedidoLink(opts.pedidoToken);
+    if (link) {
+      lines.push(`🔗 ${esc(link)}`);
+    } else {
+      const nomes = (opts.itemNames ?? []).map((s) => s.trim()).filter(Boolean);
+      if (nomes.length) lines.push(nomes.map(esc).join(", "));
+    }
   } else if (assunto) {
     lines.push("", `🗺️ <b>Roteiro:</b> ${esc(assunto)}`);
   }
-  // ⚠️ O link público /r/[token] foi removido (página deletada na simplificação Compras PY).
   return lines;
 }
 
@@ -328,35 +327,18 @@ export async function notifyNewLead(n: NewLeadNotice, chatId: string | null): Pr
 /**
  * Modo passivo: o grupo recebe o lead como LOG/histórico — SEM botão "Assumir" (não distribuímos).
  *
- * `confirmFlow` (item A): quando o sucesso do modal é o botão "Iniciar conversa" (mesmo WhatsApp
- * compartilhado), o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] — a edição
+ * ⚠️ O fluxo é SEMPRE "Confirmar", independente do modo de sucesso do produto (mesma regra do
+ * RoteiroFoz): o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] — a edição
  * (`editConfirmedMessage`) então libera o botão "Iniciar conversa". SEM claim atômico: qualquer
  * vendedor pode confirmar (não há disputa — é o mesmo número pra todos, então cair na conversa já
- * iniciada pelo lead não é colisão).
- *
- * Sem `confirmFlow` (sucesso "Só mensagem"): o card carrega [📲 Iniciar conversa] DIRETO — é o ÚNICO
- * canal de atendimento (o lead não ganha botão no site), e o WhatsApp segue visível no texto: quem
- * clicar primeiro atende. Antes deste card era log puro sem ação nenhuma — beco-sem-saída.
- */
-/**
- * Modo passivo: o grupo recebe o lead como LOG/histórico — SEM botão "Assumir" (não distribuímos).
- *
- * `confirmFlow` (item A): quando o sucesso do modal é o botão "Iniciar conversa" (mesmo WhatsApp
- * compartilhado), o WhatsApp do lead fica OCULTO até um vendedor tocar [✅ Confirmar] — a edição
- * (`editConfirmedMessage`) então libera o botão "Iniciar conversa". SEM claim atômico: qualquer
- * vendedor pode confirmar (não há disputa — é o mesmo número pra todos, então cair na conversa já
- * iniciada pelo lead não é colisão).
- *
- * Sem `confirmFlow` (sucesso "Só mensagem"): o card carrega [📲 Iniciar conversa] DIRETO — é o ÚNICO
- * canal de atendimento (o lead não ganha botão no site), então deixar o card sem ação era um funil
- * beco-sem-saída. O número segue FORA do texto (regra do card, sem exceção): o acesso ao WhatsApp é
- * SEMPRE o botão — nunca a linha "📱 WhatsApp" no texto.
+ * iniciada pelo lead não é colisão). O número segue FORA do texto (regra do card, sem exceção): o
+ * acesso ao WhatsApp é SEMPRE o botão — nunca linha "📱 WhatsApp" no texto.
  *
  * `greetingTemplate` = saudação com a voz já resolvida (`getWaGreetingFor`, portal × agência) — só
- * alimenta o botão de conversa; o texto do card não a usa.
+ * alimenta o botão de conversa liberado pós-confirm; o texto do card não a usa.
  */
 export async function notifyLeadLog(
-  n: NewLeadNotice & { whatsapp: string; confirmFlow?: boolean; greetingTemplate?: string | null },
+  n: NewLeadNotice & { whatsapp: string; greetingTemplate?: string | null },
   chatId: string | null,
 ): Promise<number | null> {
   if (!BOT_TOKEN || !chatId) return null;
@@ -372,22 +354,13 @@ export async function notifyLeadLog(
   linhas.push("", ...detailLines(n));
   const hora = nowBRT();
   if (hora) linhas.push(`🕐 Enviado em: ${hora}`);
-  linhas.push(
-    "",
-    n.confirmFlow
-      ? "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇"
-      : "Modo passivo: o lead não recebe botão de conversa no site — o atendimento começa por aqui 👇",
-  );
+  linhas.push("", "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇");
 
   const result = await call<{ message_id: number }>("sendMessage", {
     chat_id: chatId,
     text: linhas.join("\n"),
     parse_mode: "HTML",
-    ...(n.confirmFlow
-      ? { reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] } }
-      : n.whatsapp.replace(/\D/g, "").length >= 10
-        ? { reply_markup: { inline_keyboard: [[{ text: "📲 Iniciar conversa", url: buildWaUrl(n.whatsapp, n.nome, n.greetingTemplate, { resumo: n.resumo, token: n.pedidoToken, kind: n.productKind, locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE, itens: n.itens, itemCount: n.itemNames?.length ?? 0, nomes: n.itemNames }) }]] } }
-        : {}), // sem WhatsApp utilizável: log puro, sem botão — e sem número quebrado.
+    reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] },
   });
 
   return result?.message_id ?? null;
@@ -410,13 +383,8 @@ function infoOnlyKeyboard(n: NewLeadNotice & { whatsapp?: string | null; greetin
       inline_keyboard: [[{
         text: "📲 Iniciar conversa",
         url: buildWaUrl(n.whatsapp, n.nome, n.greetingTemplate, {
-          resumo: n.resumo,
           token: n.pedidoToken,
-          kind: n.productKind,
           locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE,
-          itens: n.itens,
-          itemCount: n.itemNames?.length ?? 0,
-          nomes: n.itemNames,
         }),
       }]],
     },
@@ -480,9 +448,8 @@ export async function editLeadCard(
     whatsapp?: string | null;
     /** `true` = modo passivo (log/central); `false` = modo `assume` (botão "Assumir Lead"). */
     passive?: boolean;
-    confirmFlow?: boolean;
-    /** Saudação com a voz resolvida (`getWaGreetingFor`) — alimenta o botão de atendimento no modo
-     * passivo SEM confirmFlow (mesmo teclado do card original, remontado a cada edição). */
+    /** Saudação com a voz resolvida (`getWaGreetingFor`) — segue aceita por contrato; o teclado do
+     * modo passivo é SEMPRE o gate [✅ Confirmar] (o botão de conversa só sai pós-confirm). */
     greetingTemplate?: string | null;
     /** `created_at` do lead ORIGINAL — o card preserva a hora de entrada na fila. */
     sentAt?: Date | null;
@@ -511,9 +478,7 @@ export async function editLeadCard(
   linhas.push(
     "",
     n.passive
-      ? n.confirmFlow
-        ? "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇"
-        : "Modo passivo: o lead não recebe botão de conversa no site — o atendimento começa por aqui 👇"
+      ? "⚠️ Toque em Confirmar para liberar o botão de iniciar conversa 👇"
       : "Clique para assumir e receber o WhatsApp do cliente 👇",
   );
 
@@ -522,13 +487,11 @@ export async function editLeadCard(
     message_id: messageId,
     text: linhas.join("\n"),
     parse_mode: "HTML",
-    // Sem `reply_markup` o editMessageText REMOVE o teclado — só vale quando não há WhatsApp utilizável.
+    // Sem `reply_markup` o editMessageText REMOVE o teclado — o modo passivo SEMPRE remonta o gate
+    // [✅ Confirmar] (mesma regra do card original: nada de botão de conversa antes do confirmar),
+    // e o modo assume remonta o [🙋‍♂️ Assumir Lead].
     ...(n.passive
-      ? n.confirmFlow
-        ? { reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] } }
-        : n.whatsapp && n.whatsapp.replace(/\D/g, "").length >= 10
-          ? { reply_markup: { inline_keyboard: [[{ text: "📲 Iniciar conversa", url: buildWaUrl(n.whatsapp, n.nome, n.greetingTemplate, { resumo: n.resumo, token: n.pedidoToken, kind: n.productKind, locale: isLocale(n.locale) ? n.locale : DEFAULT_LOCALE, itens: n.itens, itemCount: n.itemNames?.length ?? 0, nomes: n.itemNames }) }]] } }
-          : {}
+      ? { reply_markup: { inline_keyboard: [[{ text: "✅ Confirmar", callback_data: `confirm:${n.leadId}` }]] } }
       : { reply_markup: { inline_keyboard: [[{ text: "🙋‍♂️ Assumir Lead", callback_data: `claim:${n.leadId}` }]] } }),
   });
   return res !== null;
@@ -626,47 +589,27 @@ export async function answerCallback(
  * NÃO é editável no admin — vem por PRODUTO, em código (`DEFAULT_PRODUCT_COPIES`, `lib/offer-defaults.ts`),
  * e o webhook escolhe a VOZ pela agência: com agência definida/ativa usa `waGreetingAgency` com
  * `{agencia}` já preenchido; sem, o `waGreeting` do portal (`greetingFor` no webhook). Sem template →
- * cai no default (`DEFAULT_WA_GREETING.pt`). Placeholders: `{nome}`; `{pedidos}` (contagem, em
- * `fillPedidos`); `{agencia}` deve chegar JÁ preenchido. `visitDate`/`ticketQty` (D5/D6, opcionais):
- * anexam o resumo curto ("Para o dia" / pessoas / transporte) — o vendedor já chega sabendo o que o
- * lead escolheu, sem precisar perguntar de novo.
+ * cai no default (`DEFAULT_WA_GREETING.pt`). Placeholders: `{nome}`; `{agencia}` deve chegar JÁ preenchido.
+ *
+ * A mensagem é SÓ a introdução + "Ver resumo: <link>" (link `/r/<public_token>`, montado por
+ * `waMessageWithLink`). Sem token (lead legado), sai só a introdução — o detalhe do pedido nunca
+ * foi para o texto: vive na página de resumo.
  */
 export function buildWaUrl(
   whatsapp: string,
   nome: string | null,
   template?: string | null,
   pedido?: {
-    /** Resumo de uma linha, na voz da AGÊNCIA (`resumoCurto(..., "agencia")`). */
-    resumo?: string | null;
-    /** Token do pedido — vira a linha de link. Sem ele a mensagem sai só com intro + resumo. */
+    /** Token do pedido — vira a linha "Ver resumo: <link>". Sem ele a mensagem sai só com a introdução. */
     token?: string | null;
-    kind?: ProductCopyKind;
+    /** Idioma do lead (escolhe o rótulo do link, `VER_RESUMO` em lib/pedido-resumo.ts). */
     locale?: Locale;
-    /** Classificação dos itens — muda o rótulo do link (§17-ter). */
-    itens?: ItensKind;
-    /** Nº de itens (pro `{pedidos}` da saudação) e os NOMES (lista "Incluído: …"). */
-    itemCount?: number;
-    nomes?: string[];
   },
 ): string {
   const digits = whatsapp.replace(/\D/g, "");
   const tpl = (template ?? "").trim() || DEFAULT_WA_GREETING.pt;
-  const intro = fillPedidos(
-    fillTemplate(tpl, { nome: firstNameOf(nome), cupom: "" }),
-    pedido?.itemCount ?? 0,
-    pedido?.locale ?? "pt",
-  );
-  // Mesma montagem das duas pontas (`lib/pedido-resumo.ts`): intro → resumo → lista "Incluído: …". Texto
-  // PURO aqui — o wa.me não interpreta o HTML do Telegram, então nada de <b> nesta string.
-  const msg = buildWaMessage(
-    intro,
-    pedido?.resumo ?? "",
-    pedido?.token ?? null,
-    pedido?.kind ?? "atrativo",
-    pedido?.locale ?? "pt",
-    "agencia",
-    { nomes: pedido?.nomes },
-  );
+  const intro = fillTemplate(tpl, { nome: firstNameOf(nome), cupom: "" });
+  const msg = waMessageWithLink(intro, pedido?.token, pedido?.locale ?? "pt");
   return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -765,13 +708,8 @@ export async function editConfirmedMessage(e: ConfirmedEdit): Promise<void> {
       inline_keyboard: [[{
         text: "📲 Iniciar conversa",
         url: buildWaUrl(e.whatsapp, e.nome, e.greetingTemplate, {
-          resumo: e.resumo,
           token: e.pedidoToken,
-          kind: e.productKind,
           locale: isLocale(e.locale) ? e.locale : DEFAULT_LOCALE,
-          itens: e.itens,
-          itemCount: e.itemNames?.length ?? 0,
-          nomes: e.itemNames,
         }),
       }]],
     },
@@ -818,13 +756,8 @@ export async function sendPrivateWa(
   whatsapp: string,
   greetingTemplate?: string | null,
   pedido?: {
-    resumo?: string | null;
     token?: string | null;
-    kind?: ProductCopyKind;
     locale?: Locale;
-    itens?: ItensKind;
-    itemCount?: number;
-    nomes?: string[];
   },
 ): Promise<boolean> {
   const res = await call("sendMessage", {

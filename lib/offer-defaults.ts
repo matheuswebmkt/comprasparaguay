@@ -215,12 +215,13 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
         "Quer adiantar? Toque abaixo e comece a conversa agora — já recebemos seu pedido.",
       subjectBadge: "Ingresso / atrativo",
       subjectIncluded: "Incluído",
-      waGreeting: "Olá {nome}! Aqui é do Compras Paraguay. Vi {pedidos} que você escolheu — vou te passar as condições:",
-      waGreetingAgency: "Olá {nome}! Aqui é a agência {agencia}. Recebemos {pedidos} que você escolheu no Compras Paraguay — vou te passar as condições:",
-      // Mensagem que o LEAD manda ao clicar no wa.me (site): mesmo template da mensagem da agência
-      // (intro → resumo → lista "Incluído: …"), mudando só o gancho/introdução. `{pedidos}` vira
-      // "a reserva"/"as reservas" conforme o nº de itens.
-      waLeadText: "Olá! Fiz {pedidos} no Compras Paraguay e gostaria de receber as condições:",
+      // Mensagens prontas do wa.me disparado no TELEGRAM — intro limpa; o detalhe do pedido (itens,
+      // data, pessoas, transporte) concentra no link do resumo (/r/<token>), anexado por `waMessageWithLink`.
+      waGreeting: "Olá {nome}! Aqui é do Compras Paraguay. Vou te passar as condições do seu pedido.",
+      waGreetingAgency: "Olá {nome}! Aqui é a agência {agencia}. Recebemos seu pedido feito no Compras Paraguay. Vou te passar as condições.",
+      // Mensagem que o LEAD manda ao clicar no wa.me (site): intro limpa + link do resumo (/r/[token]),
+      // anexado por `waMessageWithLink` (lib/pedido-resumo.ts). Todo o detalhe do pedido vive na página.
+      waLeadText: "Olá! Vim pelo Compras Paraguay. Gostaria de receber as condições do meu pedido.",
       waButtonLabel: "Falar sobre minha reserva 💬",
       duplicateNoticeTitle: "Já recebemos sua solicitação.",
     },
@@ -236,9 +237,9 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
         "Want to get ahead? Tap below and start the conversation now — we've already received your request.",
       subjectBadge: "Ticket / attraction",
       subjectIncluded: "Included",
-      waGreeting: "Hi {nome}! This is Compras Paraguay. I saw {pedidos} you picked — here are the conditions:",
-      waGreetingAgency: "Hi {nome}! This is the {agencia} agency. We received {pedidos} you picked on Compras Paraguay — here are the conditions:",
-      waLeadText: "Hi! I made {pedidos} on Compras Paraguay and I'd like to receive the conditions:",
+      waGreeting: "Hi {nome}! This is Compras Paraguay. I'll share the conditions for your request.",
+      waGreetingAgency: "Hi {nome}! This is the {agencia} agency. We received your request made on Compras Paraguay. I'll share the conditions.",
+      waLeadText: "Hi! I came through Compras Paraguay and I'd like to receive the conditions for my request.",
       waButtonLabel: "Talk about my booking 💬",
       duplicateNoticeTitle: "We already got your request.",
     },
@@ -254,9 +255,9 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
         "¿Quieres adelantar? Toca abajo y empieza la conversación ahora — ya recibimos tu pedido.",
       subjectBadge: "Entrada / atractivo",
       subjectIncluded: "Incluido en el pedido de condiciones",
-      waGreeting: "¡Hola {nome}! Aquí Compras Paraguay. Vi {pedidos} que elegiste — te paso las condiciones:",
-      waGreetingAgency: "¡Hola {nome}! Aquí la agencia {agencia}. Recibimos {pedidos} que elegiste en Compras Paraguay — te paso las condiciones:",
-      waLeadText: "¡Hola! Hice {pedidos} en Compras Paraguay y quiero recibir las condiciones:",
+      waGreeting: "¡Hola {nome}! Aquí Compras Paraguay. Te paso las condiciones de tu pedido.",
+      waGreetingAgency: "¡Hola {nome}! Aquí la agencia {agencia}. Recibimos tu pedido hecho en Compras Paraguay. Te paso las condiciones.",
+      waLeadText: "¡Hola! Vine por Compras Paraguay y quiero recibir las condiciones de mi pedido.",
       waButtonLabel: "Hablar sobre mi reserva 💬",
       duplicateNoticeTitle: "¡Ya recibimos tu solicitud!",
     },
@@ -281,9 +282,9 @@ export const DEFAULT_PARTNER_GREETING =
  * SERVER-ONLY (nunca vai ao OfferConfig client). Editável por idioma em "Oferta da agência" (admin) — vai no
  * idioma que o LEAD escolheu no modal (`leads.locale`), não no idioma de quem está no Telegram. {nome} substituído no server. */
 export const DEFAULT_WA_GREETING: Record<Locale, string> = {
-  pt: "Olá {nome}! Aqui é do Compras Paraguay. Recebi a sua solicitação e posso te passar as condições e a melhor forma de organizar os seus dias em Foz do Iguaçu. Podemos falar por aqui?",
-  en: "Hi {nome}! This is Compras Paraguay. I got your request and I can share the conditions and the best way to organize your days in Foz do Iguaçu. Can we talk here?",
-  es: "¡Hola {nome}! Aquí Compras Paraguay. Recibí tu solicitud y puedo pasarte las condiciones y la mejor forma de organizar tus días en Foz do Iguaçu. ¿Hablamos por aquí?",
+  pt: "Olá {nome}! Aqui é do Compras Paraguay. Vou te passar as condições do seu pedido.",
+  en: "Hi {nome}! This is Compras Paraguay. I'll share the conditions for your request.",
+  es: "¡Hola {nome}! Aquí Compras Paraguay. Te paso las condiciones de tu pedido.",
 };
 
 // ⚠️ Este bloco é FALLBACK. Em produção todo CTA real define um contexto de produto, e aí quem manda é

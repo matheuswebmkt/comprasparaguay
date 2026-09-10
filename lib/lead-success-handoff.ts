@@ -26,9 +26,6 @@ export interface LeadSuccessHandoff {
   /** Token do pedido (`/r/[token]`) devolvido por `/api/leads` — a página de obrigado mostra o link e
    * a mensagem de WhatsApp o carrega. Ausente em lead que não chegou a ser gravado. */
   pedidoToken?: string | null;
-  /** Resumo de UMA linha do pedido, já montado (`lib/pedido-resumo.ts`). Viaja pronto porque só o
-   * modal tem os dados crus na mão — a página de obrigado não conhece extras nem transporte efetivo. */
-  resumo?: string | null;
   /**
    * Qual fluxo gravou este handoff. ⚠️⚠️ EXISTE PARA IMPEDIR QUE UM PEDIDO MOSTRE OUTRO: o storage é
    * por aba e sobrevive entre envios, então sem este marcador a página de roteiro lia o handoff do
@@ -38,12 +35,9 @@ export interface LeadSuccessHandoff {
    * de um envio do wizard — que não gravava handoff nenhum e herdava o anterior.
    */
   fluxo?: "atrativo" | "roteiro-pronto" | "roteiro-personalizado";
-  /** Ingressos, reservas de data ou os dois (`itensKind`, §17-ter): decide o rótulo do link na tela
-   * de sucesso e na mensagem de WhatsApp. Ausente = tratar como "ingressos". */
+  /** Classificação dos itens (`itensKind`, §17-ter): decide o rótulo do link na tela de sucesso e na
+   *  mensagem de WhatsApp. Ausente = tratar como "ingressos". */
   itens?: ItensKind;
-  /** Nomes legíveis dos itens do pedido — a lista "Incluído: …" do WhatsApp, exibida igual em
-   * "O que você pediu" na página de obrigado. Ausente/vazia = sem lista (fluxo sem itens). */
-  nomes?: string[];
   /** Link wa.me pronto (voz do LEAD, `centralWaUrl`) — gravado só quando a tela de sucesso mostra o
    * botão "Iniciar conversa" (modo whatsapp, ou fallback de dedup) e há número central. É o que faz
    * o botão existir na página de obrigado (a tela de sucesso dentro do modal só roda em preview). */
