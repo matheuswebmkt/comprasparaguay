@@ -201,9 +201,9 @@ function profileLine(isLocal?: boolean | null, alreadyInFoz?: boolean | null): s
  */
 /** Título do card PENDENTE: bola VERMELHA = aguardando Assumir/Confirmar (o verde passa a marcar
  * atendido). Decisão do usuário: a cor é o estado, o texto do título não muda. */
-const LEAD_TITLE = "🔴 <b>NOVA QUALIFICAÇÃO</b>";
+const LEAD_TITLE = "🔴 <b>NOVA QUALIFICAÇÃO</b> — COMPRAS PARAGUAY";
 /** Título pós-atendimento (Assumir OU Confirmar) — o verde marca o lead resolvido. */
-const CONFIRMED_TITLE = "🟢 <b>CONFIRMADO - COMPRAS PARAGUAY</b>";
+const CONFIRMED_TITLE = "🟢 <b>CONFIRMADO — COMPRAS PARAGUAY</b>";
 /** Cenário sem agência — visualmente distinto de propósito: não é um lead pra "Assumir", é registro. */
 const LEAD_TITLE_INFO_ONLY = "ℹ️ <b>REGISTRO DE NOVA QUALIFICAÇÃO</b>";
 
