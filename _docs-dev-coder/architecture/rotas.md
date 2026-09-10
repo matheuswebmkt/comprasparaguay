@@ -18,7 +18,7 @@ concluir qualquer mudança de estrutura.
 | `/triplice-fronteira` | estática | BR / AR / PY | sim (0.93) | — |
 | `/sobre` · `/contato` · `/aviso-legal` | estáticas | institucionais | sim (0.3–0.4) | — |
 | `/obrigado` | estática | confirmação pós-envio — só título + confirmação + link "Ver resumo" para `/r/<token>` (do handoff); sem card de resumo | **não** | `noindex` |
-| `/r/[token]` | dinâmica (force-dynamic) | página pública do pedido — o link curto que as mensagens prontas de WhatsApp carregam ("Ver resumo:"); renderiza no idioma do lead (`leads.locale`), sem PII | **não** | `noindex`; conteúdo em `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts` |
+| `/r/[token]` | dinâmica (force-dynamic) | página pública do pedido — o link curto que as mensagens prontas de WhatsApp carregam ("Ver resumo:"); renderiza no idioma do lead (`leads.locale`), sem PII; oferece "Copiar informações" (resumo estruturado para a agência) e "Voltar" | **não** | `noindex`; conteúdo em `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts`; client em `app/r/[token]/{copiar-button,voltar-button}.tsx` |
 
 ⚠️ `/transfer` é página de **nicho**, não de destino: ela vem de `app/data/niches.ts` (o único nicho
 vivo), enquanto os destinos vêm de `app/data/attractions.ts`. São dois catálogos e duas rotas — a

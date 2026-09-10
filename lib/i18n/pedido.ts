@@ -27,6 +27,9 @@ export interface PedidoUI {
   prefsTitle: string;
   enviadoEmLabel: string;
   ctaHint: string;
+  /** Botão que copia o resumo estruturado da página, pra a agência colar no WhatsApp. */
+  copiarLabel: string;
+  copiadoLabel: string;
   /** Navegação de saída da página: Voltar (histórico da aba) e Página inicial (/). */
   voltar: string;
   paginaInicial: string;
@@ -51,6 +54,8 @@ export const PEDIDO_UI: Record<Locale, PedidoUI> = {
     prefsTitle: "Resumo de suas respostas",
     enviadoEmLabel: "Enviado em",
     ctaHint: "Nada aqui é automático — um especialista em Foz revisa suas escolhas.",
+    copiarLabel: "Copiar informações",
+    copiadoLabel: "Copiado!",
     voltar: "Voltar",
     paginaInicial: "Página inicial",
     notFoundTitle: "Não encontramos este link",
@@ -73,6 +78,8 @@ export const PEDIDO_UI: Record<Locale, PedidoUI> = {
     prefsTitle: "Summary of your answers",
     enviadoEmLabel: "Sent on",
     ctaHint: "Nothing here is automatic — a Foz specialist reviews your choices.",
+    copiarLabel: "Copy information",
+    copiadoLabel: "Copied!",
     voltar: "Back",
     paginaInicial: "Home page",
     notFoundTitle: "We couldn't find this link",
@@ -94,6 +101,8 @@ export const PEDIDO_UI: Record<Locale, PedidoUI> = {
     prefsTitle: "Resumen de tus respuestas",
     enviadoEmLabel: "Enviado el",
     ctaHint: "Nada aquí es automático — un especialista en Foz revisa tus elecciones.",
+    copiarLabel: "Copiar información",
+    copiadoLabel: "¡Copiado!",
     voltar: "Volver",
     paginaInicial: "Página inicial",
     notFoundTitle: "No encontramos este enlace",

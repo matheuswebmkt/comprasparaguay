@@ -1,6 +1,6 @@
 // Filepath: app/r/[token]/page.tsx
-// Version: 1.0
-// Nome da Versão: "Página pública do pedido — o link curto que vai ao WhatsApp e ao card do grupo"
+// Version: 2.0
+// Nome da Versão: "Página pública do pedido — link curto + botão Copiar informações para a agência"
 //
 // Rota CURTA de propósito (`/r/<token>`): o endereço é digitado/colado em conversa de WhatsApp, onde
 // cada caractere aparece na prévia da mensagem. Toda a mensagem pronta de WhatsApp (as duas pontas:
@@ -21,6 +21,7 @@ import { PEDIDO_UI } from "@/lib/i18n/pedido";
 import { DEFAULT_PRODUCT_COPIES } from "@/lib/offer-defaults";
 import { waMessageWithLink } from "@/lib/pedido-resumo";
 import { VoltarButton } from "./voltar-button";
+import { CopiarButton } from "./copiar-button";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -124,6 +125,31 @@ export default async function PedidoPage({ params }: { params: Promise<{ token: 
   // Rótulo do CTA = o MESMO botão da tela de sucesso (`waButtonLabel` do bucket do produto).
   const ctaLabel = DEFAULT_PRODUCT_COPIES.atrativo[pedido.locale].waButtonLabel;
 
+  // Linhas do resumo — fonte ÚNICA do card e do texto do "Copiar informações" (não duplicar regra).
+  const rows: { label: string; value: string }[] = [];
+  if (pedido.visitDate) rows.push({ label: ui.paraODiaLabel, value: formatDate(pedido.visitDate) });
+  if (pedido.isLocal !== null) {
+    // INVERTIDO de propósito: o dado cru é "morador?" (isLocal), mas a linha lida como PERFIL do
+    // visitante — morador=sim → turista=não, e vice-versa.
+    rows.push({ label: ui.prefTurista, value: pedido.isLocal ? ui.identidade.não : ui.identidade.sim });
+  }
+  if (pedido.inFoz !== null) {
+    rows.push({ label: ui.prefInFoz, value: pedido.inFoz ? ui.identidade.sim : ui.identidade.não });
+  }
+  if (pedido.ticketQty) rows.push({ label: ui.pessoasLabel, value: String(pedido.ticketQty) });
+  // Reserva de data assume transporte (o modal nem pergunta): a linha diz o FATO do produto.
+  if (pedido.wantsTransport !== null) rows.push({ label: ui.transporteLabel, value: ui.transporteIncluido });
+  if (pedido.createdAt) rows.push({ label: ui.enviadoEmLabel, value: formatBRT(pedido.createdAt) });
+
+  // Texto do "Copiar informações" — mesma estrutura da página, pra a agência colar no WhatsApp.
+  const copyLines: string[] = [ui.titulo, ""];
+  if (pedido.itens.length > 0) {
+    copyLines.push(ui.itensLabel, ...pedido.itens.map((it) => `- ${it.name}`), "");
+  }
+  copyLines.push(ui.prefsTitle);
+  for (const r of rows) copyLines.push(`${r.label}: ${r.value}`);
+  const copyText = copyLines.join("\n");
+
   return (
     <>
       <Navbar />
@@ -161,33 +187,15 @@ export default async function PedidoPage({ params }: { params: Promise<{ token: 
                   {ui.prefsTitle}
                 </h2>
                 <dl className="mt-1">
-                  {pedido.visitDate && (
-                    <Linha label={ui.paraODiaLabel} value={formatDate(pedido.visitDate)} />
-                  )}
-                  {pedido.isLocal !== null && (
-                    <Linha
-                      label={ui.prefTurista}
-                      /* INVERTIDO de propósito: o dado cru é "morador?" (isLocal), mas a linha lida
-                         como PERFIL do visitante — morador=sim → turista=não, e vice-versa. */
-                      value={pedido.isLocal ? ui.identidade.não : ui.identidade.sim}
-                    />
-                  )}
-                  {pedido.inFoz !== null && (
-                    <Linha label={ui.prefInFoz} value={pedido.inFoz ? ui.identidade.sim : ui.identidade.não} />
-                  )}
-                  {pedido.ticketQty && (
-                    <Linha label={ui.pessoasLabel} value={String(pedido.ticketQty)} />
-                  )}
-                  {pedido.wantsTransport !== null && (
-                    // Reserva de data assume transporte (o modal nem pergunta): a linha diz o FATO do
-                    // produto — "incluído".
-                    <Linha label={ui.transporteLabel} value={ui.transporteIncluido} />
-                  )}
-                  {pedido.createdAt && (
-                    <Linha label={ui.enviadoEmLabel} value={formatBRT(pedido.createdAt)} />
-                  )}
+                  {rows.map((r) => (
+                    <Linha key={r.label} label={r.label} value={r.value} />
+                  ))}
                 </dl>
               </div>
+            </div>
+
+            <div className="mt-6 flex justify-center">
+              <CopiarButton text={copyText} label={ui.copiarLabel} copiedLabel={ui.copiadoLabel} />
             </div>
 
             {waHref && (
