@@ -14,7 +14,7 @@ const TicketOfferModal = dynamic(
 export default function TicketOfferModalLazy() {
   return (
     <DeferredEventMount event="ticket-offer:open">
-      {() => <TicketOfferModal />}
+      {(onReady) => <TicketOfferModal onReady={onReady} />}
     </DeferredEventMount>
   );
 }

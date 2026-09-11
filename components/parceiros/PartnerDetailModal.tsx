@@ -22,7 +22,12 @@ import { PARTNER_DETAIL_EVENT } from "@/lib/partner-detail";
 import { trackConversion, CONVERSIONS } from "@/lib/analytics";
 import { asNiche, taxonomyParams, verticalOfPartnerCategory } from "@/lib/tracking-taxonomy";
 
-export default function PartnerDetailModal() {
+export default function PartnerDetailModal({
+  onReady,
+}: {
+  /** Avisa o loader preguiçoso que o listener já está registrado — ver `architecture/componentes.md`. */
+  onReady?: () => void;
+} = {}) {
   const [slug, setSlug] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,8 +36,9 @@ export default function PartnerDetailModal() {
       setSlug(detail?.slug ?? null);
     };
     window.addEventListener(PARTNER_DETAIL_EVENT, handler);
+    onReady?.();
     return () => window.removeEventListener(PARTNER_DETAIL_EVENT, handler);
-  }, []);
+  }, [onReady]);
 
   const close = useCallback(() => setSlug(null), []);
 

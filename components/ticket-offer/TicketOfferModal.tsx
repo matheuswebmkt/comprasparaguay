@@ -163,6 +163,12 @@ interface TicketOfferModalProps {
      * comportam igual ao site real (nada de "funciona só no preview"). */
     productKind?: ProductCopyKind;
   };
+  /**
+   * Avisa o loader preguiçoso (`components/lazy/`) que o listener de `ticket-offer:open` já está
+   * registrado, para ele reemitir o clique que chegou antes de o chunk montar. Ver
+   * `architecture/componentes.md`.
+   */
+  onReady?: () => void;
 }
 
 /** Detail sintético do preview — produto único (atrativo) na simplificação Compras PY. */
@@ -178,6 +184,7 @@ function previewDetailFor(_kind: ProductCopyKind = "atrativo"): OpenDetail {
 
 export default function TicketOfferModal({
   preview,
+  onReady,
 }: TicketOfferModalProps = {}) {
   const router = useRouter();
   const [open, setOpen] = useState(!!preview);
@@ -682,8 +689,12 @@ export default function TicketOfferModal({
       });
     };
     window.addEventListener("ticket-offer:open", handler);
+    // Handshake do loader preguiçoso: o listener JÁ está registrado neste ponto, então o pai pode
+    // reemitir com segurança o clique que chegou antes do chunk montar. `onReady` é memoizado no
+    // loader (`useCallback`), então incluí-lo nas deps não recria o listener a cada render.
+    onReady?.();
     return () => window.removeEventListener("ticket-offer:open", handler);
-  }, [offer, preview]);
+  }, [offer, preview, onReady]);
 
   // Preview: as tabs "Formulário"/"Sucesso" do admin controlam o estágio de fora — sincroniza sempre que mudar.
   useEffect(() => {

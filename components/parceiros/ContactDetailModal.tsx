@@ -27,7 +27,12 @@ import {
   type TaxonomyParams,
 } from "@/lib/tracking-taxonomy";
 
-export default function ContactDetailModal() {
+export default function ContactDetailModal({
+  onReady,
+}: {
+  /** Avisa o loader preguiçoso que o listener já está registrado — ver `architecture/componentes.md`. */
+  onReady?: () => void;
+} = {}) {
   const { locale } = useLocale();
   const t = SHARED_UI[locale].contactSidebar;
   const [open, setOpen] = useState<{ kind: ContactKind; slug: string } | null>(null);
@@ -38,8 +43,9 @@ export default function ContactDetailModal() {
       if (detail?.kind && detail?.slug) setOpen({ kind: detail.kind, slug: detail.slug });
     };
     window.addEventListener(CONTACT_DETAIL_EVENT, handler);
+    onReady?.();
     return () => window.removeEventListener(CONTACT_DETAIL_EVENT, handler);
-  }, []);
+  }, [onReady]);
 
   const close = useCallback(() => setOpen(null), []);
 

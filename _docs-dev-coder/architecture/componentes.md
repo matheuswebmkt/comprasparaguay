@@ -31,12 +31,20 @@ perde.
 
 1. escuta o evento em **fase de captura** enquanto o pesado não montou;
 2. enfileira o `detail` e dispara o import;
-3. quando o filho monta, o efeito do **pai** roda **depois** dos efeitos do filho (React executa
-   efeitos de baixo para cima) — logo o listener do filho já está registrado — e reemite o(s)
-   evento(s) enfileirado(s) via `window.dispatchEvent`.
+3. quando o **filho avisa que está pronto** — chamando `onReady` depois de registrar o próprio
+   listener — o wrapper reemite o(s) evento(s) enfileirado(s) via `window.dispatchEvent`.
 
-⚠️ **Não reordenar isso.** A garantia depende de o efeito do pai rodar depois do efeito do filho.
-Não usar `useLayoutEffect` no pai para reemitir nem reemitir fora do efeito de `mounted`.
+⚠️ **O handshake `onReady` é obrigatório, não cerimônia.** `next/dynamic` carrega o chunk de forma
+**assíncrona**: o filho NÃO monta no mesmo commit em que `mounted` vira `true`. Reemitir a partir de
+`mounted` (ou de qualquer efeito do pai) chega ANTES de o filho escutar e o primeiro clique se perde
+— o visitante precisa clicar duas vezes no CTA "Reservar data". Foi exatamente esse o bug de uma
+primeira versão deste padrão, que reemitia no efeito do pai confiando em "efeito do filho roda
+primeiro" (verdade para um filho síncrono, falsa para `next/dynamic`).
+
+Por isso todo componente montado por este wrapper recebe `onReady?: () => void` e o chama logo após
+registrar o listener do evento. Um componente novo montado aqui **precisa** do mesmo handshake — sem
+ele, o wrapper engole o primeiro clique.
+
 `stopPropagation` ocorre só enquanto o pesado não está pronto; depois disso o evento segue o
 caminho normal.
 

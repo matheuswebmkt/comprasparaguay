@@ -14,16 +14,19 @@
 //   1. escuta o evento em FASE DE CAPTURA enquanto o pesado não montou (o listener do filho ainda
 //      não existe);
 //   2. enfileira o `detail` e dispara o import;
-//   3. quando o filho monta, o efeito DESTE pai roda DEPOIS dos efeitos do filho (React executa
-//      efeitos de baixo para cima) — logo o listener do filho já está registrado — e reemite o(s)
-//      evento(s) enfileirado(s).
+//   3. quando o filho está pronto — e ELE avisa, chamando `onReady` depois de registrar o próprio
+//      listener — o wrapper reemite o(s) evento(s) enfileirado(s).
 //
-// ⚠️ Não trocar a ordem por `useLayoutEffect` no pai nem reemitir fora do efeito de `mounted`:
-// a garantia de que o filho já escuta depende de o efeito do pai rodar depois do efeito do filho.
+// ⚠️ O handshake `onReady` NÃO é cerimônia: `next/dynamic` carrega o chunk de forma ASSÍNCRONA, então
+// o filho não monta no mesmo commit em que `mounted` vira `true`. Qualquer reemissão disparada
+// apenas por `mounted` (ou por efeito do pai) chega antes de o filho escutar e o primeiro clique se
+// perde — o visitante precisa clicar duas vezes. O filho só avisa quando o listener dele já está
+// registrado.
+//
 // ⚠️ `stopPropagation` só vale enquanto `ready.current` é falso — depois disso o evento segue o
 // caminho normal até o listener do filho.
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 export default function DeferredEventMount({
   event,
@@ -32,7 +35,7 @@ export default function DeferredEventMount({
   /** Nome do CustomEvent global que abre o componente (ex.: "ticket-offer:open"). */
   event: string;
   /** Renderiza o componente pesado — só é chamado depois do primeiro evento. */
-  children: () => ReactNode;
+  children: (onReady: () => void) => ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
   const ready = useRef(false);
@@ -49,15 +52,15 @@ export default function DeferredEventMount({
     return () => window.removeEventListener(event, capture, true);
   }, [event]);
 
-  useEffect(() => {
-    if (!mounted) return;
+  const onReady = useCallback(() => {
+    if (ready.current) return;
     ready.current = true;
     const pending = queued.current;
     queued.current = [];
     for (const detail of pending) {
       window.dispatchEvent(new CustomEvent(event, { detail }));
     }
-  }, [mounted, event]);
+  }, [event]);
 
-  return mounted ? <>{children()}</> : null;
+  return mounted ? <>{children(onReady)}</> : null;
 }

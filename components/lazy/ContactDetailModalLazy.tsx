@@ -14,7 +14,7 @@ const ContactDetailModal = dynamic(
 export default function ContactDetailModalLazy() {
   return (
     <DeferredEventMount event={CONTACT_DETAIL_EVENT}>
-      {() => <ContactDetailModal />}
+      {(onReady) => <ContactDetailModal onReady={onReady} />}
     </DeferredEventMount>
   );
 }

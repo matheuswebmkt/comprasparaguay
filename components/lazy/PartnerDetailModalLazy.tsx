@@ -14,7 +14,7 @@ const PartnerDetailModal = dynamic(
 export default function PartnerDetailModalLazy() {
   return (
     <DeferredEventMount event={PARTNER_DETAIL_EVENT}>
-      {() => <PartnerDetailModal />}
+      {(onReady) => <PartnerDetailModal onReady={onReady} />}
     </DeferredEventMount>
   );
 }
