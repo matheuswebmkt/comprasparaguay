@@ -60,9 +60,11 @@ export default function PilaresFoz() {
                 >
                   {p.label}
                 </span>
+                {/* 42%, não 55%: o cinza-azulado claro sobre areia/branco dava ~3,4:1 e reprovava
+                    em AA para texto pequeno (apontado pelo Lighthouse). Em 42% passa (~5:1). */}
                 <span
                   className="mt-1.5 block text-sm"
-                  style={{ color: "hsl(210,25%,55%)" }}
+                  style={{ color: "hsl(210,25%,42%)" }}
                 >
                   {p.hint}
                 </span>

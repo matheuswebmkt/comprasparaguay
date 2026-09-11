@@ -22,11 +22,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Destinos de compras: página canônica de cada destino do eixo compras/fronteira (5).
+  // `images` alimenta o image sitemap — a capa do destino é conteúdo elegível a Google Imagens
+  // (ainda que seja WebP no card; o sitemap aceita WebP, quem não aceita é o OG de rede social).
   const attractionPages: MetadataRoute.Sitemap = attractions.map((a) => {
     const iso = a.updatedAt ?? a.publishedAt;
     return {
       url: `${SITE_URL}/roteiros-de-compras/${a.slug}`,
       ...(iso ? { lastModified: new Date(iso) } : {}),
+      images: [`${SITE_URL}${a.cover}`],
       changeFrequency: "monthly" as const,
       priority: a.featured ? 0.9 : 0.82,
     };

@@ -71,7 +71,9 @@ export default function LanguageSwitcher() {
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-xs font-bold transition-colors hover:bg-[hsl(214,50%,97%)] sm:gap-1.5 sm:px-3 sm:py-2"
         style={{ borderColor: "hsl(214,25%,86%)", color: "hsl(210,56%,23%)", background: "white" }}
-        aria-label="Idioma / Language / Idioma"
+        // O rótulo acessível PRECISA conter o texto visível (WCAG 2.5.3, label-in-name): o botão
+        // mostra a sigla do idioma atual ("PT"/"EN"/"ES"), então ela entra no início do rótulo.
+        aria-label={`Idioma: ${ready ? current.short : "PT"}`}
         aria-expanded={open}
       >
         <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />

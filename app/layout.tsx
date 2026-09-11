@@ -8,10 +8,14 @@ import MetaPixel from "@/components/analytics/MetaPixel";
 import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 import ConsentGate from "@/components/analytics/ConsentGate";
 import CookieBanner from "@/components/CookieBanner";
-import TicketOfferModal from "@/components/ticket-offer/TicketOfferModal";
+// ⚠️ Os três modais entram via loader preguiçoso (`components/lazy/*`), não import direto: eles
+// montam no root layout, mas só baixam o chunk quando o CustomEvent que os abre dispara. Import
+// direto aqui colocava o modal de reserva (maior client do projeto) no bundle inicial de toda
+// página. O loader preserva a corrida evento-antes-do-chunk — ver `DeferredEventMount`.
+import TicketOfferModalLazy from "@/components/lazy/TicketOfferModalLazy";
 import EnvioOverlay from "@/components/ui/EnvioOverlay";
-import PartnerDetailModal from "@/components/parceiros/PartnerDetailModal";
-import ContactDetailModal from "@/components/parceiros/ContactDetailModal";
+import PartnerDetailModalLazy from "@/components/lazy/PartnerDetailModalLazy";
+import ContactDetailModalLazy from "@/components/lazy/ContactDetailModalLazy";
 import { NavigationEvents } from "@/components/analytics/NavigationEvents"; // Importado
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
@@ -74,9 +78,10 @@ export const metadata: Metadata = {
       "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
     images: [
       {
-        // OG padrão do site: /og.webp na raiz de `public/`, feita no formato canônico 1200×630
-        // (a capa do atrativo é 1400×1000 — proporção errada pra card de compartilhamento).
-        url: "/og.webp",
+        // OG padrão do site: `/og.jpg` na raiz de `public/`, JPG 1200×630 real.
+        // ⚠️ JPG, não WebP: Facebook/LinkedIn não renderizam WebP de forma confiável no card, e a
+        // capa de atrativo (proporções variadas, WebP) não serve como OG — ver `BRAND_OG_IMAGE`.
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Dia de compras em Ciudad del Este com guia especialista — Compras Paraguay",
@@ -88,7 +93,7 @@ export const metadata: Metadata = {
     title: "Compras no Paraguai — Compras Paraguay",
     description:
       "Dia de compras em Ciudad del Este com guia especialista: veículo privativo de ida e volta, horários, câmbio e cota resolvidos — a partir do seu hotel em Foz do Iguaçu.",
-    images: ["/og.webp"],
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -151,9 +156,9 @@ export default async function RootLayout({
                     ao `router.push` e só sumir quando /obrigado renderiza. Dentro do modal ela
                     morreria no `setOpen(false)`, que é exatamente quando precisa aparecer. */}
                 <EnvioOverlay />
-                <TicketOfferModal />
-                <PartnerDetailModal />
-                <ContactDetailModal />
+                <TicketOfferModalLazy />
+                <PartnerDetailModalLazy />
+                <ContactDetailModalLazy />
                 <CookieBanner />
                 {children}
               </CtaModeProvider>

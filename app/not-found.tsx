@@ -19,7 +19,9 @@ export default function NotFound() {
       <Navbar />
       <main className="min-h-screen flex items-center" style={{ background: "hsl(40,33%,97%)" }}>
         <div className="section-container text-center py-28">
-          <p className="text-6xl sm:text-7xl font-black tracking-tight" style={{ color: "hsl(35,82%,47%)", fontFamily: "var(--font-display)" }}>
+          {/* O dourado de marca `47%` dava ~2,8:1 sobre areia e reprovava até no limiar de texto
+              grande (3:1). A `32%` mantém o tom e passa AA. */}
+          <p className="text-6xl sm:text-7xl font-black tracking-tight" style={{ color: "hsl(35,82%,32%)", fontFamily: "var(--font-display)" }}>
             404
           </p>
           <h1 className="mt-4 text-2xl sm:text-3xl font-black tracking-tight" style={{ color: "hsl(210,60%,15%)", fontFamily: "var(--font-display)" }}>

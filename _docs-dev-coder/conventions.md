@@ -20,6 +20,8 @@
 | Pixel, eventos, `value`, telemetria 1st-party | [`conventions/tracking-metricas.md`](conventions/tracking-metricas.md) | o que é enviado ao Meta, por quê, onde é injetado, o que é proibido, e como se mede com dados próprios |
 | Marca, escopo do projeto e o que saiu dele | [`conventions/marca-e-escopo.md`](conventions/marca-e-escopo.md) | identidade do domínio, ausência de redes próprias, verticais fora do escopo, painel do parceiro removido |
 | Telegram Mini-CRM (card, wa.me, webhook, cron) | [`conventions/telegram.md`](conventions/telegram.md) | integração serverless, anatomia do card com os nomes dos itens, estrutura da mensagem wa.me, envs e registro do webhook |
+| SEO técnico | [`conventions/seo.md`](conventions/seo.md) | domínio canônico, favicon, OG em JPG 1200×630, title/canonical, robots/sitemap/llms, páginas privadas e JSON-LD |
+| Acessibilidade | [`conventions/acessibilidade.md`](conventions/acessibilidade.md) | contraste AA, proibição de atenuar texto por `opacity` e label-in-name |
 
 Temas sem arquivo = tema sem regra escrita. Quando uma decisão sobre um tema novo aparecer, criar
 `conventions/<tema>.md` com seções numeradas e acrescentar a linha acima.

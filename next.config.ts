@@ -8,6 +8,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Não anunciar o framework.
+  poweredByHeader: false,
+
+  // `X-Robots-Tag: noindex` nas páginas privadas por header, além do `<meta name="robots">` que
+  // elas já emitem. O header vale para respostas que o crawler busca cru (ex.: `/r/<token>`), onde
+  // a meta tag sozinha é frágil — e é mais difícil de um proxy/CDN remover por acidente.
+  async headers() {
+    return [
+      {
+        source: "/r/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
   // ⚠️ Middleware Edge: o Next 15.5.x embute no bundle do middleware o módulo interno
   // `experimental/testmode` (require estático no adapter), que referencia `node:async_hooks`
   // e `node:buffer` — e a validação da Vercel rejeita o deploy por isso. O runtime Node

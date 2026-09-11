@@ -43,7 +43,7 @@ export default function DayCalendar({ value, onChange, locale, disabled }: {
       </div>
       <div className="grid grid-cols-7 gap-1 mb-1">
         {weekdayLabels.map((w, i) => (
-          <div key={i} className="text-center text-[11px] font-semibold uppercase" style={{ color: "hsl(210,25%,55%)" }}>{w}</div>
+          <div key={i} className="text-center text-[11px] font-semibold uppercase" style={{ color: "hsl(210,25%,42%)" }}>{w}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">

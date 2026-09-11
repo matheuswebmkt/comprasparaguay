@@ -18,7 +18,7 @@ concluir qualquer mudança de estrutura.
 | `/triplice-fronteira` | estática | BR / AR / PY | sim (0.93) | — |
 | `/sobre` · `/contato` · `/aviso-legal` | estáticas | institucionais | sim (0.3–0.4) | — |
 | `/obrigado` | estática | confirmação pós-envio — só título + confirmação + link "Ver resumo" para `/r/<token>` (do handoff); sem card de resumo | **não** | `noindex` |
-| `/r/[token]` | dinâmica (force-dynamic) | página pública do pedido — o link curto que as mensagens prontas de WhatsApp carregam ("Ver resumo:"); renderiza no idioma do lead (`leads.locale`), sem PII; oferece "Copiar informações" (resumo estruturado para a agência) e "Voltar" | **não** | `noindex`; conteúdo em `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts`; client em `app/r/[token]/{copiar-button,voltar-button}.tsx` |
+| `/r/[token]` | dinâmica (force-dynamic) | página pública do pedido — o link curto que as mensagens prontas de WhatsApp carregam ("Ver resumo:"); renderiza no idioma do lead (`leads.locale`), sem PII; oferece "Copiar informações" (resumo estruturado para a agência) e "Voltar"; token inexistente → `notFound()` (404 real) | **não** | `noindex` + `X-Robots-Tag` (`next.config.ts`); título `absolute`; conteúdo em `lib/pedido.ts` + dicionário `lib/i18n/pedido.ts`; client em `app/r/[token]/{copiar-button,voltar-button}.tsx` |
 
 ⚠️ `/transfer` é página de **nicho**, não de destino: ela vem de `app/data/niches.ts` (o único nicho
 vivo), enquanto os destinos vêm de `app/data/attractions.ts`. São dois catálogos e duas rotas — a
@@ -54,9 +54,12 @@ descoberta: `/api` está no `disallow` do `robots.ts`.
 |---|---|
 | `app/sitemap.ts` | só páginas vivas; omite `lastModified` quando a data não é real; `/obrigado` e admin fora |
 | `app/robots.ts` | `disallow` só de `/admin` e `/api`; libera crawlers de IA (GEO) |
+| `public/llms.txt` | resumo da entidade + links principais, alinhado a `lib/seo.ts` e às rotas canônicas (GEO) |
+| `public/og-image.jpg` | arte OG da marca — JPG 1200×630 real, referenciada por `BRAND_OG_IMAGE` (`lib/seo.ts`) |
 | `middleware.ts` | guarda `/admin/**`; semeia cookie de idioma **sem** redirecionar, e não o semeia para bots (o conteúdo i18n client-izado trocaria o DOM para o crawler sob um `<title>` em pt) |
-| `next.config.ts` | stub do `experimental/testmode` no bundle do Edge; **não** há `redirects()` — o domínio é greenfield, nenhum 301 de migração |
-| `lib/seo.ts` | `SITE_URL` (default `https://www.comprasparaguay.online`), `SITE_NAME`, schemas de `organization`/`website`/destino e keywords por silo |
+| `next.config.ts` | stub do `experimental/testmode` no bundle do Edge; `poweredByHeader: false`; `headers()` com `X-Robots-Tag: noindex` em `/r/*`; **não** há `redirects()` — o domínio é greenfield, nenhum 301 de migração |
+| `components/lazy/*` | loaders dos modais globais (`next/dynamic` + `DeferredEventMount`) — ver `architecture/componentes.md` |
+| `lib/seo.ts` | `SITE_URL` (default `https://www.comprasparaguay.online`), `SITE_NAME`, `BRAND_OG_IMAGE` (`/og-image.jpg`), schemas de `organization`/`website`/destino e keywords por silo |
 
 ## 5 · O que NÃO existe (e não deve voltar de meio de caminho)
 

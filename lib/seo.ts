@@ -16,8 +16,14 @@ export const SITE_URL = (
 
 export const SITE_NAME = "Compras Paraguay";
 
-/** Imagem OG padrão da marca — a arte canônica 1200×630 na raiz de `public/` (mesma do layout). */
-export const BRAND_OG_IMAGE = "/og.webp";
+/**
+ * Imagem OG padrão da marca — `/og.jpg`, JPG 1200×630 na raiz de `public/` (mesma do layout).
+ *
+ * ⚠️ JPG, não WebP (`/og.webp` era o valor anterior): Facebook e LinkedIn não renderizam WebP de
+ * forma confiável em card de compartilhamento, e a capa de atrativo é WebP com proporção variável
+ * (832×495 a 1399×999) — declarar 1200×630 sobre ela era mentira e o card saía quebrado.
+ */
+export const BRAND_OG_IMAGE = "/og-image.jpg";
 
 /**
  * Palavras-chave canônicas de intenção de COMPRAS no Paraguai (Compras PY).

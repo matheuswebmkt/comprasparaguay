@@ -84,7 +84,7 @@ export default function AttractionPageContent({
             <nav aria-label="Trilha" className="mb-8">
               <ol
                 className="flex flex-wrap items-center gap-1.5 text-xs"
-                style={{ color: "hsl(210,25%,55%)" }}
+                style={{ color: "hsl(210,25%,42%)" }}
               >
                 <li>
                   <Link
@@ -227,7 +227,7 @@ export default function AttractionPageContent({
                       <div>
                         <dt
                           className="text-xs font-semibold uppercase tracking-wide"
-                          style={{ color: "hsl(210,25%,55%)" }}
+                          style={{ color: "hsl(210,25%,42%)" }}
                         >
                           {t.addressLabel}
                         </dt>
@@ -243,7 +243,7 @@ export default function AttractionPageContent({
                       <div key={it.label}>
                         <dt
                           className="text-xs font-semibold uppercase tracking-wide"
-                          style={{ color: "hsl(210,25%,55%)" }}
+                          style={{ color: "hsl(210,25%,42%)" }}
                         >
                           {it.label}
                         </dt>

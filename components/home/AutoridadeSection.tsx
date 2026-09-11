@@ -82,19 +82,24 @@ export default function AutoridadeSection() {
             onBlurCapture={() => setPausado(false)}
           >
 
+          {/* ⚠️ SEM `opacity` no `<li>`: a versão anterior baixava o passo inativo para 0,45 e
+              o Lighthouse reprovava o contraste de TODO texto não-ativo (opacidade mistura o
+              texto com o branco e nenhum tom de cinza salva). O destaque do passo ativo agora
+              vem do badge (escala + cor) e da cor do título, que continuam transicionando — a
+              hierarquia visual se mantém sem apagar o texto. */}
           {PASSOS.map((p, i) => {
             const on = destacado(i);
             return (
               <li
                 key={p.n}
-                className="relative transition-opacity duration-700"
-                style={{ opacity: on ? 1 : 0.45 }}
+                className="relative"
                 onMouseEnter={() => setAtivo(i)}
               >
                 <div
                   className="relative flex h-12 w-12 items-center justify-center rounded-full transition-all duration-700"
                   style={{
                     background: on ? "hsl(152,47%,32%)" : "hsl(214,50%,94%)",
+                    opacity: on ? 1 : 0.7,
                     color: on ? "#fff" : "hsl(210,25%,50%)",
                     fontFamily: "var(--font-display)",
                     fontWeight: 600,
@@ -119,7 +124,9 @@ export default function AutoridadeSection() {
                 <h3
                   className="mt-5 text-lg font-bold leading-snug transition-colors duration-700"
                   style={{
-                    color: on ? "hsl(210,60%,15%)" : "hsl(210,25%,42%)",
+                    // Inativo em 40% (não 42%/45%): sobre areia o tom anterior ficava no limite de
+                    // AA e o Lighthouse reprovava os passos fora de foco. Ativo segue navy.
+                    color: on ? "hsl(210,60%,15%)" : "hsl(210,25%,40%)",
                     fontFamily: "var(--font-display)",
                   }}
                 >
@@ -127,7 +134,7 @@ export default function AutoridadeSection() {
                 </h3>
                 <p
                   className="mt-2.5 text-sm leading-relaxed"
-                  style={{ color: "hsl(210,25%,45%)" }}
+                  style={{ color: "hsl(210,25%,40%)" }}
                 >
                   {p.texto}
                 </p>

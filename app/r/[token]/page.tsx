@@ -14,6 +14,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import Footer from "@/components/footer";
 import { getPedido } from "@/lib/pedido";
@@ -29,7 +30,9 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   // "Resumo", não "pedido": o visitante não faz um pedido de compra aqui — ele envia o que escolheu e
   // recebe as condições depois.
-  title: "Resumo — Compras Paraguay",
+  // ⚠️ `absolute`: sem isso o template do layout anexa a marca de novo e o `<title>` vira
+  // "Resumo — Compras Paraguay | Compras Paraguay".
+  title: { absolute: "Resumo — Compras Paraguay" },
   robots: { index: false, follow: false },
 };
 
@@ -79,34 +82,11 @@ export default async function PedidoPage({ params }: { params: Promise<{ token: 
   const pedido = await getPedido(token);
   const ui = PEDIDO_UI[pedido?.locale ?? "pt"];
 
-  if (!pedido) {
-    return (
-      <>
-        <Navbar />
-        <main className="pt-20" style={{ background: AREIA, minHeight: "70vh" }}>
-          <div className="section-container py-16 text-center">
-            <h1
-              className="text-3xl"
-              style={{ fontFamily: "var(--font-display)", fontWeight: 600, color: TITULO }}
-            >
-              {ui.notFoundTitle}
-            </h1>
-            <p className="mx-auto mt-3 max-w-[52ch] leading-relaxed" style={{ color: SECUNDARIO }}>
-              {ui.notFoundDesc}
-            </p>
-            <Link
-              href="/roteiros-de-compras"
-              className="mt-8 inline-flex items-center justify-center rounded-3xl px-8 py-4 text-lg font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
-              style={{ background: "linear-gradient(135deg, hsl(152,47%,32%) 0%, hsl(152,50%,26%) 100%)" }}
-            >
-              {ui.notFoundCta}
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  // ⚠️ Token inexistente/temporariamente indisponível = 404 REAL, não uma página 200 com aviso.
+  // A versão anterior renderizava o aviso com status 200 (soft 404) — e esta rota é noindex, então
+  // o crawler não deveria chegar nela de todo; um 200 num link curto só confunde ferramenta de
+  // webmaster. O aviso amigável agora vem do `app/not-found.tsx`.
+  if (!pedido) notFound();
 
   // CTA de conversa: mesma condição do handoff (modo do produto = whatsapp + número central).
   // A mensagem é a do bucket de produto; aqui NÃO vai link nenhum — a pessoa já está na página dele.

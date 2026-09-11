@@ -50,8 +50,10 @@ export async function generateMetadata({
     path: `/roteiros-de-compras/${a.slug}`,
     keywords: attractionKeywords(a),
     silo: "compras",
-    image: a.cover,
-    imageAlt: `${a.name} — Foz do Iguaçu | Compras Paraguay`,
+    // ⚠️ OG NÃO usa `a.cover`: a capa é WebP e cada uma tem proporção própria (832×495 a
+    // 1399×999). O card do Facebook precisa de JPG/PNG 1200×630, então a página herda a arte
+    // padrão da marca. Se um dia houver capa JPG 1200×630 por atrativo, passar aqui.
+    imageAlt: `${a.name} — Compras Paraguay`,
     type: "article",
   });
 }

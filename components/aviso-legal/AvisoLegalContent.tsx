@@ -27,9 +27,11 @@ export default function AvisoLegalContent() {
     >
       <div className="section-container">
         <div className="mx-auto max-w-3xl">
+          {/* Dourado de texto pequeno: `40%` dava ~3,7:1 sobre o fundo areia e reprovava em AA. Em
+              `30%` passa (~5,6:1) sem sair da paleta. Texto grande/ícones podem seguir no tom da marca. */}
           <p
             className="mb-3 text-xs font-semibold uppercase tracking-widest"
-            style={{ color: "hsl(35,82%,40%)" }}
+            style={{ color: "hsl(35,82%,30%)" }}
           >
             {t.eyebrow}
           </p>

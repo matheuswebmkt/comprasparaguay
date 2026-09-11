@@ -69,12 +69,22 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/images/atrativos/compras-paraguai-ciudad-del-este/cover.webp",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Roteiro de compras em Ciudad del Este — Compras Paraguay",
       },
     ],
+  },
+  // ⚠️ Repetir `twitter` aqui: no Next, quando uma página define `openGraph`/`twitter`, o objeto
+  // do layout NÃO é mesclado em profundidade. Sem este bloco, a home servia `og:title` próprio e
+  // `twitter:title` do layout — o card do Twitter/X anunciava outro título.
+  twitter: {
+    card: "summary_large_image",
+    title: "Guia especialista de Compras no Paraguai — Ciudad del Este",
+    description:
+      "Onde comprar, horários das lojas, documentação, cota da Receita, sua logística com transporte e tudo organizado para o seu dia de compras no Paraguai ser ideal.",
+    images: ["/og-image.jpg"],
   },
 };
 

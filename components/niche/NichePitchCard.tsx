@@ -191,7 +191,7 @@ export default function NichePitchCard({ subject }: { subject: PitchSubject }) {
           </div>
         </div>
 
-        <p className="mt-10 text-center text-xs" style={{ color: "hsl(210,25%,55%)" }}>
+        <p className="mt-10 text-center text-xs" style={{ color: "hsl(210,25%,42%)" }}>
           {t.footer}
         </p>
       </div>

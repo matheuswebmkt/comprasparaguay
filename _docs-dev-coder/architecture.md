@@ -21,6 +21,7 @@ Next.js 15 (App Router) · React 19 · TypeScript · Tailwind 3 · Neon Postgres
 | Tema | Arquivo | O que responde |
 |---|---|---|
 | Rotas, superfícies expostas e fronteiras | [`architecture/rotas.md`](architecture/rotas.md) | quais rotas existem, quem é canônica, quem é noindex, o que o middleware protege, o que o sitemap/robots declaram |
+| Componentes | [`architecture/componentes.md`](architecture/componentes.md) | carga preguiçosa dos modais globais (`components/lazy/`) e a corrida evento → chunk |
 
 > Temas ainda sem arquivo não têm regra escrita: ao aparecer uma decisão de estrutura sobre um tema
 > novo, criar `architecture/<tema>.md` e acrescentar a linha aqui (§4, "Growing the structure").

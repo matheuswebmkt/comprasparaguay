@@ -1,6 +1,11 @@
 {
+  "id": "/",
   "name": "Compras Paraguay — Guia especialista de Compras no Paraguai — Ciudad del Este",
   "short_name": "Compras Paraguay",
+  "description": "Curadoria de compras na Tríplice Fronteira: Ciudad del Este, duty free e By Night em Puerto Iguazú e os shoppings da região — com guia especialista a partir de Foz do Iguaçu.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "scope": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
