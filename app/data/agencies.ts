@@ -1,6 +1,6 @@
 // Filepath: app/data/agencies.ts
-// Version: 1.0
-// Nome da Versão: "Catálogo estático de AGÊNCIAS — SSOT de perfil (Foz Falls + teste); espelha o padrão de partners.ts"
+// Version: 1.1
+// Nome da Versão: "Catálogo estático de AGÊNCIAS — SSOT de perfil (Foz Falls + Fontlux Tur + teste); espelha o padrão de partners.ts"
 //
 // ⚠️ AGÊNCIA ≠ PARTNER (conventions §13): partners = negócios locais (vitrine/SEO).
 //    Agências = quem RECEBE os leads. Bases SEPARADAS.
@@ -91,6 +91,24 @@ export const agencies: AgencyProfile[] = [
       "Ingressos",
       "Tríplice Fronteira",
     ],
+    isPublic: true,
+    status: "active",
+  },
+  {
+    slug: "fontlux-tur",
+    name: "Fontlux Tur",
+    businessType: "Agência de turismo",
+    tagline:
+      "Agência de turismo em Foz do Iguaçu com atendimento personalizado e roteiros na Tríplice Fronteira.",
+    description: [
+      "A Fontlux Tur é uma agência de turismo com atendimento personalizado para passeios, transfers e roteiros na Tríplice Fronteira.",
+    ],
+    city: "Foz do Iguaçu",
+    state: "PR",
+    country: "BR",
+    whatsapp: "5545998012721",
+    instagram: "fontlux.tur",
+    email: "contato@fontlux.com.br",
     isPublic: true,
     status: "active",
   },

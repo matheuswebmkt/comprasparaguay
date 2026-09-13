@@ -34,6 +34,12 @@ export const ENTIDADES_I18N: Record<Locale, Record<string, EntidadeI18n>> = {
         "Specialists in Foz do Iguaçu, Paraguay and Argentina — custom tours and itineraries, transfers and tickets with close-knit service.",
       highlights: ["Private tours", "Transfers", "Custom itineraries", "Tickets", "Triple Frontier"],
     },
+    "fontlux-tur": {
+      name: "Fontlux Tur",
+      businessType: "Tour agency",
+      tagline:
+        "Tour agency in Foz do Iguaçu with personalized service and itineraries across the Triple Frontier.",
+    },
     "agencia-teste": {
       name: "Test Agency",
       businessType: "Test agency",
@@ -54,6 +60,12 @@ export const ENTIDADES_I18N: Record<Locale, Record<string, EntidadeI18n>> = {
       tagline:
         "Especialistas en Foz do Iguaçu, Paraguay y Argentina — viajes e itinerarios personalizados, transfers y entradas con atención cercana.",
       highlights: ["Turismo privado", "Transfers", "Itinerarios personalizados", "Entradas", "Triple Frontera"],
+    },
+    "fontlux-tur": {
+      name: "Fontlux Tur",
+      businessType: "Agencia de turismo",
+      tagline:
+        "Agencia de turismo en Foz do Iguaçu con atención personalizada e itinerarios en la Triple Frontera.",
     },
     "agencia-teste": {
       name: "Agencia de prueba",
