@@ -23,7 +23,7 @@ const URL_PATH = "/roteiros-de-compras";
 const PUBLISHED_ISO = "2026-07-11";
 const UPDATED_ISO = "2026-07-11";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
   title: "Compras na Tríplice Fronteira - Brasil, Paraguai e Argentina",

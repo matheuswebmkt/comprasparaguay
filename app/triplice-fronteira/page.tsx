@@ -18,7 +18,7 @@ const URL_PATH = "/triplice-fronteira";
 const PUBLISHED_ISO = "2026-07-10";
 const UPDATED_ISO = "2026-07-11";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = pageMetadata({
   // ⚠️ Sem sufixo `| Compras Paraguay`: os três países SÃO a consulta desta página, e a marca só caberia

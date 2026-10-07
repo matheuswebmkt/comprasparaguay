@@ -21,7 +21,7 @@ import {
   pageMetadata,
 } from "@/lib/seo";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 // Fallback para atrativo que ainda não tem data própria no catálogo. A data REAL de cada um vive
 // em `publishedAt`/`updatedAt` no dado (`app/types/index.ts`) — antes, estas duas constantes eram

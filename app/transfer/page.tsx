@@ -7,7 +7,7 @@ import NichePageTemplate from "@/components/niche/NichePageTemplate";
 
 const niche = getNiche("transfer")!;
 
-export const revalidate = 60;
+export const revalidate = 3600;
 export const metadata = buildNicheMetadata(niche);
 
 export default function TransferPage() {

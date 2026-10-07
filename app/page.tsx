@@ -43,7 +43,7 @@ import { HOME_UI } from "@/lib/i18n/home";
 // Mantido por consistência com o resto do site (todo ponto equivalente declara revalidate
 // explicitamente). Desde a R3 a home não consome mais dado de banco — o `getVisiblePartnerSlugs()`
 // saiu junto com a vitrine de parceiros —, então isto é hoje inofensivo, não necessário.
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   // ⚠️ O `title` segue mirando "roteiro de compras em Ciudad del Este" — o comprador, não o piloto
