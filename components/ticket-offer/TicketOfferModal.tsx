@@ -860,17 +860,17 @@ export default function TicketOfferModal({
     fire(v ? "q_local_yes" : "q_local_no");
     justAnsweredRef.current = true;
   };
-  // "Incluir outros atrativos?" — lista todos os atrativos (menos o que o lead já está reservando),
-  // ordenada por nome. Os nomes vêm de `offer.attractionCatalog` (assado no servidor — o modal não
-  // importa `app/data/attractions.ts`). Desligar o toggle limpa a seleção.
-  const attractionPickerList = useMemo(
-    () =>
-      Object.entries(offer.attractionCatalog ?? {})
-        .filter(([slug]) => slug !== detail?.itemSlug)
-        .map(([slug, name]) => ({ slug, name }))
-        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
-    [offer.attractionCatalog, detail?.itemSlug],
-  );
+  // "Incluir outras opções?" — lista FIXA e curta, nesta ordem: Compras Duty Free primeiro, By Night
+  // Argentina depois. NÃO é o catálogo inteiro (os outros atrativos não são upsell natural do funil de
+  // compras), e o item do próprio lead sai mesmo estando na lista. Os nomes vêm de
+  // `offer.attractionCatalog` (assado no servidor — o modal não importa `app/data/attractions.ts`).
+  // Desligar o toggle limpa a seleção.
+  const attractionPickerList = useMemo(() => {
+    const slugs = ["duty-free-shop-puerto-iguazu-argentina", "by-night-argentina-puerto-iguazu"];
+    return slugs
+      .filter((slug) => slug !== detail?.itemSlug)
+      .map((slug) => ({ slug, name: offer.attractionCatalog?.[slug] ?? slug }));
+  }, [offer.attractionCatalog, detail?.itemSlug]);
   const toggleIncludeOtherAttractions = () => {
     setIncludeOtherAttractions((v) => {
       const next = !v;
