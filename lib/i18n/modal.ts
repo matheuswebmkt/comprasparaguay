@@ -49,8 +49,12 @@ export interface ModalUI {
    *  editável no admin. Mesmo critério já aplicado no título e no badge do modal. */
   reservaSuccessTitle: string;
   reservaSuccessClose: string;
-  /** Atrativo: expansor "Incluir ingresso de outros atrativos?" + botão de cancelar do picker. */
-  includeOtherAttractions: string;
+  /** Atrativo: bloco de atrativos extras (título + linha de apoio + expansor) e botão de
+   *  cancelar do picker. `contactTitle` encabeça o bloco do formulário. */
+  includeMoreAttractionsTitle: string;
+  includeMoreAttractionsDesc: string;
+  selectAttraction: string;
+  contactTitle: string;
   cancel: string;
   /** Rótulo do seletor de idioma no topo do modal (transplantado do RG). Fica ao lado do
    * `LanguageSwitcher` — o mesmo do navbar —, e só no modal real: no preview do admin o idioma é
@@ -116,7 +120,11 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "Solicitação de atrativo recebida!",
     reservaSuccessClose:
       "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste atrativo.",
-    includeOtherAttractions: "Incluir outros atrativos no mesmo dia?",
+    includeMoreAttractionsTitle: "Gostaria de incluir mais atrativos no seu roteiro?",
+    includeMoreAttractionsDesc:
+      "Organizamos junto ao enviar as condições e orçamento",
+    selectAttraction: "Selecionar atrativo",
+    contactTitle: "Onde te enviamos a proposta e condições dessa reserva?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",
@@ -163,7 +171,13 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "Booking request received!",
     reservaSuccessClose:
       "A specialist in Foz do Iguaçu will message you on WhatsApp with the conditions for this attraction.",
-    includeOtherAttractions: "Add other attractions to the same day?",
+    includeMoreAttractionsTitle:
+      "Would you like to add more attractions to your itinerary?",
+    includeMoreAttractionsDesc:
+      "We arrange it together when we send the conditions and the quote",
+    selectAttraction: "Select attraction",
+    contactTitle:
+      "Where should we send the proposal and conditions for this booking?",
     cancel: "cancel",
     languageLabel: "Language",
     sent: "Sent",
@@ -210,7 +224,13 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "¡Solicitud de atractivo recibida!",
     reservaSuccessClose:
       "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de este atractivo.",
-    includeOtherAttractions: "¿Incluir otros atractivos en el mismo día?",
+    includeMoreAttractionsTitle:
+      "¿Quieres incluir más atractivos en tu itinerario?",
+    includeMoreAttractionsDesc:
+      "Lo organizamos juntos al enviar las condiciones y el presupuesto",
+    selectAttraction: "Seleccionar atractivo",
+    contactTitle:
+      "¿A dónde enviamos la propuesta y las condiciones de esta reserva?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",

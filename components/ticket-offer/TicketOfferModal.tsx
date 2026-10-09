@@ -1638,80 +1638,21 @@ export default function TicketOfferModal({
                 />
               )}
 
-              {/* Atrativo: pacote com mais de um ingresso no mesmo lead. */}
+              {/* Atrativo: pacote com mais de um ingresso no mesmo lead — bloco de extras com
+                  título, linha de apoio e expansor (ExtrasPicker), idêntico ao do projeto-irmão. */}
               {isAtrativoCtx &&
                 showSubjectCard &&
                 subjectTitle &&
                 leadCopy &&
                 attractionPickerList.length > 0 && (
-                  <div className="mt-3">
-                    <button
-                      type="button"
-                      onClick={toggleIncludeOtherAttractions}
-                      className="text-sm font-semibold transition-opacity hover:opacity-80"
-                      style={{ color: "hsl(210,56%,23%)" }}
-                    >
-                      {includeOtherAttractions ? "− " : "+ "}
-                      {ui.includeOtherAttractions}
-                    </button>
-                    {includeOtherAttractions && (
-                      <div
-                        className="mt-2 rounded-2xl border p-3"
-                        style={{
-                          borderColor: "hsl(214,25%,88%)",
-                          background: "white",
-                        }}
-                      >
-                        <div className="max-h-52 overflow-y-auto flex flex-col gap-1 pr-1">
-                          {attractionPickerList.map((a) => {
-                            const checked = extraAttractions.includes(a.slug);
-                            return (
-                              <button
-                                key={a.slug}
-                                type="button"
-                                onClick={() => toggleExtraAttraction(a.slug)}
-                                className="flex items-center gap-2 rounded-xl px-2.5 py-2 text-left text-sm transition-colors"
-                                style={{
-                                  background: checked
-                                    ? "hsl(152,40%,95%)"
-                                    : "transparent",
-                                  color: checked
-                                    ? "hsl(152,47%,25%)"
-                                    : "hsl(210,25%,35%)",
-                                }}
-                              >
-                                <span
-                                  className="flex h-4 w-4 flex-none items-center justify-center rounded border"
-                                  style={{
-                                    borderColor: checked
-                                      ? "hsl(152,47%,40%)"
-                                      : "hsl(214,25%,75%)",
-                                    background: checked
-                                      ? "hsl(152,47%,40%)"
-                                      : "white",
-                                  }}
-                                  aria-hidden="true"
-                                >
-                                  {checked && (
-                                    <Check className="h-3 w-3 text-white" />
-                                  )}
-                                </span>
-                                {a.name}
-                              </button>
-                            );
-                          })}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={toggleIncludeOtherAttractions}
-                          className="mt-2 text-xs font-semibold transition-opacity hover:opacity-70"
-                          style={{ color: "hsl(210,25%,50%)" }}
-                        >
-                          {ui.cancel}
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <ExtrasPicker
+                    open={includeOtherAttractions}
+                    onToggleOpen={toggleIncludeOtherAttractions}
+                    items={attractionPickerList}
+                    selected={extraAttractions}
+                    onToggle={toggleExtraAttraction}
+                    locale={locale}
+                  />
                 )}
 
               <ModalDivider />
@@ -1879,6 +1820,15 @@ export default function TicketOfferModal({
                   {readyForForm && (
                     <>
                       <ModalDivider />
+                      {/* Título do bloco de contato — fica no dicionário FIXO (`MODAL_UI.contactTitle`)
+                          e não em `ProductLeadCopy` de propósito: campo novo no bucket de produto
+                          sairia `undefined` no objeto assado pela Data Cache, sem erro nenhum. */}
+                      <p
+                        className="text-base font-bold text-center mb-2"
+                        style={{ color: "hsl(152,47%,30%)" }}
+                      >
+                        {ui.contactTitle}
+                      </p>
                       {texts.formHint && (
                         <p
                           className="text-sm font-semibold text-center mb-2"
@@ -2283,6 +2233,150 @@ function SimNao({
 /**
  * Card do item em contexto (roteiro pronto / personalizar / atrativo).
  */
+/** Item do picker de atrativos (`offer.attractionCatalog` já satisfaz: `slug`/`name`/`hasLink`). */
+type PickerItem = { slug: string; name: string; hasLink?: boolean };
+
+/**
+ * Lista marcável do picker de atrativos — o corpo do bloco de extras do modal. O gatilho/expansor
+ * e o título ficam no `ExtrasPicker`; aqui vive só a lista + o "cancelar".
+ *
+ * Atrativo de RESERVA leva o sub-rótulo "Transporte já incluído": o transporte dele está
+ * contemplado por definição, e sem essa linha a pergunta de transporte pareceria esquecida quando a
+ * própria seleção a derruba.
+ */
+function AttractionPicker({
+  items,
+  selected,
+  onToggle,
+  onCancel,
+  locale,
+}: {
+  items: PickerItem[];
+  selected: string[];
+  onToggle: (slug: string) => void;
+  onCancel: () => void;
+  locale: Locale;
+}) {
+  const ui = MODAL_UI[locale];
+  return (
+    <div
+      className="mt-2 rounded-2xl border p-3 text-left"
+      style={{ borderColor: "hsl(214,25%,88%)", background: "white" }}
+    >
+      <div className="max-h-52 overflow-y-auto flex flex-col gap-1 pr-1">
+        {items.map((a) => {
+          const checked = selected.includes(a.slug);
+          return (
+            <button
+              key={a.slug}
+              type="button"
+              onClick={() => onToggle(a.slug)}
+              className="flex items-center gap-2 rounded-xl px-2.5 py-2 text-left text-sm transition-colors"
+              style={{
+                background: checked ? "hsl(152,40%,95%)" : "transparent",
+                color: checked
+                  ? "hsl(152,47%,25%)"
+                  : "hsl(210,25%,35%)",
+              }}
+            >
+              <span
+                className="flex h-4 w-4 flex-none items-center justify-center rounded border"
+                style={{
+                  borderColor: checked
+                    ? "hsl(152,47%,40%)"
+                    : "hsl(214,25%,75%)",
+                  background: checked ? "hsl(152,47%,40%)" : "white",
+                }}
+                aria-hidden="true"
+              >
+                {checked && <Check className="h-3 w-3 text-white" />}
+              </span>
+              <span className="min-w-0 flex-1">
+                {a.name}
+                {a.hasLink === false && (
+                  <span
+                    className="mt-0.5 block text-xs"
+                    style={{ color: "hsl(152,47%,32%)" }}
+                  >
+                    {ui.transportIncluded}
+                  </span>
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="mt-2 text-xs font-semibold transition-opacity hover:opacity-70"
+        style={{ color: "hsl(210,25%,50%)" }}
+      >
+        {ui.cancel}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Bloco de atrativos EXTRAS do pedido — título ("Gostaria de incluir mais atrativos no seu
+ * roteiro?"), a linha de como isso acontece, o expansor "+ Selecionar atrativo" e, aberto, a lista
+ * marcável (`AttractionPicker`).
+ */
+function ExtrasPicker({
+  open,
+  onToggleOpen,
+  items,
+  selected,
+  onToggle,
+  locale,
+}: {
+  open: boolean;
+  onToggleOpen: () => void;
+  items: PickerItem[];
+  selected: string[];
+  onToggle: (slug: string) => void;
+  locale: Locale;
+}) {
+  const ui = MODAL_UI[locale];
+  return (
+    <div className="mt-3">
+      <p
+        className="text-sm font-bold mb-1 text-center"
+        style={{ color: "hsl(152,47%,30%)" }}
+      >
+        {ui.includeMoreAttractionsTitle}
+      </p>
+      <p
+        className="text-xs leading-relaxed text-center mb-2"
+        style={{ color: "hsl(210,25%,45%)" }}
+      >
+        {ui.includeMoreAttractionsDesc}
+      </p>
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={onToggleOpen}
+          className="text-sm font-semibold transition-opacity hover:opacity-80"
+          style={{ color: "hsl(210,56%,23%)" }}
+        >
+          {open ? "− " : "+ "}
+          {ui.selectAttraction}
+        </button>
+      </div>
+      {open && (
+        <AttractionPicker
+          items={items}
+          selected={selected}
+          onToggle={onToggle}
+          onCancel={onToggleOpen}
+          locale={locale}
+        />
+      )}
+    </div>
+  );
+}
+
 function SubjectItemCard({
   label,
   copy,
