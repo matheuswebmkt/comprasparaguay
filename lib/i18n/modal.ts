@@ -120,10 +120,10 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessTitle: "Solicitação de atrativo recebida!",
     reservaSuccessClose:
       "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste atrativo.",
-    includeMoreAttractionsTitle: "Gostaria de incluir mais atrativos no seu roteiro?",
+    includeMoreAttractionsTitle: "Gostaria de incluir mais opções no seu roteiro?",
     includeMoreAttractionsDesc:
       "Organizamos junto ao enviar as condições e orçamento",
-    selectAttraction: "Selecionar atrativo",
+    selectAttraction: "Selecionar opções",
     contactTitle: "Onde te enviamos a proposta e condições dessa reserva?",
     cancel: "cancelar",
     languageLabel: "Idioma",
@@ -172,10 +172,10 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessClose:
       "A specialist in Foz do Iguaçu will message you on WhatsApp with the conditions for this attraction.",
     includeMoreAttractionsTitle:
-      "Would you like to add more attractions to your itinerary?",
+      "Would you like to add more options to your itinerary?",
     includeMoreAttractionsDesc:
       "We arrange it together when we send the conditions and the quote",
-    selectAttraction: "Select attraction",
+    selectAttraction: "Select options",
     contactTitle:
       "Where should we send the proposal and conditions for this booking?",
     cancel: "cancel",
@@ -225,10 +225,10 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     reservaSuccessClose:
       "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de este atractivo.",
     includeMoreAttractionsTitle:
-      "¿Quieres incluir más atractivos en tu itinerario?",
+      "¿Quieres incluir más opciones en tu itinerario?",
     includeMoreAttractionsDesc:
       "Lo organizamos juntos al enviar las condiciones y el presupuesto",
-    selectAttraction: "Seleccionar atractivo",
+    selectAttraction: "Seleccionar opciones",
     contactTitle:
       "¿A dónde enviamos la propuesta y las condiciones de esta reserva?",
     cancel: "cancelar",

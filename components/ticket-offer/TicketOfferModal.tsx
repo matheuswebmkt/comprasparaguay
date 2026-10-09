@@ -1711,6 +1711,17 @@ export default function TicketOfferModal({
                   {/* Card único consolidado (nome/telefone/morador?/já-em-Foz?) — só quando NÃO editando (identidade
                       já conhecida/válida, ver `editingContact` acima). Quando editando, mostra as 2 perguntas ao
                       vivo (bloco abaixo); "Editar" nunca reabre ESSE bloco, só volta pros campos de contato. */}
+                  {/* Título do bloco de contato em MODO CONSOLIDADO — acima do card de infos
+                      consolidadas (nome/telefone/morador?/já-em-Foz?): o título encabeça as infos,
+                      não vem depois delas. Em edição o título desce pro formulário (bloco abaixo). */}
+                  {!editingContact && (
+                    <p
+                      className="text-base font-bold text-center mb-2"
+                      style={{ color: "hsl(152,47%,30%)" }}
+                    >
+                      {ui.contactTitle}
+                    </p>
+                  )}
                   {!editingContact && identitySummary}
 
                   {editingContact && (
@@ -1820,15 +1831,19 @@ export default function TicketOfferModal({
                   {readyForForm && (
                     <>
                       <ModalDivider />
-                      {/* Título do bloco de contato — fica no dicionário FIXO (`MODAL_UI.contactTitle`)
-                          e não em `ProductLeadCopy` de propósito: campo novo no bucket de produto
-                          sairia `undefined` no objeto assado pela Data Cache, sem erro nenhum. */}
-                      <p
-                        className="text-base font-bold text-center mb-2"
-                        style={{ color: "hsl(152,47%,30%)" }}
-                      >
-                        {ui.contactTitle}
-                      </p>
+                      {/* Título do bloco de contato em MODO EDIÇÃO — acima do formulário, pois as
+                          infos não estão consolidadas (a versão consolidada leva o título lá em cima,
+                          no bloco do card — ver abaixo). Dicionário FIXO (`MODAL_UI.contactTitle`) e
+                          não `ProductLeadCopy` de propósito: campo novo no bucket de produto sairia
+                          `undefined` no objeto assado pela Data Cache, sem erro nenhum. */}
+                      {editingContact && (
+                        <p
+                          className="text-base font-bold text-center mb-2"
+                          style={{ color: "hsl(152,47%,30%)" }}
+                        >
+                          {ui.contactTitle}
+                        </p>
+                      )}
                       {texts.formHint && (
                         <p
                           className="text-sm font-semibold text-center mb-2"
@@ -2319,8 +2334,8 @@ function AttractionPicker({
 }
 
 /**
- * Bloco de atrativos EXTRAS do pedido — título ("Gostaria de incluir mais atrativos no seu
- * roteiro?"), a linha de como isso acontece, o expansor "+ Selecionar atrativo" e, aberto, a lista
+ * Bloco de atrativos EXTRAS do pedido — título ("Gostaria de incluir mais opções no seu
+ * roteiro?"), a linha de como isso acontece, o expansor "+ Selecionar opções" e, aberto, a lista
  * marcável (`AttractionPicker`).
  */
 function ExtrasPicker({
