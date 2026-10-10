@@ -1634,6 +1634,7 @@ export default function TicketOfferModal({
                   includedLabel={
                     isReservaCtx ? ui.transportIncluded : leadCopy.subjectIncluded
                   }
+                  transportImage={isReservaCtx}
                   locale={locale}
                 />
               )}
@@ -2398,6 +2399,7 @@ function SubjectItemCard({
   image,
   badge,
   includedLabel,
+  transportImage,
   locale,
 }: {
   label: string;
@@ -2405,6 +2407,9 @@ function SubjectItemCard({
   image: string | null;
   badge: string;
   includedLabel: string;
+  /** Reserva de data: exibe a imagem do transfer abaixo do rótulo "Transporte já incluído",
+   *  dentro da própria pílula verde (mesmo desenho da pergunta de transfer do rodagigantefoz). */
+  transportImage?: boolean;
   locale: Locale;
 }) {
   const ui = MODAL_UI[locale];
@@ -2464,15 +2469,32 @@ function SubjectItemCard({
         </div>
       </div>
       <div
-        className="mt-3 flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-bold"
+        className="mt-3 overflow-hidden rounded-xl border text-xs font-bold"
         style={{
           borderColor: "hsl(152,35%,80%)",
           background: "hsl(152,40%,97%)",
           color: "hsl(152,47%,28%)",
         }}
       >
-        <Check className="h-3.5 w-3.5" aria-hidden />
-        {includedLabel || ui.includedBadge}
+        <div className="flex items-center justify-center gap-1.5 py-2">
+          <Check className="h-3.5 w-3.5" aria-hidden />
+          {includedLabel || ui.includedBadge}
+        </div>
+        {/* Imagem do transfer — FIXA em código (`/images/transfer/cover.webp`), decorativa (`alt=""`):
+            o rótulo acima já descreve o serviço. `fill` + wrapper `aspect-[16/9]` p/ crop consistente;
+            `overflow-hidden` no container mantém os cantos arredondados da pílula. */}
+        {transportImage && (
+          <div className="relative aspect-[16/9] w-full border-t" style={{ borderColor: "hsl(152,35%,85%)" }}>
+            <Image
+              src="/images/transfer/cover.webp"
+              alt=""
+              fill
+              sizes="(max-width: 448px) 100vw, 448px"
+              quality={85}
+              className="object-cover"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
