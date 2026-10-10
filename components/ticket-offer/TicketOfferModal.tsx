@@ -2476,7 +2476,7 @@ function SubjectItemCard({
           color: "hsl(152,47%,28%)",
         }}
       >
-        <div className="flex items-center justify-center gap-1.5 pt-2">
+        <div className="flex items-center justify-center gap-1.5 pt-3">
           <Check className="h-3.5 w-3.5" aria-hidden />
           {includedLabel || ui.includedBadge}
         </div>
@@ -2484,7 +2484,7 @@ function SubjectItemCard({
             o rótulo acima já descreve o serviço. `fill` + wrapper `aspect-[16/9]` p/ crop consistente;
             `overflow-hidden` no container mantém os cantos arredondados da pílula. */}
         {transportImage && (
-          <div className="p-2 pt-2">
+          <div className="p-3 pt-3">
             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border" style={{ borderColor: "hsl(152,35%,85%)" }}>
               <Image
                 src="/images/transfer/cover.webp"
