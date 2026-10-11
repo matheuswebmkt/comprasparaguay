@@ -202,12 +202,12 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
   atrativo: {
     pt: {
       title: "Receba as condições desse ingresso",
-      // subtitle: “Orçamento e informações” (decisão do usuário set/2026 — substitui a antiga decisão
-      // de vazio). Vale para os DOIS contextos atrativo (ingresso E reserva de data): o modal renderiza
-      // `texts.subtitle` do bucket atrativo nos dois. “Orçamento” = dinheiro do VISITANTE (§21.5).
-      subtitle: "Orçamento e informações",
+      // subtitle: “Orçamento e informações sobre disponibilidade” (decisão do usuário — substitui a
+      // antiga decisão de vazio). Vale para os DOIS contextos atrativo (ingresso E reserva de data): o
+      // modal renderiza `texts.subtitle` do bucket atrativo nos dois. “Orçamento” = dinheiro do VISITANTE (§21.5).
+      subtitle: "Orçamento e informações sobre disponibilidade",
       formHint: "",
-      submitLabel: "Finalizar e continuar",
+      submitLabel: "Receber as informações",
       successTitle: "Solicitação de ingresso recebida!",
       successClose:
         "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste ingresso e a melhor forma de encaixá-lo no restante dos seus dias na cidade.",
@@ -227,9 +227,9 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
     },
     en: {
       title: "Receive the conditions for this ticket",
-      subtitle: "Budget and information",
+      subtitle: "Budget and availability information",
       formHint: "",
-      submitLabel: "Receive the ticket conditions",
+      submitLabel: "Receive the information",
       successTitle: "Ticket request received!",
       successClose:
         "A Foz do Iguaçu specialist will message you on WhatsApp with this ticket's conditions and the best way to fit it into the rest of your days in the city.",
@@ -245,9 +245,9 @@ export const DEFAULT_PRODUCT_COPIES: ProductCopies = {
     },
     es: {
       title: "Recibe las condiciones de esta entrada",
-      subtitle: "Presupuesto e información",
+      subtitle: "Presupuesto e información sobre disponibilidad",
       formHint: "",
-      submitLabel: "Finalizar y continuar",
+      submitLabel: "Recibir la información",
       successTitle: "¡Solicitud de entrada recibida!",
       successClose:
         "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de esta entrada y la mejor forma de encajarla en el resto de tus días en la ciudad.",

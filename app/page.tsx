@@ -98,15 +98,13 @@ export default function Home() {
       <JsonLd data={faqSchema(HOME_UI.pt.faq.items)} />
       <Navbar />
       <main style={{ background: "hsl(40,33%,97%)" }}>
-        {/* Alternância de fundo §7.5: Hero areia → DoresSection branco → AutoridadeSection areia →
-            TransferPitchCard branco → FAQ areia → PilaresFoz branco → CtaFinal areia.
-            ⓘ O card de transfer FECHA o bloco (4º), herdando o branco — a alternância areia/branco
-            segue intacta em toda a página. */}
+        {/* Alternância de fundo §7.5: Hero branco → DoresSection areia → TransferPitchCard branco →
+            AutoridadeSection areia → FAQ branco → PilaresFoz areia → CtaFinal branco. */}
         <RoteirosHero />
         <DoresSection />
-        <AutoridadeSection />
         {/* O card é o mesmo do `/transfer`; `placement="home"` só troca o fundo e a telemetria. */}
         <TransferPitchCard placement="home" />
+        <AutoridadeSection />
         <FaqSection />
         <PilaresFoz />
         <CtaFinal />

@@ -170,7 +170,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1After: "do jeito certo",
       h1LineBreakAfterStrong: false,
       subtitle:
-        "Te levamos às compras no Paraguai — Ciudad del Este, com ida e volta a partir do seu hotel em Foz do Iguaçu. Segurança para você e suas compras com nossos guias especialistas.",
+        "Evite dor de cabeça com suas compras e documentação ao atravessar a ponte. Facilidade e segurança garantida com nosso transporte e guias especialistas à sua disposição.",
     },
     dores: {
       eyebrow: "O cenário",
@@ -329,7 +329,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1After: "done right",
       h1LineBreakAfterStrong: false,
       subtitle:
-        "We take you shopping in Paraguay — Ciudad del Este, round trip from your hotel in Foz do Iguaçu. You and your purchases stay safe with our expert guides.",
+        "Avoid headaches with your shopping and paperwork when crossing the bridge. Ease and guaranteed safety with our transport and expert guides at your disposal.",
     },
     dores: {
       eyebrow: "The scenario",
@@ -478,7 +478,7 @@ export const HOME_UI: Record<Locale, HomeUI> = {
       h1After: "como deben ser",
       h1LineBreakAfterStrong: false,
       subtitle:
-        "Te llevamos de compras por Paraguay — Ciudad del Este, con ida y vuelta desde tu hotel en Foz do Iguaçu. Seguridad para ti y tus compras con nuestros guías especialistas.",
+        "Evita dolores de cabeza con tus compras y documentación al cruzar el puente. Facilidad y seguridad garantizada con nuestro transporte y guías especialistas a tu disposición.",
     },
     dores: {
       eyebrow: "El escenario",

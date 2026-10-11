@@ -37,6 +37,7 @@ que de fato responde por aquele conteúdo. Ao criar redes próprias do domínio,
 | Parceiros cadastrados | lista vazia em `app/data/partners.ts` — os slots de "Recomendação Oficial" exibem o empty state |
 | `PartnerCategory` | só `"turismo"` |
 | Nichos ativos | um só: `transfer` (rota fixa `/transfer`) |
+| Transfer de aeroporto / check-in e check-out no hotel | **Incluído de propósito** como serviço de logística (item `aeroporto-checkin-checkout-hotel` em `app/data/attractions.ts`): aparece como 6º item do hub `/roteiros-de-compras` e no seletor "incluir outras opções" do modal. Não é destino de compras — é apoio ao deslocamento do lead, e a exceção convive com a exclusão de turismo generalista da §1 |
 
 ⚠️ **Isso vale para o dado deste repositório, não para o vocabulário do pixel.** Os enums de
 `lib/tracking-taxonomy.ts` permanecem o superset do portfólio — ver `conventions/tracking-metricas.md`

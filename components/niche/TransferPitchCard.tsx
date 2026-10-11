@@ -1,6 +1,6 @@
 // Filepath: components/niche/TransferPitchCard.tsx
 // Version: 2.3
-// Nome da Versão: "na home o card fecha o bloco (4º) — fundo AREIA (ritmo branco→areia que fecha com o footer)"
+// Nome da Versão: "na home o card é o 3º — fundo BRANCO; a AutoridadeSection passa a fechar o par com areia"
 //
 // Card "nosso" do transfer — imagem de van neutra com a identidade do site, SEM nome nem marca de
 // agência. Foi criado como o card de recomendação do nicho `transfer` (substituindo o card da
@@ -14,8 +14,8 @@
 //
 // ⚠️ `placement` existe por causa da ALTERNÂNCIA DE FUNDO (§7.5). O ritmo da home é
 //    BRANCO→AREIA→BRANCO→AREIA→BRANCO→AREIA→BRANCO (hero a CtaFinal, fecha com o footer) e o card
-//    é o 4º da sequência (4ª seção = areia): em `/transfer` ele é branco (como sempre foi). Fundo
-//    só tem DOIS valores válidos — branco `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
+//    é o 3º da sequência (3ª seção = branco): em `/transfer` ele também é branco. Fundo só tem DOIS
+//    valores válidos — branco `hsl(0,0%,100%)` ou Areia `hsl(40,33%,97%)`.
 //
 // ⚠️ Sem nome de agência aqui, e sem copy de parceiro: a copy/SEO da página de nicho vive em
 //    `app/data/niches.ts` e nunca menciona o recomendado (`NicheRecommendation`, §13).
@@ -41,7 +41,7 @@ const PLACEMENT = {
     source: "transfer-card",
   },
   home: {
-    background: "hsl(40,33%,97%)",
+    background: "hsl(0,0%,100%)",
     ctaType: "home_transfer_reserva",
     impressionType: "home_transfer",
     source: "home-transfer",

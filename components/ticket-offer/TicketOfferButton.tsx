@@ -7,6 +7,7 @@
 import React from "react";
 import { buildTrackedUrl, type UtmParams } from "@/lib/utm";
 import { track } from "@/lib/track";
+import { grantCookieConsent } from "@/lib/cookie-consent";
 import type { LeadContext, LeadIntent, TicketOfferOpenDetail } from "@/lib/roteiro-lead";
 
 interface TicketOfferButtonProps {
@@ -65,6 +66,9 @@ export default function TicketOfferButton({
     // clique bubbla pro <Link> e navega pro atrativo além de (ou em vez de) abrir o modal.
     e.preventDefault();
     e.stopPropagation();
+    // Abrir a reserva É o aceite do banner: sem clique extra e sem o banner sobre o modal.
+    // O `ConsentGate` monta Pixel/GTM a partir daqui; `lib/fbq` segura o IC até o `fbq` subir.
+    grantCookieConsent();
     // "Cliques nos CTAs" (/admin/dashboard/pagina) só conta o que passa por `track()` — antes este botão
     // só disparava o CustomEvent abaixo (que abre o modal) e nunca chamava `track()`, então nenhum clique
     // aqui era contado. ⚠️ `destination: "#"`: o clique abre o MODAL, o visitante não vai a lugar nenhum

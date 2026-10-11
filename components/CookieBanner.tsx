@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Cookie } from "lucide-react";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { SHARED_UI } from "@/lib/i18n/shared";
-import { hasCookieConsent, grantCookieConsent } from "@/lib/cookie-consent";
+import { hasCookieConsent, grantCookieConsent, COOKIE_CONSENT_EVENT } from "@/lib/cookie-consent";
 
 export default function CookieBanner() {
   const { locale } = useLocale();
@@ -19,6 +19,11 @@ export default function CookieBanner() {
   useEffect(() => {
     // Só decide no client (evita flash/hydration mismatch — o servidor não sabe o que está no localStorage).
     setVisible(!hasCookieConsent());
+    // O aceite pode vir de fora (ex: clique no CTA de reserva em TicketOfferButton) — sem isto o
+    // banner ficaria por cima do modal. Fecha sempre que o consentimento for concedido.
+    const onGranted = () => setVisible(false);
+    window.addEventListener(COOKIE_CONSENT_EVENT, onGranted);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, onGranted);
   }, []);
 
   if (!visible) return null;
@@ -43,22 +48,33 @@ export default function CookieBanner() {
         }}
       >
         <Cookie className="h-6 w-6 flex-none hidden sm:block" style={{ color: "hsl(38,90%,60%)" }} aria-hidden="true" />
-        <p className="text-sm leading-relaxed text-white/75 flex-1">
-          {t.textBefore}{" "}
-          <Link href="/aviso-legal" className="underline underline-offset-2 text-white/90">
-            {t.linkLabel}
-          </Link>
-          {t.textAfter}
+        <p className="text-[0.625rem] sm:text-xs leading-relaxed text-white/75 flex-1">
+          {t.text}
+          <span className="hidden sm:inline">
+            {" "}
+            {t.learnMoreBefore}
+            <Link href="/aviso-legal" className="underline underline-offset-2 text-white/90">
+              {t.linkLabel}
+            </Link>
+            {t.learnMoreAfter}
+          </span>
         </p>
         <button
           onClick={onAccept}
-          className="flex-none inline-flex items-center justify-center rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
+          className="flex-none inline-flex items-center justify-center rounded-xl px-5 py-1.5 text-xs font-bold text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
           style={{
             background: "linear-gradient(135deg, hsl(35,82%,47%) 0%, hsl(38,90%,55%) 100%)",
           }}
         >
           {t.accept}
         </button>
+        <span className="sm:hidden text-center text-[0.625rem] leading-relaxed text-white/60">
+          {t.learnMoreBefore}
+          <Link href="/aviso-legal" className="underline underline-offset-2 text-white/80">
+            {t.linkLabel}
+          </Link>
+          {t.learnMoreAfter}
+        </span>
       </div>
     </div>
   );

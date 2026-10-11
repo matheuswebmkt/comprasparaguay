@@ -12,7 +12,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Script from "next/script";
-import { X, CalendarCheck, Check, CircleCheck, Loader2, Pencil, Route, Ticket } from "lucide-react";
+import { X, CalendarCheck, Check, CircleCheck, Loader2, Pencil, RefreshCw, Route, Ticket, User } from "lucide-react";
 import TurnstileWidget, {
   TURNSTILE_ENABLED,
 } from "@/components/ticket-offer/TurnstileWidget";
@@ -36,6 +36,7 @@ import {
   modalTexts,
 } from "@/lib/i18n/modal";
 import { waMessageWithLink } from "@/lib/pedido-resumo";
+import { SHARED_UI } from "@/lib/i18n/shared";
 import type { Locale } from "@/lib/i18n/config";
 import {
   DEFAULT_PRODUCT_COPIES,
@@ -141,6 +142,14 @@ function clearDraft(): void {
     // noop
   }
 }
+
+/** Slugs cujo card do assunto exibe os itens do produto ("Ida e Volta" + "Guia especialista").
+ *  Só os destinos de compras em que transporte/guia fazem parte da oferta. */
+const PRODUCT_FEATURE_SLUGS = [
+  "compras-paraguai-ciudad-del-este",
+  "by-night-argentina-puerto-iguazu",
+  "duty-free-shop-puerto-iguazu-argentina",
+];
 
 interface TicketOfferModalProps {
   /**
@@ -315,7 +324,15 @@ export default function TicketOfferModal({
     detail?.roteiroTitulo ||
     (isAtrativoCtx ? detail?.itemSlug : null);
   const subjectImage = detail?.subjectImage ?? null;
-  const subjectSubtitle = subjectTraduzido?.subtitle ?? detail?.subjectSubtitle ?? null;
+  // Subtítulo do mini card: nos atrativos é SEMPRE o pitch padrão do produto (não a tagline do
+  // atrativo), para o card ficar uniforme em todos os modais; roteiro segue com o seu.
+  const subjectSubtitle = isAtrativoCtx
+    ? SHARED_UI[locale].roteirosCta.reservaSubjectSub
+    : subjectTraduzido?.subtitle ?? detail?.subjectSubtitle ?? null;
+  // Itens do produto no card: só nos destinos de compras (não nos shoppings nem no transfer de aeroporto).
+  const showProductFeatures = Boolean(
+    detail?.itemSlug && PRODUCT_FEATURE_SLUGS.includes(detail.itemSlug),
+  );
   const showSubjectCard =
     Boolean(subjectTitle) && (isRoteiroCtx || isAtrativoCtx);
   const effectiveAgencyChecked = true;
@@ -860,13 +877,17 @@ export default function TicketOfferModal({
     fire(v ? "q_local_yes" : "q_local_no");
     justAnsweredRef.current = true;
   };
-  // "Incluir outras opções?" — lista FIXA e curta, nesta ordem: Compras Duty Free primeiro, By Night
-  // Argentina depois. NÃO é o catálogo inteiro (os outros atrativos não são upsell natural do funil de
-  // compras), e o item do próprio lead sai mesmo estando na lista. Os nomes vêm de
+  // "Incluir outras opções?" — lista FIXA e curta, nesta ordem: Duty Free, By Night Argentina e o
+  // transfer de aeroporto. NÃO é o catálogo inteiro (os outros atrativos não são upsell natural do
+  // funil de compras), e o item do próprio lead sai mesmo estando na lista. Os nomes vêm de
   // `offer.attractionCatalog` (assado no servidor — o modal não importa `app/data/attractions.ts`).
   // Desligar o toggle limpa a seleção.
   const attractionPickerList = useMemo(() => {
-    const slugs = ["duty-free-shop-puerto-iguazu-argentina", "by-night-argentina-puerto-iguazu"];
+    const slugs = [
+      "duty-free-shop-puerto-iguazu-argentina",
+      "by-night-argentina-puerto-iguazu",
+      "aeroporto-checkin-checkout-hotel",
+    ];
     return slugs
       .filter((slug) => slug !== detail?.itemSlug)
       .map((slug) => ({ slug, name: offer.attractionCatalog?.[slug] ?? slug }));
@@ -1627,17 +1648,13 @@ export default function TicketOfferModal({
                   }
                   image={subjectImage}
                   badge={isReservaCtx ? ui.reservaBadge : leadCopy.subjectBadge}
-                  /* Atrativo de RESERVA: o rótulo "Incluído" do mini-card é o aviso de que o transporte
-                     está contemplado — é fato do produto (ver `transportEfetivo`), independente de
-                     toggle de admin. Este é o único lugar da tela onde a informação cabe sem virar um
-                     bloco a mais, e é o que substitui a antiga pergunta Sim/Não. */
-                  includedLabel={
-                    isReservaCtx ? ui.transportIncluded : leadCopy.subjectIncluded
-                  }
                   transportImage={isReservaCtx}
+                  showFeatures={showProductFeatures}
                   locale={locale}
                 />
               )}
+
+              <ModalDivider />
 
               {/* Atrativo: pacote com mais de um ingresso no mesmo lead — bloco de extras com
                   título, linha de apoio e expansor (ExtrasPicker), idêntico ao do projeto-irmão. */}
@@ -2398,18 +2415,18 @@ function SubjectItemCard({
   copy,
   image,
   badge,
-  includedLabel,
   transportImage,
+  showFeatures,
   locale,
 }: {
   label: string;
   copy: string;
   image: string | null;
   badge: string;
-  includedLabel: string;
-  /** Reserva de data: exibe a imagem do transfer abaixo do rótulo "Transporte já incluído",
-   *  dentro da própria pílula verde (mesmo desenho da pergunta de transfer do rodagigantefoz). */
+  /** Reserva de data: exibe a imagem do transfer abaixo do título/copy do assunto. */
   transportImage?: boolean;
+  /** Itens do produto ("Ida e Volta" + "Guia especialista"): só nos destinos de compras. */
+  showFeatures?: boolean;
   locale: Locale;
 }) {
   const ui = MODAL_UI[locale];
@@ -2419,7 +2436,7 @@ function SubjectItemCard({
       style={{ borderColor: "hsl(214,25%,88%)", background: "white" }}
     >
       <div className="overflow-hidden">
-        {image ? (
+        {image && (
           <Image
             src={image}
             alt=""
@@ -2433,14 +2450,6 @@ function SubjectItemCard({
             quality={85}
             className="float-left mr-3 mb-1 h-[56px] w-[56px] rounded-xl object-cover"
           />
-        ) : (
-          <div
-            className="float-left mr-3 mb-1 flex h-[56px] w-[56px] items-center justify-center rounded-xl text-2xl"
-            style={{ background: "hsl(214,50%,96%)" }}
-            aria-hidden
-          >
-            🗺️
-          </div>
         )}
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -2455,49 +2464,61 @@ function SubjectItemCard({
             </span>
           </div>
           <p
-            className="mt-1 text-sm font-bold leading-snug"
+            className="mt-1 text-base font-bold leading-snug"
             style={{ color: "hsl(210,60%,15%)" }}
           >
             {label}
           </p>
           <p
-            className="mt-0.5 text-xs leading-relaxed"
+            className="mt-0.5 text-sm leading-relaxed"
             style={{ color: "hsl(210,25%,45%)" }}
           >
             {copy}
           </p>
         </div>
       </div>
-      <div
-        className="mt-3 overflow-hidden rounded-xl border text-xs font-bold"
-        style={{
-          borderColor: "hsl(152,35%,80%)",
-          background: "hsl(152,40%,97%)",
-          color: "hsl(152,47%,28%)",
-        }}
-      >
-        <div className="flex items-center justify-center gap-1.5 pt-3">
-          <Check className="h-3.5 w-3.5" aria-hidden />
-          {includedLabel || ui.includedBadge}
-        </div>
-        {/* Imagem do transfer — FIXA em código (`/images/transfer/cover.webp`), decorativa (`alt=""`):
-            o rótulo acima já descreve o serviço. `fill` + wrapper `aspect-[16/9]` p/ crop consistente;
-            `overflow-hidden` no container mantém os cantos arredondados da pílula. */}
-        {transportImage && (
-          <div className="p-3 pt-3">
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border" style={{ borderColor: "hsl(152,35%,85%)" }}>
-              <Image
-                src="/images/transfer/cover.webp"
-                alt=""
-                fill
-                sizes="(max-width: 448px) 100vw, 448px"
-                quality={85}
-                className="object-cover"
-              />
-            </div>
+      {transportImage && (
+        <div className="mt-3">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border" style={{ borderColor: "hsl(152,35%,85%)" }}>
+            <Image
+              src="/images/transfer/cover.webp"
+              alt=""
+              fill
+              sizes="(max-width: 448px) 100vw, 448px"
+              quality={85}
+              className="object-cover"
+            />
           </div>
-        )}
+        </div>
+      )}
+      {/* Itens do produto em duas colunas, abaixo da imagem do transfer — substituem o antigo
+          rótulo "Transporte já incluído". Só nos destinos de compras (`PRODUCT_FEATURE_SLUGS`). */}
+      {showFeatures && (
+        <div className="mt-3 grid grid-cols-2 gap-3">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <RefreshCw className="h-3.5 w-3.5 flex-none" style={{ color: "hsl(152,47%,32%)" }} aria-hidden />
+            <p className="text-sm font-bold leading-snug" style={{ color: "hsl(210,60%,15%)" }}>
+              {ui.featureRoundTrip}
+            </p>
+          </div>
+          <p className="mt-0.5 text-xs leading-relaxed" style={{ color: "hsl(210,25%,45%)" }}>
+            {ui.featureRoundTripSub}
+          </p>
+        </div>
+        <div>
+          <div className="flex items-center gap-1.5">
+            <User className="h-3.5 w-3.5 flex-none" style={{ color: "hsl(152,47%,32%)" }} aria-hidden />
+            <p className="text-sm font-bold leading-snug" style={{ color: "hsl(210,60%,15%)" }}>
+              {ui.featureGuide}
+            </p>
+          </div>
+          <p className="mt-0.5 text-xs leading-relaxed" style={{ color: "hsl(210,25%,45%)" }}>
+            {ui.featureGuideSub}
+          </p>
+        </div>
       </div>
+      )}
     </div>
   );
 }

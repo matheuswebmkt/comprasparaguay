@@ -72,9 +72,10 @@ export interface SharedUI {
   /** Banner de cookies (componente global, sem CMP externo). */
   cookieBanner: {
     ariaLabel: string;
-    textBefore: string;
+    text: string;
+    learnMoreBefore: string;
     linkLabel: string;
-    textAfter: string;
+    learnMoreAfter: string;
     accept: string;
   };
   /** Sidebar de contato (mini modal de contato e modais de detalhe). */
@@ -135,7 +136,7 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       ctaReserva: "Reservar data",
       reservaSubject: "Compras no Paraguai — Ciudad del Este",
       reservaSubjectSub:
-        "Dia de compras com carro privativo e guia especialista, saindo do seu hotel em Foz do Iguaçu",
+        "Veículo e guia especialista à sua disposição, para você ir e voltar com segurança!",
     },
     attractionsSection: {
       eyebrow: "Atrativos turísticos",
@@ -156,10 +157,11 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
     },
     cookieBanner: {
       ariaLabel: "Aviso de cookies",
-      textBefore:
-        "Usamos cookies e tecnologias semelhantes para melhorar sua experiência e medir a performance do site. Ao continuar navegando, você concorda com isso — saiba mais no nosso ",
+      text:
+        "Usamos cookies e tecnologias semelhantes para melhorar sua experiência e medir a performance do site.",
+      learnMoreBefore: "Saiba mais no nosso ",
       linkLabel: "Aviso Legal, Termos e Privacidade",
-      textAfter: ".",
+      learnMoreAfter: ".",
       accept: "Entendi",
     },
     contactSidebar: {
@@ -211,7 +213,7 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       ctaReserva: "Reserve a date",
       reservaSubject: "Shopping in Paraguay — Ciudad del Este",
       reservaSubjectSub:
-        "A shopping day with a private car and an expert guide, leaving from your hotel in Foz do Iguaçu",
+        "A vehicle and an expert guide at your disposal, so you can come and go safely!",
     },
     attractionsSection: {
       eyebrow: "Tourist attractions",
@@ -232,10 +234,11 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
     },
     cookieBanner: {
       ariaLabel: "Cookie notice",
-      textBefore:
-        "We use cookies and similar technologies to improve your experience and measure site performance. By continuing to browse, you agree to this — learn more in our ",
+      text:
+        "We use cookies and similar technologies to improve your experience and measure site performance.",
+      learnMoreBefore: "Learn more in our ",
       linkLabel: "Legal Notice, Terms and Privacy",
-      textAfter: ".",
+      learnMoreAfter: ".",
       accept: "Got it",
     },
     contactSidebar: {
@@ -287,7 +290,7 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
       ctaReserva: "Reservar fecha",
       reservaSubject: "Compras en Paraguay — Ciudad del Este",
       reservaSubjectSub:
-        "Un día de compras con auto privado y guía especialista, saliendo desde tu hotel en Foz do Iguaçu",
+        "¡Vehículo y guía especialista a tu disposición, para que vayas y vuelvas con seguridad!",
     },
     attractionsSection: {
       eyebrow: "Atractivos turísticos",
@@ -308,10 +311,11 @@ export const SHARED_UI: Record<Locale, SharedUI> = {
     },
     cookieBanner: {
       ariaLabel: "Aviso de cookies",
-      textBefore:
-        "Usamos cookies y tecnologías similares para mejorar tu experiencia y medir el rendimiento del sitio. Al continuar navegando, aceptas esto — conoce más en nuestro ",
+      text:
+        "Usamos cookies y tecnologías similares para mejorar tu experiencia y medir el rendimiento del sitio.",
+      learnMoreBefore: "Conoce más en nuestro ",
       linkLabel: "Aviso Legal, Términos y Privacidad",
-      textAfter: ".",
+      learnMoreAfter: ".",
       accept: "Entendido",
     },
     contactSidebar: {

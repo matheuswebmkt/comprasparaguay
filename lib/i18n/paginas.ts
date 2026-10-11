@@ -243,7 +243,7 @@ export const AVISO_LEGAL_UI: Record<Locale, AvisoLegalUI> = {
       {
         title: "Cookies e tecnologias semelhantes",
         paragraphs: [
-          "Usamos cookies e tecnologias de medição (incluindo, quando você aceita o banner, tags de marketing) para entender o uso do site e melhorar a experiência. Detalhes práticos estão no banner de cookies e nesta política. Analytics 1st-party essencial pode funcionar sem PII identificável.",
+          "Usamos cookies e tecnologias de medição (incluindo tags de marketing ativadas quando você aceita o banner ou interage com o site, por exemplo ao abrir o formulário de reserva) para entender o uso do site e melhorar a experiência. Detalhes práticos estão no banner de cookies e nesta política. Analytics 1st-party essencial pode funcionar sem PII identificável.",
         ],
       },
       {
@@ -291,7 +291,7 @@ export const AVISO_LEGAL_UI: Record<Locale, AvisoLegalUI> = {
       {
         title: "Cookies and similar technologies",
         paragraphs: [
-          "We use cookies and measurement technologies (including marketing tags when you accept the banner) to understand site usage and improve the experience. Practical details are in the cookie banner and in this policy. Essential first-party analytics may work without identifiable PII.",
+          "We use cookies and measurement technologies (including marketing tags enabled when you accept the banner or interact with the site, for example by opening the booking form) to understand site usage and improve the experience. Practical details are in the cookie banner and in this policy. Essential first-party analytics may work without identifiable PII.",
         ],
       },
       {
@@ -339,7 +339,7 @@ export const AVISO_LEGAL_UI: Record<Locale, AvisoLegalUI> = {
       {
         title: "Cookies y tecnologías similares",
         paragraphs: [
-          "Usamos cookies y tecnologías de medición (incluidas, cuando aceptas el banner, etiquetas de marketing) para entender el uso del sitio y mejorar la experiencia. Los detalles prácticos están en el banner de cookies y en esta política. Los analytics de primera parte esenciales pueden funcionar sin PII identificable.",
+          "Usamos cookies y tecnologías de medición (incluidas las etiquetas de marketing activadas cuando aceptas el banner o interactúas con el sitio, por ejemplo al abrir el formulario de reserva) para entender el uso del sitio y mejorar la experiencia. Los detalles prácticos están en el banner de cookies y en esta política. Los analytics de primera parte esenciales pueden funcionar sin PII identificable.",
         ],
       },
       {

@@ -136,7 +136,12 @@ inteiro de uma vez.
   em relatório se for registrado como dimensão/métrica personalizada, e sessões de domínios diferentes
   não se unem sozinhas (pedem cross-domain linker). O pooling que interessa a campanha é o do Meta.
 - **Consentimento**: Pixel e GA4 só montam depois do aceite (`ConsentGate` + `CookieBanner`), sem CMP
-  externo. É o que o `/aviso-legal` declara ao visitante.
+externo. O aceite tem dois gatilhos, ambos afirmativos: o botão "Entendi" do banner e o clique num CTA
+de reserva (`TicketOfferButton`) — abrir a oferta É o aceite, sem clique extra nem banner sobre o modal.
+Como o Pixel monta no aceite e o `InitiateCheckout` dispara de um modal lazy-loaded, `lib/fbq.ts`
+enfileira o evento quando o consentimento já existe mas o `fbq` ainda não subiu (flush assim que o
+script aparece). Sem consentimento o evento é descartado — nunca bufferizado, para não coletar dado
+pré-aceite. É o que o `/aviso-legal` declara ao visitante.
 
 ## 8 · `property` e literais proibidos
 

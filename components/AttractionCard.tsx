@@ -92,7 +92,6 @@ export default function AttractionCard({
             campaign="destinos-reserva"
             context="atrativo"
             subjectTitle={nome}
-            subjectImage={attraction.cover}
             subjectSubtitle={tagline}
             /* ⚠️ As TRÊS versões: o modal tem seletor de idioma próprio e o `detail` é um snapshot do
                clique — sem isto, trocar o idioma lá dentro não retraduzia o card do assunto. Quem

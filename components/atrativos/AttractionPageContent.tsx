@@ -268,7 +268,6 @@ export default function AttractionPageContent({
                   campaign="destinos-reserva"
                   context="atrativo"
                   subjectTitle={nome}
-                  subjectImage={a.cover}
                   subjectSubtitle={ai.tagline}
                   /* As três versões — ver AttractionCard (o modal troca de idioma sem recarregar). */
                   subjectI18n={attractionSubjectI18n(a.slug, a)}

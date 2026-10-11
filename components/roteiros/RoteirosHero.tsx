@@ -65,15 +65,20 @@
 "use client";
 
 import Image from "next/image";
+import { RefreshCw, User } from "lucide-react";
 import { useLocale } from "@/components/i18n/LocaleProvider";
 import { HOME_UI } from "@/lib/i18n/home";
 import { SHARED_UI } from "@/lib/i18n/shared";
+import { MODAL_UI } from "@/lib/i18n/modal";
 import ReservarDataCta from "@/components/ReservarDataCta";
 
 export default function RoteirosHero() {
   const { locale } = useLocale();
   const t = HOME_UI[locale].hero;
   const cta = SHARED_UI[locale].roteirosCta;
+  // Itens do produto abaixo do CTA — MESMO dicionário e mesmas chaves do card do modal (`SubjectItemCard`),
+  // para o texto não divergir entre a hero e o modal.
+  const m = MODAL_UI[locale];
   return (
     // ⚠️⚠️ A ALTURA DA HERO É RELAÇÃO, NÃO CONSTANTE. `min-h-[100svh]` + `justify-center`:
     // a seção SEMPRE ocupa a viewport inteira e o conteúdo se centra sozinho no espaço que
@@ -157,6 +162,32 @@ export default function RoteirosHero() {
                   →
                 </span>
               </ReservarDataCta>
+            </div>
+
+            {/* Itens do produto — mesmos do card do modal (chaves em `MODAL_UI`). */}
+            <div className="rf-rise rf-d4 mt-8 flex max-w-[30rem] flex-wrap gap-x-8 gap-y-4">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <RefreshCw className="h-3.5 w-3.5 flex-none" style={{ color: "hsl(152,47%,32%)" }} aria-hidden="true" />
+                  <p className="text-sm font-bold leading-snug" style={{ color: "hsl(210,60%,15%)" }}>
+                    {m.featureRoundTrip}
+                  </p>
+                </div>
+                <p className="mt-0.5 text-xs leading-relaxed" style={{ color: "hsl(210,25%,45%)" }}>
+                  {m.featureRoundTripSub}
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5 flex-none" style={{ color: "hsl(152,47%,32%)" }} aria-hidden="true" />
+                  <p className="text-sm font-bold leading-snug" style={{ color: "hsl(210,60%,15%)" }}>
+                    {m.featureGuide}
+                  </p>
+                </div>
+                <p className="mt-0.5 text-xs leading-relaxed" style={{ color: "hsl(210,25%,45%)" }}>
+                  {m.featureGuideSub}
+                </p>
+              </div>
             </div>
           </div>
 

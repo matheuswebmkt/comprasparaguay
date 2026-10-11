@@ -2,10 +2,11 @@
 // Version: 3.0
 // Nome da Versão: "Foco Compras Paraguay — catálogo reduzido a 5 atrativos de compras/fronteira"
 //
-// Catálogo enxuto para o posicionamento Compras Paraguay: apenas os 5 atrativos ligados ao
-// eixo de compras e fronteira (Cataratas JL Shopping, compras em Ciudad del Este, By Night
-// Puerto Iguazú, Duty Free de Puerto Iguazú e Shopping Catuaí Palladium). Os demais atrativos
-// foram removidos nesta rodada (decisão do usuário).
+// Catálogo enxuto para o posicionamento Compras Paraguay: os 5 atrativos ligados ao eixo de compras
+// e fronteira (Cataratas JL Shopping, compras em Ciudad del Este, By Night Puerto Iguazú, Duty Free
+// de Puerto Iguazú e Shopping Catuaí Palladium), mais o transfer de aeroporto/check-in e check-out
+// no hotel — serviço de logística que entra como opção no hub e no seletor do modal. Os demais
+// atrativos foram removidos (decisão do usuário).
 
 import { Attraction } from "@/app/types";
 
@@ -354,6 +355,66 @@ export const attractions: Attraction[] = [
       {
         q: "Com o que combina no mesmo dia?",
         a: "Com tudo que fica na RN 12: as Cataratas do lado argentino, o Hito Tres Fronteras e La Aripuca estão na mesma estrada. Gastar uma travessia de fronteira só com o free shop é desperdiçar o deslocamento — ele foi feito para somar, não para ocupar o dia.",
+      },
+    ],
+  },
+
+  // ===========================================================================
+  // TRANSFER DE AEROPORTO — serviço (check-in/check-out no hotel)
+  // ===========================================================================
+  // Serviço, não lugar com ingresso: o CTA do card cai em "Reservar data".
+  {
+    slug: "aeroporto-checkin-checkout-hotel",
+    name: "Aeroporto / Check-in e Check-out no hotel",
+    tagline:
+      "Do pouso ao hotel na chegada, e do hotel ao embarque na partida — sem depender de aplicativo.",
+    seoTitle: "Transfer do Aeroporto em Foz do Iguaçu: check-in e check-out no hotel",
+    seoDescription:
+      "Transfer do aeroporto de Foz do Iguaçu para o hotel e de volta ao embarque: chegada, partida, espera inclusa e motorista que conhece a cidade.",
+    updatedAt: "2026-08-08",
+    description: [
+      "O primeiro e o último trajeto são os que mais decidem como a chegada e a partida em Foz acontecem. Chegar e cair no trânsito procurando o hotel, ou descer do voo e ficar refém de um aplicativo com tarifa de pico, é o tipo de atrito que mancha a chegada — e a partida, com mala, pressa e horário de voo, é ainda pior se deixada para a última hora.",
+      "O transfer de aeroporto resolve isso com um combinado: o motorista espera a sua chegada, ajuda com as malas e leva direto ao hotel; na volta, busca você no horário certo para chegar com folga ao check-in do voo. Para quem hospeda em Foz é a mesma lógica — o serviço cobre o trecho entre o hotel e qualquer ponto da cidade, inclusive o aeroporto, sem a surra de aplicativo nem a lista de espera.",
+    ],
+    highlights: [
+      "Do aeroporto ao hotel na chegada",
+      "Do hotel ao aeroporto na partida",
+      "Espera do voo e malas inclusas",
+      "Sem depender de aplicativo",
+    ],
+    city: "Foz do Iguaçu",
+    state: "PR",
+    country: "BR",
+    address:
+      "Aeroporto Internacional de Foz do Iguaçu (BR-277) e hotéis da cidade",
+    officialUrl: "https://www.ccraeroportos.com.br/aeroporto/foz-do-iguacu/",
+    cover: "/images/atrativos/aeroporto-checkin-checkout-hotel/cover.webp",
+    info: [
+      {
+        label: "Onde fica",
+        value: "Aeroporto Internacional de Foz do Iguaçu e hotéis da cidade",
+      },
+      {
+        label: "Horário",
+        value: "Flexível — combinado conforme o horário do voo",
+      },
+      {
+        label: "Dica",
+        value: "Combine a coleta na volta com antecedência, para chegar com folga ao check-in do voo.",
+      },
+    ],
+    faq: [
+      {
+        q: "O transfer do aeroporto inclui a espera do voo?",
+        a: "Sim. O motorista acompanha o horário da sua chegada e espera na área de desembarque, ajudando com as malas — o valor combinado cobre a espera e o trajeto até o hotel.",
+      },
+      {
+        q: "Dá para usar o mesmo transfer para a volta ao aeroporto?",
+        a: "Dá, e é o que normalmente se recomenda: buscam você no hotel no horário certo para chegar com folga ao check-in do voo, evitando correria de última hora.",
+      },
+      {
+        q: "O transfer substitui o aplicativo no deslocamento pela cidade?",
+        a: "Para o trajeto aeroporto–hotel–aeroporto, sim — com vantagem de preço combinado e motorista que conhece a cidade. Para trechos avulsos dentro de Foz, o serviço também cobre, e é a mesma pessoa/empresa que cuida do seu deslocamento.",
       },
     ],
   },

@@ -42,6 +42,12 @@ export interface ModalUI {
    * idiomas e chaves de `app_settings` para duas linhas de texto. */
   reservaTitle: string;
   reservaBadge: string;
+  /** Itens do card do assunto (atrativo/reserva), em duas colunas abaixo da imagem do transfer:
+   *  "Ida e Volta" + "Guia especialista". Chaves FIXAS — estado do produto, não copy vendável. */
+  featureRoundTrip: string;
+  featureRoundTripSub: string;
+  featureGuide: string;
+  featureGuideSub: string;
   /** Sucesso do atrativo de RESERVA (§17-ter). Sobrescreve `successTitle`/`successClose` do
    *  "3b · Textos por produto", que falam em INGRESSO — vocabulário errado num lugar que não
    *  vende ingresso, e que já contradiz o CTA do card ("Reservar data").
@@ -116,7 +122,11 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     includedBadge: "Incluído",
     saberMais: "Saber mais →",
     reservaTitle: "Receba as condições dessa reserva",
-    reservaBadge: "Reserva / atrativo",
+    reservaBadge: "Reserva",
+    featureRoundTrip: "Ida e Volta",
+    featureRoundTripSub: "Partindo de Foz do Iguaçu",
+    featureGuide: "Guia especialista",
+    featureGuideSub: "Garantia de segurança",
     reservaSuccessTitle: "Solicitação de atrativo recebida!",
     reservaSuccessClose:
       "Um especialista em Foz do Iguaçu vai te chamar no WhatsApp com as condições deste atrativo.",
@@ -124,7 +134,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     includeMoreAttractionsDesc:
       "Organizamos junto ao enviar as condições e orçamento",
     selectAttraction: "Selecionar opções",
-    contactTitle: "Onde te enviamos a proposta e condições dessa reserva?",
+    contactTitle: "Onde te enviamos as condições e disponibilidade dessa reserva?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",
@@ -167,7 +177,11 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     includedBadge: "Included",
     saberMais: "Learn more →",
     reservaTitle: "Receive the conditions for this booking",
-    reservaBadge: "Booking / attraction",
+    reservaBadge: "Booking",
+    featureRoundTrip: "Round Trip",
+    featureRoundTripSub: "Departing from Foz do Iguaçu",
+    featureGuide: "Expert guide",
+    featureGuideSub: "Guaranteed safety",
     reservaSuccessTitle: "Booking request received!",
     reservaSuccessClose:
       "A specialist in Foz do Iguaçu will message you on WhatsApp with the conditions for this attraction.",
@@ -177,7 +191,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
       "We arrange it together when we send the conditions and the quote",
     selectAttraction: "Select options",
     contactTitle:
-      "Where should we send the proposal and conditions for this booking?",
+      "Where should we send the conditions and availability for this booking?",
     cancel: "cancel",
     languageLabel: "Language",
     sent: "Sent",
@@ -220,7 +234,11 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
     includedBadge: "Incluida",
     saberMais: "Saber más →",
     reservaTitle: "Recibe las condiciones de esta reserva",
-    reservaBadge: "Reserva / atractivo",
+    reservaBadge: "Reserva",
+    featureRoundTrip: "Ida y vuelta",
+    featureRoundTripSub: "Saliendo de Foz do Iguaçu",
+    featureGuide: "Guía especialista",
+    featureGuideSub: "Garantía de seguridad",
     reservaSuccessTitle: "¡Solicitud de atractivo recibida!",
     reservaSuccessClose:
       "Un especialista en Foz do Iguaçu te escribirá por WhatsApp con las condiciones de este atractivo.",
@@ -230,7 +248,7 @@ export const MODAL_UI: Record<Locale, ModalUI> = {
       "Lo organizamos juntos al enviar las condiciones y el presupuesto",
     selectAttraction: "Seleccionar opciones",
     contactTitle:
-      "¿A dónde enviamos la propuesta y las condiciones de esta reserva?",
+      "¿A dónde enviamos las condiciones y disponibilidad de esta reserva?",
     cancel: "cancelar",
     languageLabel: "Idioma",
     sent: "Enviado",

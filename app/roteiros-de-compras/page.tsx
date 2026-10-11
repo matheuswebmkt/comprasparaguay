@@ -2,7 +2,8 @@
 // Version: 3.1
 // Nome da Versão: "Hub e páginas individuais agora sob /roteiros-de-compras — a rota /atrativos saiu"
 //
-// Central do produto: os 5 destinos de compras do eixo compras/fronteira.
+// Central do produto: os 5 destinos de compras do eixo compras/fronteira, mais o transfer de
+// aeroporto/check-in e check-out no hotel (serviço de logística).
 // As páginas individuais vivem em /roteiros-de-compras/[slug]. `/atrativos` era herança do projeto
 // de conteúdo (atraivo = turismo = ingresso) e FOI; o caminho todo é roteiros/destinos de compras.
 

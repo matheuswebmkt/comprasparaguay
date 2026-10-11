@@ -60,7 +60,7 @@ export default function AutoridadeSection() {
   const destacado = (i: number) => semMovimento || i === ativo;
 
   return (
-    <section className="rf-section" style={{ background: "hsl(0,0%,100%)" }}>
+    <section className="rf-section" style={{ background: "hsl(40,33%,97%)" }}>
       <div className="section-container">
         <div className="rf-head">
           <p className="rf-eyebrow">{t.eyebrow}</p>
